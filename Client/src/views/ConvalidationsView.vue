@@ -26,68 +26,63 @@
 import type { AxiosResponse } from 'axios';
 import axios from 'axios';
 import type {Convalidation} from '@/models/Convalidation'; 
+import { AxiosError } from 'axios';
 
 export default {
   data() {
     return {
-      convalidations: [] as Convalidation[] 
+      convalidations: [] as Convalidation[],
     };
   },
   mounted() {
-    this.fetchData();
+    this.getConvalidation();
   },
   methods: {
-    // Método para obtener los datos de la API
-    async fetchData(): Promise<void> {
+ 
+    async getConvalidation(): Promise<void> {
       try {
-        // Realizar la solicitud GET a la API
         const response: AxiosResponse<Convalidation[]> = await axios.get('http://localhost:8000/convalidations/');
-        // Asignar los datos de la respuesta a la propiedad convalidations
         this.convalidations = response.data;
         console.log(this.convalidations);
       } catch (error) {
-        // Capturar y manejar errores
-        console.error('Error al obtener los datos:', error);
+        const axiosError = error as AxiosError;
+        console.error('Error al obtener convalidaciones:', axiosError?.response?.data);
       }
     },
-
-      formatReadableDate(date: string | null): string {
-        const settings: Intl.DateTimeFormatOptions = { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric', 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        };
-        return date ? new Date(date).toLocaleDateString('es-ES', settings) : '-';
+    
+    async getConvalidationByState(state: string): Promise<void> {
+      try {
+        const response: AxiosResponse<Convalidation[]> = await axios.get(`http://localhost:8000/convalidations/state/${state}`);
+        this.convalidations = response.data;
+        console.log(this.convalidations);
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al obtener convalidaciones:', axiosError?.response?.data || 'Error de red');
+        
       }
+  },
+
+    async getConvalidationByUser(user: string): Promise<void> {
+      try {
+        const response: AxiosResponse<Convalidation[]> = await axios.get(`http://localhost:8000/convalidations/user/${user}`);
+        this.convalidations = response.data;
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al obtener convalidaciones:', axiosError?.response?.data || 'Error de red');
+      }
+    },
+    
+    formatReadableDate(date: string | null): string {
+      const settings: Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      };
+      return date ? new Date(date).toLocaleDateString('es-ES', settings) : '-';
+    }
   }
 };
 </script>
 
-<style>
-.convalidations-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.convalidation-card {
-  background-color: #f8f8f8;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
-}
-
-.convalidation-card h3 {
-  margin-top: 0;
-  color: #333;
-}
-
-.convalidation-card p {
-  margin: 5px 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-</style>
