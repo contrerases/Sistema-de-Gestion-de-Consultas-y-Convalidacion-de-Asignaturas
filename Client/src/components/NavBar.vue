@@ -1,6 +1,6 @@
 
 <template>
-  <nav class="bg-red-500 rounded w-auto h-16">
+  <nav class="rounded w-auto h-16">
     <ul>
       <li>
         <router-link to="/">Home</router-link>

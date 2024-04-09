@@ -1,23 +1,59 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <div v-for="convalidation in convalidations" :key="convalidation.id" class="bg-white shadow-md rounded-md p-6 mb-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-gray-600"><strong>ID:</strong> {{ convalidation.id }}</p>
-          <p class="text-gray-600"><strong>Rol:</strong> {{ convalidation.rol }}</p>
-          <p class="text-gray-600"><strong>ID de curso de origen:</strong> {{ convalidation.id_origin_course }}</p>
-          <p class="text-gray-600"><strong>ID de curso de destino:</strong> {{ convalidation.id_destination_course }}</p>
-          <p class="text-gray-600"><strong>Estado:</strong> {{ convalidation.state }}</p>
+  <main class="flex flex-col justify-center">
+    <div v-for="convalidation in convalidations" :key="convalidation.id" class="flex flex-col items-center p-4 m-4 bg-white rounded-lg shadow-md">
+      <div class="flex bg-red-500 w-6/12 h-72  rounded-2xl justify-center min-w-6xl text-left text-white font-bold font-sans text-xl">
+        <div class="flex flex-col w-3/4  m-5 gap-5">
+          <div class=" flex w-full h-1/4 gap-10">
+          <div class="bg-red-600 w-2/5 h-full rounded-lg pl-3">
+            {{convalidation.rol }}
+          </div>
+  
+          <div class="bg-red-600 w-3/5 h-full rounded-lg pl-3">
+            NOMBRE
+          </div>
+  
         </div>
-        <div>
-          <p class="text-gray-600"><strong>Comentarios:</strong> {{ convalidation.comments }}</p>
-          <p class="text-gray-600"><strong>Fecha de creación:</strong> {{ formatReadableDate(convalidation.creation_date ) }}</p>
-          <p class="text-gray-600"><strong>Fecha de aprobación:</strong> {{ formatReadableDate(convalidation.approval_date)}}</p>
-          <p class="text-gray-600"><strong>ID del usuario que aprueba:</strong> {{ convalidation.user_approves }}</p>
+        <div class=" w-full h-1/4">
+          <div class="bg-red-600 w-full h-full rounded-lg pl-3">
+            {{convalidation.id_origin_course}}
+          </div>
+        </div>
+        <div class="w-full h-1/4">
+          <div class="bg-red-600 w-full h-full rounded-lg pl-3">
+            {{convalidation.id_destination_course}}
+          </div>
+        </div>
+        <div class=" flex w-full h-1/4 justify-between">
+          <div class="bg-red-600 w-5/12 h-full rounded-lg pl-3">
+            {{formatReadableDate(convalidation.creation_date)}}
+          </div>
+          <div class="bg-red-600 w-5/12 h-full rounded-lg pl-3">
+            {{formatReadableDate(convalidation.approval_date)}}
+          </div>
+  
+  
+  
+        </div>
+  
+      </div>
+      <div class="flex w-1/4 m-5 text-center">
+        <div class="flex flex-col w-full h-full">
+          <div class="bg-red-600 w-full h-1/4 rounded-lg mb-5 pl-3">
+            {{convalidation.id}}
+          </div>
+  
+          <div class="bg-red-600 w-full h-2/4 rounded-lg ">
+            {{convalidation.state}}
+          </div>
+          <div class="bg-red-600 w-full h-1/4 rounded-lg mt-5 pl-3">
+            BUTTON
+          </div>
         </div>
       </div>
+      </div>
+  
     </div>
-  </div>
+  </main>
 </template>
 
 
