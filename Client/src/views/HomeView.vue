@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import RequestCard from '@/components/RequestCard.vue';
+
 
 </script>
 
 <template>
   <main>
-   hola
+   <RequestCard />
   </main>
 </template>
 
