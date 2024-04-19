@@ -3,7 +3,19 @@ CREATE DATABASE IF NOT EXISTS SGC;
 
 USE SGC;
 
+
+
 -- Tabla Administradores
+
+DROP TABLE IF EXISTS `CONVALIDATIONS`;
+DROP TABLE IF EXISTS `ADMINISTRATORS`;
+DROP TABLE IF EXISTS `STUDENTS`;
+DROP TABLE IF EXISTS `AUTH_STUDENTS`;
+DROP TABLE IF EXISTS `SUBJECTS`;
+DROP TABLE IF EXISTS `COURSES`;
+
+
+
 CREATE TABLE
     `ADMINISTRATORS` (
         `id` INT NOT NULL AUTO_INCREMENT,
@@ -18,21 +30,38 @@ CREATE TABLE
 
 
 
+
+
+
 -- Tabla Alumnos
 CREATE TABLE
     `STUDENTS` (
-        `rol` VARCHAR(10) NOT NULL,
+        `rol` VARCHAR(10) NOT NULL UNIQUE,
         `verificator_number` VARCHAR(1) NOT NULL CHECK (verificator_number REGEXP '^[0-9K]$'),
         `first_name` VARCHAR(255) NOT NULL,
         `second_name` VARCHAR(255) NOT NULL,
         `first_last_name` VARCHAR(255) NOT NULL,
         `second_last_name` VARCHAR(255) NOT NULL,
-        `email` VARCHAR(255) NOT NULL,
-        `password` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`rol`)
     );
 
+
+
+
+CREATE TABLE
+    `AUTH_STUDENTS` (
+        `rol` VARCHAR(10) NOT NULL UNIQUE,
+        `email` VARCHAR(255) NOT NULL UNIQUE,
+        `password_hash` VARCHAR(255) NOT NULL,
+        `token` VARCHAR(255) NOT NULL,
+        `expiration_date` TIMESTAMP NOT NULL,
+        PRIMARY KEY (`rol`),
+        FOREIGN KEY (`rol`) REFERENCES `STUDENTS` (`rol`)
+    );
+
 -- Tabla Cursos
+
+
 CREATE TABLE
     `SUBJECTS` (
         `id` INT NOT NULL AUTO_INCREMENT,
@@ -41,6 +70,8 @@ CREATE TABLE
         PRIMARY KEY (`id`)
     );
 
+
+
 CREATE TABLE
     `COURSES` (
         `id` INT NOT NULL AUTO_INCREMENT,
@@ -48,6 +79,8 @@ CREATE TABLE
         `name` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`id`)
     );
+
+
 
 
 -- Tabla Convalidaciones
