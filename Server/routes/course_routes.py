@@ -6,10 +6,11 @@ import mariadb as mdb
 
 router = APIRouter()
 
-MODEL = course_model.Course
+RESPONSE_MODEL = course_model.Course
+QUERY_MODEL = course_model.CourseQuery
 
 # Endpoint para obtener todos los cursos
-@router.get("/", response_model=List[MODEL])
+@router.get("/", response_model=List[RESPONSE_MODEL])
 async def get_all_courses():
     try:
         conn = get_db_connection()  # Abrir la conexión
@@ -22,3 +23,41 @@ async def get_all_courses():
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
+@router.post("/new_course", response_model=QUERY_MODEL)
+async def create_course(course: QUERY_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL add_course(?, ?)", (course.acronym, course.name))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return course
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+@router.put("/update_course/{acronym}")
+async def update_course(acronym: str, course: QUERY_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL update_course(?,?,?)", (acronym, course.acronym, course.name))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return {"message": "Curso actualizado"}
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+@router.delete("/delete_course/{acronym}")
+async def delete_course(acronym: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL delete_course(?)", (acronym,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return {"message": "Curso eliminado"}
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
