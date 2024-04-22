@@ -1,21 +1,10 @@
-USE SGC;
+DROP PROCEDURE IF EXISTS get_convalidation_by_state;
+DROP PROCEDURE IF EXISTS get_convalidation_by_student;
 
--- Cambio del delimitador para evitar problemas con la sintaxis
+DROP PROCEDURE IF EXISTS get_all_convalidations;
+
 DELIMITER //
 
--- Procedimiento para obtener todos los cursos
-CREATE PROCEDURE get_all_courses()
-BEGIN
-    SELECT * FROM COURSES;
-END //
-
--- Procedimiento para obtener todas las materias
-CREATE PROCEDURE get_all_subjects()
-BEGIN
-    SELECT * FROM SUBJECTS;
-END //
-
--- Procedimiento para obtener todas las convalidaciones
 CREATE PROCEDURE get_all_convalidations()
 BEGIN
     SELECT
@@ -32,17 +21,6 @@ BEGIN
         CONVALIDATIONS;
 END //
 
-
-
-
-
--- Procedimiento para obtener todas las convalidaciones por estado
-
-DELIMITER //
-
-DROP PROCEDURE IF EXISTS get_convalidation_by_state;
-
-DELIMITER //
 
 CREATE PROCEDURE get_convalidation_by_state(
     IN in_state VARCHAR(50)
@@ -70,10 +48,7 @@ BEGIN
         state = in_state;
 END //
 
-DELIMITER ;
 
-
--- Procedimiento para obtener todas las convalidaciones por estudiante
 
 
 CREATE PROCEDURE get_convalidation_by_student(
@@ -107,5 +82,5 @@ BEGIN
         rol = in_rol;
 END //
 
--- Restauramos el delimitador a su valor predeterminado
+
 DELIMITER ;

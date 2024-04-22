@@ -1,0 +1,9 @@
+DROP PROCEDURE IF EXISTS get_all_subjects;
+
+DELIMITER //
+CREATE PROCEDURE get_all_subjects()
+BEGIN
+    SELECT * FROM SUBJECTS;
+END //
+
+DELIMITER ;
