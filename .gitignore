@@ -1,3 +1,10 @@
 Server/__pycache__
 Client/node_modules
 
+Server/__pycache__/app.cpython-312.pyc
+Server/__pycache__/models.cpython-312.pyc
+Server/models/__pycache__/__init__.cpython-312.pyc
+Server/models/__init__.py
+Server/routes/__pycache__/convalidation_routes.cpython-312.pyc
+Server/routes/__pycache__/Convalidation.cpython-312.pyc
+Server/routes/__pycache__/Course.cpython-312.pyc
