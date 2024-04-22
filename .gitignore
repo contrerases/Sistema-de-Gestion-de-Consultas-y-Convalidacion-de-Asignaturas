@@ -8,3 +8,4 @@ Server/models/__init__.py
 Server/routes/__pycache__/convalidation_routes.cpython-312.pyc
 Server/routes/__pycache__/Convalidation.cpython-312.pyc
 Server/routes/__pycache__/Course.cpython-312.pyc
+Server/__pycache__/main.cpython-312.pyc
