@@ -23,7 +23,7 @@ CREATE TABLE
         `second_name` VARCHAR(255) NOT NULL,
         `first_last_name` VARCHAR(255) NOT NULL,
         `second_last_name` VARCHAR(255) NOT NULL,
-        `email` VARCHAR(255) NOT NULL,
+        `email` VARCHAR(255) NOT NULL UNIQUE,
         `password` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`id`)
     );
@@ -65,7 +65,7 @@ CREATE TABLE
 CREATE TABLE
     `SUBJECTS` (
         `id` INT NOT NULL AUTO_INCREMENT,
-        `name` VARCHAR(255) NOT NULL,
+        `name` VARCHAR(255) NOT NULL UNIQUE,
         `type` VARCHAR(100) NOT NULL,
         PRIMARY KEY (`id`)
     );
@@ -75,7 +75,7 @@ CREATE TABLE
 CREATE TABLE
     `COURSES` (
         `id` INT NOT NULL AUTO_INCREMENT,
-        `acronym` VARCHAR(255) NOT NULL,	
+        `acronym` VARCHAR(255) NOT NULL UNIQUE,	
         `name` VARCHAR(255) NOT NULL,
         PRIMARY KEY (`id`)
     );
