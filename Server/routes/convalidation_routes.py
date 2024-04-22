@@ -14,6 +14,7 @@ MODEL = convalidation_model.Convalidation
 @router.get("/", response_model=List[MODEL])
 async def get_all_convalidations():
     try:
+        print("entro")
         conn = get_db_connection()  # Abrir la conexión
         cursor = conn.cursor(dictionary=True)
         cursor.execute("CALL get_all_convalidations()")
