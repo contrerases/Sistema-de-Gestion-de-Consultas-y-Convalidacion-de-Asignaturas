@@ -12,3 +12,7 @@ class Convalidation(BaseModel):
     creation_date: datetime
     approval_date: Optional[datetime]
     user_approves: int
+
+class ConvalidationQuery(BaseModel):
+    state: str
+    comments: Optional[Text]

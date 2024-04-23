@@ -1,8 +1,7 @@
 DROP PROCEDURE IF EXISTS get_convalidation_by_state;
 DROP PROCEDURE IF EXISTS get_convalidation_by_student;
-
 DROP PROCEDURE IF EXISTS get_all_convalidations;
-
+DROP PROCEDURE IF EXISTS set_convalidation;
 DELIMITER //
 
 CREATE PROCEDURE get_all_convalidations()
@@ -25,6 +24,7 @@ END //
 CREATE PROCEDURE get_convalidation_by_state(
     IN in_state VARCHAR(50)
 )
+
 BEGIN
     -- Verificar si el estado proporcionado es válido
     IF NOT (in_state IN ('En revisión', 'Aceptada por el jefe de carrera', 'Aceptada por dirección de estudio', 'Rechazada', 'Finalizada')) THEN
@@ -81,6 +81,31 @@ BEGIN
     WHERE
         rol = in_rol;
 END //
+
+CREATE PROCEDURE set_convalidation (
+    IN p_convalidation_id INT, 
+    IN p_new_status VARCHAR(50), 
+    IN p_comments TEXT
+)
+BEGIN
+    DECLARE convalidation_exists INT;
+
+    -- Verificar si la convalidación existe
+    SELECT COUNT(*) INTO convalidation_exists FROM CONVALIDATIONS WHERE id = p_convalidation_id;
+
+    IF convalidation_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La convalidación no existe';
+    ELSE
+        -- Actualizar el estado, los comentarios y la fecha de aprobación de la convalidación
+        UPDATE CONVALIDATIONS 
+        SET state = p_new_status, 
+            comments = p_comments, 
+            approval_date = CURRENT_TIMESTAMP
+        WHERE id = p_convalidation_id;
+    END IF;
+END;
+
 
 
 DELIMITER ;
