@@ -9,3 +9,7 @@ export interface Convalidation {
   approval_date:         string | null;
   user_approves:         number;
 }
+
+function formatApprovalDate(date: string | null): string {
+  return date ? date : '-';
+}

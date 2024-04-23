@@ -1,3 +1,6 @@
+<script setup lang="ts">
+import ColorMode from '@/components/ColorMode.vue'
+</script>
 
 <template>
   <nav class="rounded w-auto h-16">
@@ -8,6 +11,7 @@
       <li>
         about
       </li>
+      <ColorMode/>
     </ul>
   </nav>
     
