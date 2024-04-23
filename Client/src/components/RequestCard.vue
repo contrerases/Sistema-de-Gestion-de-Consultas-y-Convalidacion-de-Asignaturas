@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Convalidation } from '@/models/Convalidation';
 import { ref } from 'vue';
+import axios from 'axios';
+import ConvalidationsView from '@/views/ConvalidationsView.vue';
 
-defineProps<{
+const props = defineProps<{
   convalidation: Convalidation;
 }>()
 
@@ -10,6 +12,7 @@ const showCard = ref(false);
 
 
 function toggleCardShow() {
+  console.log('props.convalidation:', props.convalidation);
   showCard.value = !showCard.value;
 }
 
@@ -23,6 +26,19 @@ function formatReadableDate(date: string | null): string {
   };
   return date ? new Date(date).toLocaleDateString('es-ES', settings) : '-';
 }
+
+
+function updateConvalidation() {  
+  axios.put(`http://localhost:8000/convalidations/set_convalidation/${props.convalidation.id}`, props.convalidation )
+  .then(response => {
+    console.log('Convalidación actualizada correctamente:', response.data);
+  })
+  .catch(error => {
+    console.error('Error al actualizar la convalidación:', error);
+  });
+}
+
+
 </script>
 
 
@@ -45,10 +61,14 @@ function formatReadableDate(date: string | null): string {
           <div class="title">Asignatura a convalidar </div>
           <div class="box border rounded-lg p-4 ">{{ convalidation.id_origin_course }}</div>
         </div>
-        <div class="item flex flex-col row-span-2">
-          <div class="title">Estado</div>
-          <div class="box border rounded-lg p-4 w-full h-full text-center flex">{{ convalidation.state }}</div>
-        </div>
+        <select v-model="convalidation.state"  class="text-black box border rounded-lg row-span-2 p-4 w-full h-full bg-input text-primary-foreground text-start">
+          <option value="pending">En revisión</option>
+          <option value="ap_jc">Aprobada por el Jefe de Carrera</option>
+          <option value="ap_de">Aprobada por Direccion de estudio</option>
+          <option value="approved">Aprobada</option>
+          <option value="rejected">Rechazada</option>
+        </select>
+        
         <div class="item flex flex-col col-span-2">
           <div class="title">Asignatura cursada</div>
           <div class="box border rounded-lg p-4">{{ convalidation.id_destination_course }}</div>
@@ -64,7 +84,7 @@ function formatReadableDate(date: string | null): string {
         </div>
         <div class="item flex flex-col gap-y-2">
           <div class="title"></div>
-          <button @click="toggleCardShow" class="box border rounded-lg p-4 text-center bg-orange-600 flex items-center justify-center w-1/2 m-auto">
+          <button @click="toggleCardShow" class="box border rounded-lg p-4 text-center bg-primary flex items-center justify-center w-1/2 m-auto">
             {{ showCard ? 'Contraer' : 'Expandir' }}
           </button>
         </div>
@@ -73,7 +93,7 @@ function formatReadableDate(date: string | null): string {
     <div v-show="showCard" class="card-show  grid grid-cols-3 gap-y-4 gap-x-10">
       <div class="item flex flex-col row-span-2 col-span-2">
         <div class="title">Comentarios</div>
-        <input v-model="convalidation.comments" class=" text-black box border rounded-lg p-4 w-full h-full text-start align-top ">
+        <input v-model="convalidation.comments"  class=" box border rounded-lg p-4 w-full h-full text-start align-top">
       </div>
      <div class="item">
       <div class="title">Revisado por</div>
@@ -83,7 +103,7 @@ function formatReadableDate(date: string | null): string {
       <div class="title">Tipo</div>
       <div class="box border rounded-lg p-4">Libre || Electivo</div>
      </div>
-      <button class="box border rounded-lg p-4 mt-4 bg-primary"> Revisar</button>
+      <button @click="updateConvalidation" class="box border rounded-lg p-4 mt-4 bg-primary"> Revisar</button>
     
   </div>
 
@@ -97,7 +117,7 @@ function formatReadableDate(date: string | null): string {
 
 <style lang="postcss">
 .box {
-  @apply font-bold font-mono border-orange-100;
+  @apply  font-mono  bg-input;
 
 }
 
@@ -110,7 +130,7 @@ function formatReadableDate(date: string | null): string {
 }
 
 .main {
-  @apply flex justify-center max-w-screen-xl mx-auto p-10 m-10 rounded-lg border border-orange-100  ;
+  @apply flex justify-center max-w-screen-xl mx-auto p-10 m-10 rounded-lg border  bg-card;
 }
 
 .card-show{
