@@ -62,11 +62,11 @@ function updateConvalidation() {
           <div class="box border rounded-lg p-4 ">{{ convalidation.id_origin_course }}</div>
         </div>
         <select v-model="convalidation.state"  class="text-black box border rounded-lg row-span-2 p-4 w-full h-full bg-input text-primary-foreground text-start">
-          <option value="pending">En revisión</option>
-          <option value="ap_jc">Aprobada por el Jefe de Carrera</option>
-          <option value="ap_de">Aprobada por Direccion de estudio</option>
-          <option value="approved">Aprobada</option>
-          <option value="rejected">Rechazada</option>
+          <option value="En revisión">En revisión</option>
+          <option value="Aceptada por el jefe de carrera">Aceptada por el jefe de carrera</option>
+          <option value="Rechazada">Rechazada</option>
+          <option value="Aceptada por Direccion de estudio">Aceptada por Direccion de estudio</option>
+          <option value="Finalizada">Finalizada</option>
         </select>
         
         <div class="item flex flex-col col-span-2">
@@ -85,7 +85,7 @@ function updateConvalidation() {
         <div class="item flex flex-col gap-y-2">
           <div class="title"></div>
           <button @click="toggleCardShow" class="box border rounded-lg p-4 text-center bg-primary flex items-center justify-center w-1/2 m-auto">
-            {{ showCard ? 'Contraer' : 'Expandir' }}
+            {{ showCard ? '⇑ ' : '	⇓ ' }}
           </button>
         </div>
     </div>
@@ -117,7 +117,7 @@ function updateConvalidation() {
 
 <style lang="postcss">
 .box {
-  @apply  font-mono  bg-input;
+  @apply  rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 
 }
 

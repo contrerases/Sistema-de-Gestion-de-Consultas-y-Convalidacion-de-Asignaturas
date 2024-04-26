@@ -1,51 +1,57 @@
-INSERT INTO `ADMINISTRATORS` (`first_name`, `second_name`, `first_last_name`, `second_last_name`, `email`, `password`) 
+INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password) 
 VALUES 
-('Juan', 'Pablo', 'González', 'López', 'juan.gonzalez@example.com', 'password123'),
-('María', 'José', 'Martínez', 'Sánchez', 'maria.martinez@example.com', 'securepassword'),
-('Luis', '', 'Rodríguez', 'Hernández', 'luis.rodriguez@example.com', 'admin123'),
-('Ana', 'Isabel', 'Fernández', 'García', 'ana.fernandez@example.com', 'adminpass'),
-('Pedro', '', 'Díaz', 'Pérez', 'pedro.diaz@example.com', 'adminadmin');
+('Juan', 'Carlos', 'González', 'Pérez', 'juan@example.com', 'password123'),
+('María', 'Luisa', 'Martínez', 'García', 'maria@example.com', 'secret123'),
+('Pedro', '', 'Ramírez', 'López', 'pedro@example.com', 'admin123');
 
 
-INSERT INTO `STUDENTS` (`rol`, `verificator_number`, `first_name`, `second_name`, `first_last_name`, `second_last_name`) 
+INSERT INTO STUDENTS (rol_student, first_name, second_name, first_last_name, second_last_name, email, password) 
 VALUES 
-('201910001', 'K', 'Juan', 'Pablo', 'González', 'López'),
-('201910002', '5', 'María', 'José', 'Martínez', 'Sánchez'),
-('201910003', '3', 'Luis', '', 'Rodríguez', 'Hernández'),
-('201910004', '8', 'Ana', 'Isabel', 'Fernández', 'García'),
-('201910005', 'K', 'Pedro', '', 'Díaz', 'Pérez');
+('A001', 'José', 'Manuel', 'Gutiérrez', 'Rodríguez', 'jose@example.com', 'student123'),
+('A002', 'Ana', 'María', 'Sánchez', 'Gómez', 'ana@example.com', 'test123'),
+('A003', 'Luis', 'Miguel', 'Fernández', 'Pérez', 'luis@example.com', 'pass123');
 
-INSERT INTO `AUTH_STUDENTS` (`rol`, `email`, `password_hash`, `token`, `expiration_date`) 
+
+INSERT INTO TYPES_COURSES (name) 
 VALUES 
-('201910001', 'juan.gonzalez@example.com', 'hashedpassword123', 'randomtoken123', '2024-04-30 00:00:00'),
-('201910002', 'maria.martinez@example.com', 'hashedsecurepassword', 'randomtoken456', '2024-04-30 00:00:00'),
-('201910003', 'luis.rodriguez@example.com', 'hashedadmin123', 'randomtoken789', '2024-04-30 00:00:00'),
-('201910004', 'ana.fernandez@example.com', 'hashedadminpass', 'randomtoken012', '2024-04-30 00:00:00'),
-('201910005', 'pedro.diaz@example.com', 'hashedadminadmin', 'randomtoken345', '2024-04-30 00:00:00');
+('Asignatura INF'),
+('Asignatura Externa'),
+('Curso Certificado'),
+('Taller de INF'),
+('Proyecto Personal');
 
 
-INSERT INTO `COURSES` (`acronym`, `name`) 
+INSERT INTO GENERIC_COURSES (name) 
 VALUES 
-('MAT101', 'Matemáticas I'),
-('ENG201', 'English Conversation'),
-('PHY301', 'Physics III'),
-('CHE401', 'Chemistry Lab'),
-('BIO501', 'Biology Research');
+('Introducción a la Programación'),
+('Base de Datos Avanzadas'),
+('Diseño de Interfaces de Usuario');
 
 
-INSERT INTO `SUBJECTS` (`name`, `type`) 
+INSERT INTO WORKSHOPS (name) 
 VALUES 
-('Matemáticas I', 'Obligatoria'),
-('Inglés II', 'Electiva'),
-('Física II', 'Obligatoria'),
-('Química Orgánica', 'Electiva'),
-('Biología Molecular', 'Obligatoria');
+('Taller de Python'),
+('Taller de Desarrollo Web'),
+('Taller de Machine Learning');
 
 
-INSERT INTO `CONVALIDATIONS` (`rol`, `id_origin_course`, `id_destination_course`, `state`, `comments`, `user_approves`) 
+INSERT INTO DEPARTMENTS (name) 
 VALUES 
-('201910001', 1, 2, 'Aprobada', 'Convalidación válida', 1),
-('201910002', 3, 4, 'En revisión', 'Falta documentación', 2),
-('201910003', 2, 3, 'Rechazada', 'Créditos insuficientes', 3),
-('201910004', 4, 5, 'En revisión', 'Falta validación de contenido', 4),
-('201910005', 1, 3, 'Pendiente', NULL, 5);
+('Informática'),
+('Matemáticas'),
+('Ciencias Sociales');
+
+
+INSERT INTO SPECIFIC_COURSES (acronym, name, id_department, credits) 
+VALUES 
+('INF101', 'Introducción a la Programación', 1, 4),
+('DBA201', 'Base de Datos Avanzadas', 1, 5),
+('WEB301', 'Desarrollo Web Avanzado', 1, 5),
+('MAT101', 'Cálculo I', 2, 4),
+('SOC201', 'Sociología General', 3, 3);
+
+INSERT INTO CONVALIDATIONS (id_student, convalidation_type, id_generic_course, id_specific_course, state, comments, creation_date, revision_date, user_approves) 
+VALUES 
+(1, 1, 1, 1, 'Aprobada por DI', 'Convalidación aprobada', '2024-04-25 12:00:00', '2024-04-26 10:00:00', 1),
+(2, 3, 3, 3, 'En espera de DE', 'Convalidación pendiente de revisión', '2024-04-26 14:00:00', NULL, 2),
+(3, 2, 2, 2, 'Enviada', NULL, '2024-04-27 09:00:00', NULL, 3);
