@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class CurriculumCoursesBase(BaseModel):
+class CurriculumCourseBase(BaseModel):
     id: int
     name: str
