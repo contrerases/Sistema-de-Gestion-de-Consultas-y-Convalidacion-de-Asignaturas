@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status, APIRouter
-from models import convalidation_model
+from models import convalidations_model
 from database import get_db_connection
 from typing import List
 import mariadb as mdb
@@ -7,8 +7,8 @@ import mariadb as mdb
 
 router = APIRouter()
 
-RESPONSE_MODEL = convalidation_model.Convalidation
-QUERY_MODEL = convalidation_model.ConvalidationQuery
+BASE_MODEL = convalidations_model.ConvalidationBase
+RESPONSE_MODEL = convalidations_model.ConvalidationResponse
 
 
 # Endpoint para obtener todas las convalidaciones
@@ -17,7 +17,7 @@ async def get_all_convalidations():
     try:
         conn = get_db_connection()  # Abrir la conexión
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("CALL get_all_convalidations()")
+        cursor.execute("CALL GetAllConvalidationsProcessedData")
         convalidations = cursor.fetchall()
         cursor.close()
         conn.close()  # Cerrar la conexión
@@ -54,8 +54,8 @@ async def get_convalidations_by_student(rol: int):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
 
-@router.put("/set_convalidation/{id}", response_model=QUERY_MODEL)
-async def set_convalidation(id: int, query: QUERY_MODEL):
+@router.put("/set_convalidation/{id}", response_model=BASE_MODEL)
+async def set_convalidation(id: int, query: BASE_MODEL):
     try:
         conn = get_db_connection()  
         cursor = conn.cursor(dictionary=True)

@@ -1,34 +1,30 @@
-DELIMITER // 
-
-CREATE PROCEDURE 
-    GetProcessedConvalidationData (
-        IN convalidation_id INT
-    ) 
-    
-    BEGIN
-        SELECT
-            cv.id AS id,
-            s.rol_student AS rol_student,
-            tc.name AS convalidation_type,
-            gc.name AS name_generic_course,
-            sc.name AS name_specific_course,
-            cv.state AS state,
-            cv.comments AS comments,
-            cv.creation_date AS creation_date,
-            cv.revision_date AS revision_date,
-            a.first_name AS user_approves_name,
-            cv.file_data AS file,
-            cv.file_name AS file_name
-        FROM
-            CONVALIDATIONS cv
-            JOIN STUDENTS s ON cv.id_student = s.id
-            JOIN TYPES_COURSES tc ON cv.convalidation_type = tc.id
-            JOIN GENERIC_COURSES gc ON cv.id_generic_course = gc.id
-            JOIN SPECIFIC_COURSES sc ON cv.id_specific_course = sc.id
-            JOIN ADMINISTRATORS a ON cv.user_approves = a.id
-        WHERE
-            cv.id = convalidation_id;
-
-    END // 
+DELIMITER //
+CREATE PROCEDURE GetAllConvalidationsProcessedData()
+BEGIN
+    SELECT 
+        CONVALIDATIONS.id,
+        CONCAT(STUDENTS.first_name, ' ', STUDENTS.second_name, ' ', STUDENTS.first_last_name, ' ', STUDENTS.second_last_name) AS 'student_name',
+        STUDENTS.rol_student AS 'student_rol',
+        TYPES_COURSES.name AS 'convalidation_type',
+        CONVALIDATIONS.state,
+        CONVALIDATIONS.comments,
+        CONVALIDATIONS.creation_date,
+        CONVALIDATIONS.revision_date,
+        CONCAT(ADMINISTRATORS.first_name, ' ', ADMINISTRATORS.first_last_name) AS 'user_approves_name',
+        CURRICULUM_COURSES.name AS 'course_name',
+        SUBJECTS.name AS 'subject_name',
+        WORKSHOPS.name AS 'workshop_name',
+        CONVALIDATIONS.certified_course_name,
+        CONVALIDATIONS.personal_project_name,
+        CONVALIDATIONS.file_data,
+        CONVALIDATIONS.file_name
+    FROM CONVALIDATIONS
+    INNER JOIN STUDENTS ON CONVALIDATIONS.id_student = STUDENTS.id
+    INNER JOIN TYPES_COURSES ON CONVALIDATIONS.id_convalidation_type = TYPES_COURSES.id
+    INNER JOIN ADMINISTRATORS ON CONVALIDATIONS.id_user_approves = ADMINISTRATORS.id
+    INNER JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id
+    LEFT JOIN SUBJECTS ON CONVALIDATIONS.id_subject_to_convalidate = SUBJECTS.id
+    LEFT JOIN WORKSHOPS ON CONVALIDATIONS.id_workshop_to_convalidate = WORKSHOPS.id;
+END//
 
 DELIMITER ;

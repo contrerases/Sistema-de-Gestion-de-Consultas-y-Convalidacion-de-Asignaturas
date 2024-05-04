@@ -1,3 +1,4 @@
 {
-    "tailwindCSS.lint.invalidApply": "ignore"
+    "tailwindCSS.lint.invalidApply": "ignore",
+    "discord.enabled": true
 }

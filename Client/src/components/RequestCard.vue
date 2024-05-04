@@ -1,115 +1,132 @@
 <script setup lang="ts">
-import type { Convalidation } from '@/models/Convalidation';
-import { ref } from 'vue';
-import axios from 'axios';
-import ConvalidationsView from '@/views/ConvalidationsView.vue';
+  import type { ConvalidationResponse } from '@/models/Convalidation';
+  import {formatReadableDate} from '@/models/Convalidation';
+  import { ref } from 'vue';
+ 
 
-const props = defineProps<{
-  convalidation: Convalidation;
-}>()
+  import {
+      Select,
+      SelectContent,
+      SelectGroup,
+      SelectItem,
+      SelectTrigger,
+      SelectValue,
+} from '@/components/ui/select'
 
-const showCard = ref(false);
+  const props = defineProps<{
+    convalidation: ConvalidationResponse;
+  }>()
 
+  const showCard = ref(false);
 
-function toggleCardShow() {
-  console.log('props.convalidation:', props.convalidation);
-  showCard.value = !showCard.value;
-}
-
-function formatReadableDate(date: string | null): string {
-  const settings: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  };
-  return date ? new Date(date).toLocaleDateString('es-ES', settings) : '-';
-}
-
-
-function updateConvalidation() {  
-  axios.put(`http://localhost:8000/convalidations/set_convalidation/${props.convalidation.id}`, props.convalidation )
-  .then(response => {
-    console.log('Convalidación actualizada correctamente:', response.data);
-  })
-  .catch(error => {
-    console.error('Error al actualizar la convalidación:', error);
-  });
-}
-
+  function toggleCardShow() {
+    showCard.value = !showCard.value;
+   
+  }
 
 </script>
 
 
 <template>
   <main class="main flex flex-col">
+   <div class="p-10">
     <div class="card-show grid grid-cols-3 gap-y-4 gap-x-10">
-        <div class="item flex flex-col ">
-          <div class="title">Rol Estudiante </div>
-          <div class=" box border rounded-lg p-4">{{ convalidation.rol }} </div>
-        </div>
-        <div class="item flex flex-col">
-          <div class="title">Nombre </div>
-          <div class="box border rounded-lg p-4">Camilo Eugenio Contreras Espinoza</div>
-        </div>
-        <div class="item flex flex-col">
-          <div class="title">ID </div>
-          <div class="box border rounded-lg p-4">{{ convalidation.id }}</div>
-        </div>
-        <div class="item flex flex-col col-span-2">
-          <div class="title">Asignatura a convalidar </div>
-          <div class="box border rounded-lg p-4 ">{{ convalidation.id_origin_course }}</div>
-        </div>
-        <select v-model="convalidation.state"  class="text-black box border rounded-lg row-span-2 p-4 w-full h-full bg-input text-primary-foreground text-start">
-          <option value="En revisión">En revisión</option>
-          <option value="Aceptada por el jefe de carrera">Aceptada por el jefe de carrera</option>
-          <option value="Rechazada">Rechazada</option>
-          <option value="Aceptada por Direccion de estudio">Aceptada por Direccion de estudio</option>
-          <option value="Finalizada">Finalizada</option>
-        </select>
-        
-        <div class="item flex flex-col col-span-2">
-          <div class="title">Asignatura cursada</div>
-          <div class="box border rounded-lg p-4">{{ convalidation.id_destination_course }}</div>
-        </div>
-        <div class="item flex flex-col">
-          <div class="title"> Fecha de creación solicitud </div>
-          <div class="box border rounded-lg p-4">{{ formatReadableDate(convalidation.creation_date) }}</div>
-        </div>
-        <div class="item flex flex-col">
-          <div class="title">Fecha de finalización </div>
-          <div class="box border rounded-lg p-4">{{ convalidation.approval_date ? formatReadableDate(convalidation.approval_date
-          ) : '-' }}</div>
-        </div>
-        <div class="item flex flex-col gap-y-2">
-          <div class="title"></div>
-          <button @click="toggleCardShow" class="box border rounded-lg p-4 text-center bg-primary flex items-center justify-center w-1/2 m-auto">
-            {{ showCard ? '⇑ ' : '	⇓ ' }}
-          </button>
-        </div>
-    </div>
-    <div class="border-t-2 mx-2 mt-4 pt-4 "></div>
-    <div v-show="showCard" class="card-show  grid grid-cols-3 gap-y-4 gap-x-10">
-      <div class="item flex flex-col row-span-2 col-span-2">
-        <div class="title">Comentarios</div>
-        <input v-model="convalidation.comments"  class=" box border rounded-lg p-4 w-full h-full text-start align-top">
+      <div class="item flex flex-col ">
+        <div class="title">Rol Estudiante </div>
+        <div class=" box border rounded-lg p-4"> {{ convalidation.student_rol }} </div>
       </div>
-     <div class="item">
-      <div class="title">Revisado por</div>
-      <div class="box border rounded-lg p-4"> Pedro Godoy</div>
-     </div>
-     <div class="item">
-      <div class="title">Tipo</div>
-      <div class="box border rounded-lg p-4">Libre || Electivo</div>
-     </div>
-      <button @click="updateConvalidation" class="box border rounded-lg p-4 mt-4 bg-primary"> Revisar</button>
-    
+      <div class="item flex flex-col">
+        <div class="title">Nombre </div>
+        <div class="box border rounded-lg p-4"> {{convalidation.student_name}} </div>
+      </div>
+      <div class="item flex flex-col">
+        <div class="title">ID </div>
+        <div class="box border rounded-lg p-4">{{ convalidation.id }}</div>
+      </div>
+      <div class="item flex flex-col col-span-2">
+        <div class="title">Asignatura a convalidar </div>
+        <div class="box border rounded-lg p-4 ">{{ convalidation.curriculum_course }}</div>
+      </div>
+      
+      <div class="item flex">
+        <div class="title">
+          Estado
+        </div>
+
+        <Select v-model="convalidation.state">
+          <SelectTrigger class="h-full overflow-hidden">
+            <SelectValue placeholder="Estado" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="Enviada">
+                Enviada
+              </SelectItem>
+              <SelectItem value="Rechazada">
+                Rechazada
+              </SelectItem>
+              <SelectItem value="Aprobada por DI">
+                Aprobada por DI
+              </SelectItem>
+              <SelectItem value="En espera de DE">
+                En espera de DE
+              </SelectItem>
+              <SelectItem value="Aprobada por DE">
+                Aprobada por DE
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div class="item flex flex-col col-span-2">
+        <div class="title">Asignatura cursada</div>
+        <div class="box border rounded-lg p-4">{{ convalidation.subject }}</div>
+      </div>
+
+      <div class="item">
+        <div class="title">Tipo</div>
+        <div class="box border rounded-lg p-4"> {{convalidation.convalidation_type }}</div>
+       </div>
+      <div class="item flex flex-col">
+        <div class="title"> Fecha de creación solicitud </div>
+        <div class="box border rounded-lg p-4">{{ formatReadableDate(convalidation.creation_date) }}</div>
+      </div>
+      <div class="item flex flex-col">
+        <div class="title">Fecha de finalización </div>
+        <div class="box border rounded-lg p-4">{{ convalidation.revision_date ? formatReadableDate(convalidation.revision_date
+        ) : '-' }}</div>
+      </div>
+      <div class="item flex flex-col">
+        <div class="title">Archivo</div>
+        <div class="box border rounded-lg p-4">
+          Ícono
+        </div>
+      </div>
   </div>
+  
+  
+  
+  
+  <div class="border-t-2 mx-2 mt-4 pt-4 "></div>
+  <div v-show="showCard" class="card-show  grid grid-cols-3 gap-y-4 gap-x-10">
+    <div class="item flex flex-col row-span-2 col-span-2">
+      <div class="title">Comentarios</div>
+      <input v-model="convalidation.comments" class="box border rounded-lg border-primary p-4 w-full h-full text-start align-top">
+    </div>
+   <div class="item">
+    <div class="title">Revisado por</div>
+    <div class="box border rounded-lg p-4"> {{convalidation.approves_user}} </div>
+   </div>
+   
+    <button class="box border rounded-lg p-4 mt-4 bg-primary">Enviar revisión</button>
+</div>
 
-    
-    
-
+   </div>
+  <button @click="toggleCardShow" class="w-full bg-primary h-6 rounded-b-lg text-center opacity-80" :class="{ 'bg-secondary': !showCard, 'bg-primary': showCard }">
+    {{ showCard ? '⇑ ' : '	... ' }}
+  </button>
+  
   </main>
 
 </template>
@@ -117,7 +134,7 @@ function updateConvalidation() {
 
 <style lang="postcss">
 .box {
-  @apply  rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply  min-h-14 px-3 py-2 bg-background border border-input rounded-md text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 
 }
 
@@ -130,11 +147,11 @@ function updateConvalidation() {
 }
 
 .main {
-  @apply flex justify-center max-w-screen-xl mx-auto p-10 m-10 rounded-lg border  bg-card;
+  @apply flex justify-center mx-auto  m-10 rounded-lg border bg-card w-[1000px];
 }
 
 .card-show{
-  @apply w-full h-full shadow-sm  p-4 ;
+  @apply w-full h-full shadow-sm p-4;
 }
 
 
@@ -158,5 +175,9 @@ function updateConvalidation() {
 
 .card-footer {
   @apply flex items-center p-6 pt-0;
+}
+
+.option {
+  @apply text-lg font-semibold bg-primary;
 }
 </style>

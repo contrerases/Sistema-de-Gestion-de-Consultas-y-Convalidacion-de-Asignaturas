@@ -1,57 +1,36 @@
-INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password) 
-VALUES 
-('Juan', 'Carlos', 'González', 'Pérez', 'juan@example.com', 'password123'),
-('María', 'Luisa', 'Martínez', 'García', 'maria@example.com', 'secret123'),
-('Pedro', '', 'Ramírez', 'López', 'pedro@example.com', 'admin123');
+-- Insertar datos en la tabla ADMINISTRATORS
+INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password) VALUES
+('John', 'Doe', 'Smith', '', 'johndoe@example.com', 'password123'),
+('Jane', 'Doe', 'Brown', '', 'janedoe@example.com', 'password456');
 
+-- Insertar datos en la tabla STUDENTS
+INSERT INTO STUDENTS (rol_student, first_name, second_name, first_last_name, second_last_name, email, password) VALUES
+('A123', 'Alice', '', 'Johnson', '', 'alice@example.com', 'student123'),
+('B456', 'Bob', '', 'Smith', '', 'bob@example.com', 'student456');
 
-INSERT INTO STUDENTS (rol_student, first_name, second_name, first_last_name, second_last_name, email, password) 
-VALUES 
-('A001', 'José', 'Manuel', 'Gutiérrez', 'Rodríguez', 'jose@example.com', 'student123'),
-('A002', 'Ana', 'María', 'Sánchez', 'Gómez', 'ana@example.com', 'test123'),
-('A003', 'Luis', 'Miguel', 'Fernández', 'Pérez', 'luis@example.com', 'pass123');
+-- Insertar datos en la tabla TYPES_COURSES
+INSERT INTO TYPES_COURSES (name) VALUES
+('Subject INF'), ('External Subject'), ('Certified Course'), ('INF Workshop'), ('Personal Project');
 
+-- Insertar datos en la tabla DEPARTMENTS
+INSERT INTO DEPARTMENTS (name) VALUES
+('Department A'), ('Department B'), ('Department C');
 
-INSERT INTO TYPES_COURSES (name) 
-VALUES 
-('Asignatura INF'),
-('Asignatura Externa'),
-('Curso Certificado'),
-('Taller de INF'),
-('Proyecto Personal');
+-- Insertar datos en la tabla CURRICULUM_COURSES
+INSERT INTO CURRICULUM_COURSES (name) VALUES
+('Course A'), ('Course B'), ('Course C');
 
+-- Insertar datos en la tabla WORKSHOPS
+INSERT INTO WORKSHOPS (name) VALUES
+('Workshop 1'), ('Workshop 2'), ('Workshop 3');
 
-INSERT INTO GENERIC_COURSES (name) 
-VALUES 
-('Introducción a la Programación'),
-('Base de Datos Avanzadas'),
-('Diseño de Interfaces de Usuario');
+-- Insertar datos en la tabla SUBJECTS
+INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES
+('SUB1', 'Subject 1', 1, 3),
+('SUB2', 'Subject 2', 2, 4),
+('SUB3', 'Subject 3', 3, 5);
 
-
-INSERT INTO WORKSHOPS (name) 
-VALUES 
-('Taller de Python'),
-('Taller de Desarrollo Web'),
-('Taller de Machine Learning');
-
-
-INSERT INTO DEPARTMENTS (name) 
-VALUES 
-('Informática'),
-('Matemáticas'),
-('Ciencias Sociales');
-
-
-INSERT INTO SPECIFIC_COURSES (acronym, name, id_department, credits) 
-VALUES 
-('INF101', 'Introducción a la Programación', 1, 4),
-('DBA201', 'Base de Datos Avanzadas', 1, 5),
-('WEB301', 'Desarrollo Web Avanzado', 1, 5),
-('MAT101', 'Cálculo I', 2, 4),
-('SOC201', 'Sociología General', 3, 3);
-
-INSERT INTO CONVALIDATIONS (id_student, convalidation_type, id_generic_course, id_specific_course, state, comments, creation_date, revision_date, user_approves) 
-VALUES 
-(1, 1, 1, 1, 'Aprobada por DI', 'Convalidación aprobada', '2024-04-25 12:00:00', '2024-04-26 10:00:00', 1),
-(2, 3, 3, 3, 'En espera de DE', 'Convalidación pendiente de revisión', '2024-04-26 14:00:00', NULL, 2),
-(3, 2, 2, 2, 'Enviada', NULL, '2024-04-27 09:00:00', NULL, 3);
+-- Insertar datos en la tabla CONVALIDATIONS
+INSERT INTO CONVALIDATIONS (id_student, id_convalidation_type, id_user_approves, id_curriculum_course, id_subject_to_convalidate, id_workshop_to_convalidate, certified_course_name, personal_project_name, file_name) VALUES
+(1, 1, 1, 1, 1, NULL, 'Course Name 1', NULL, 'file1.pdf'),
+(2, 3, 2, 2, NULL, NULL, NULL, 'Project 1', 'file2.pdf');
