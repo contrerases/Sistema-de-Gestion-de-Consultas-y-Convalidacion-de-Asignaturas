@@ -69,7 +69,11 @@
         <div class="title">
           Estado
         </div>
-        <div class="box border rounded-lg p-4 ">{{ convalidation.state }}</div>
+        <div class="box border rounded-lg p-4" :class="{
+          'border-green-500': convalidation.state === 'Aprobada por DI' || convalidation.state === 'Aprobada por DE',
+          'border-red-500': convalidation.state === 'Rechazada',
+          'border-yellow-500': convalidation.state === 'Enviada'
+      }">{{ convalidation.state }}</div>
       </div>
       
       <div v-if="convalidation.subject !== null" class="item flex flex-col col-span-2">
@@ -134,11 +138,11 @@
     <div class="box border rounded-lg p-4"> {{convalidation.approves_user}} </div>
    </div>
    
-    <button class="box border rounded-lg p-4 mt-4 bg-primary">Enviar revisión</button>
+ 
 </div>
 
    </div>
-  <button @click="toggleCardShow" class="w-full bg-primary h-6 rounded-b-lg text-center opacity-80" :class="{ 'bg-secondary': !showCard, 'bg-primary': showCard }">
+  <button @click="toggleCardShow" class="w-full bg-primary h-6 rounded-b-lg text-center opacity-80" :class="{ 'bg-secondary': showCard, 'bg-primary': !showCard }">
     {{ showCard ? '⇑ ' : '	... ' }}
   </button>
   
