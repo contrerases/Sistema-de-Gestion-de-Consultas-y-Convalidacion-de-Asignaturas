@@ -7,12 +7,13 @@ import ColorMode from './ColorMode.vue';
   <nav class="flex rounded w-auto h-16 justify-center p-10">
     <ul>
       <li>
-        <router-link to="/AdminView">Admin</router-link>
+        <router-link to="/admin/convalidations">Admin Convalidations</router-link>
       </li>
       <li>
         <router-link to="/Student">Student</router-link>
       </li>
       <li> <router-link to="/StudentConvalidations">StudentConvalidations</router-link> </li>
+      <li> <router-link to="/AdminSetup">AdminSetup</router-link> </li>
       <li>
         <ColorMode />
       </li>

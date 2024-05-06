@@ -11,7 +11,12 @@
       SelectTrigger,
       SelectValue,
 } from '@/components/ui/select'
-import { Console } from 'console';
+
+import { useToast } from '@/components/ui/toast/use-toast'
+import { Button } from '@/components/ui/button'
+
+const { toast } = useToast()
+
 
 
   const props = defineProps<{
@@ -58,8 +63,7 @@ function updateConvalidationHandler() {
   
     updateConvalidation(update)
         .then(() => {
-           window.location.reload();
-
+           toggleCardShow();
         })
         .catch((error) => {
             console.error('Error updating convalidation', error);
@@ -167,9 +171,12 @@ function updateConvalidationHandler() {
           <div>No disponible</div>
         </div>
       </div>
+
+      
   </div>
   
-  
+    
+
   
   
   <div class="border-t-2 mx-2 mt-4 pt-4 "></div>
@@ -190,6 +197,8 @@ function updateConvalidationHandler() {
   <button @click="toggleCardShow" class="w-full bg-primary h-6 rounded-b-lg text-center opacity-80" :class="{ 'bg-secondary': !showCard, 'bg-primary': showCard }">
     {{ showCard ? '⇑ ' : '	... ' }}
   </button>
+
+  
   
   </main>
 
@@ -244,4 +253,6 @@ function updateConvalidationHandler() {
 .option {
   @apply text-lg font-semibold bg-primary;
 }
+
+
 </style>
