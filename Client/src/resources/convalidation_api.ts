@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { AxiosError} from 'axios';
-import type{ ConvalidationResponse, ConvalidationBase } from "../models/convalidation_model";
+import type{ ConvalidationResponse, ConvalidationBase, ConvalidationUpdate } from "../models/convalidation_model";
 
 
 
@@ -48,4 +48,15 @@ export async function insertConvalidation(convalidation: ConvalidationBase): Pro
   }
 
 
+}
+
+export async function updateConvalidation(convalidation: ConvalidationUpdate): Promise<void> {
+    try {
+        await axios.put(URL, convalidation);
+    }
+    catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al actualizar convalidación:', axiosError?.response?.data);
+        throw error;
+    }
 }

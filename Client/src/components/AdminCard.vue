@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import type { ConvalidationResponse } from '@/models/convalidation_model';
+  import type { ConvalidationResponse, ConvalidationUpdate } from '@/models/convalidation_model';
   import {formatReadableDate} from '@/models/convalidation_model';
+  import { updateConvalidation } from '@/resources/convalidation_api';
   import { ref } from 'vue';
   import {
       Select,
@@ -10,10 +11,14 @@
       SelectTrigger,
       SelectValue,
 } from '@/components/ui/select'
+import { Console } from 'console';
 
-  defineProps<{
+
+  const props = defineProps<{
     convalidation: ConvalidationResponse;
   }>()
+
+
 
   const showCard = ref(false);
 
@@ -41,6 +46,26 @@
     anchor.click();
     document.body.removeChild(anchor);
 }
+
+
+function updateConvalidationHandler() {
+    let update : ConvalidationUpdate ={
+        id: props.convalidation.id,
+        state: props.convalidation.state,
+        comments: props.convalidation.comments,
+    };
+
+  
+    updateConvalidation(update)
+        .then(() => {
+           window.location.reload();
+
+        })
+        .catch((error) => {
+            console.error('Error updating convalidation', error);
+        });
+}
+
 </script>
 
 
@@ -158,7 +183,7 @@
     <div class="box border rounded-lg p-4"> {{convalidation.approves_user}} </div>
    </div>
    
-    <button class="box border rounded-lg p-4 mt-4 bg-primary">Enviar revisión</button>
+    <button @click="updateConvalidationHandler" class="box border rounded-lg p-4 mt-4 bg-primary">Enviar revisión</button>
 </div>
 
    </div>

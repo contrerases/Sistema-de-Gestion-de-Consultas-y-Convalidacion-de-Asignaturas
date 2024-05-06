@@ -34,6 +34,12 @@ export interface ConvalidationResponse {
   file_name: string | null;
 }
 
+export interface ConvalidationUpdate {
+  id: number;
+  state: string;
+  comments: string | null;
+}
+
 
 export function formatApprovalDate(date: string | null): string {
   return date ? date : '-';

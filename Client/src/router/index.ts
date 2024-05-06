@@ -15,7 +15,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/Admin',
+      path: '/AdminView',
       name: 'AdminView',
       component: AdminReviewView
     },
@@ -26,7 +26,7 @@ const router = createRouter({
     },
 
     {
-      path: '/StudentConvalidation',
+      path: '/StudentConvalidations',
       name: 'StudentConvalidationView',
       component: StudentConvalidationView
     },

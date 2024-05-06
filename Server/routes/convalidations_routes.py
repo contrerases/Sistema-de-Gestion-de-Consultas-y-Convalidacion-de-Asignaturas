@@ -13,6 +13,7 @@ router = APIRouter()
 
 BASE_MODEL = convalidations_model.ConvalidationBase
 RESPONSE_MODEL = convalidations_model.ConvalidationResponse
+UPDATE_MODEL = convalidations_model.ConvalidationUpdate
 
 
 
@@ -89,5 +90,21 @@ async def insert_convalidation(
         conn.close()
 
         return {"message": "Convalidación creada correctamente"}
+    except mdb.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+#put
+
+@router.put("/")
+async def update_convalidation(convalidation: UPDATE_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL ModifyConvalidation(%s, %s, %s)", (convalidation.id, convalidation.state, convalidation.comments))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return {"message": "Convalidación actualizada correctamente"}
     except mdb.Error as e:
         raise HTTPException(status_code=500, detail=str(e))

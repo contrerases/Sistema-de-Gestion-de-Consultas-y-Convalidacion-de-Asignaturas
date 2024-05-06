@@ -80,3 +80,19 @@ DELIMITER ;
 
 
 
+DELIMITER //
+
+CREATE PROCEDURE ModifyConvalidation(
+    IN p_id INT,
+    IN p_state VARCHAR(50),
+    IN p_comments TEXT
+)
+BEGIN
+    UPDATE CONVALIDATIONS
+    SET state = p_state, comments = p_comments
+    WHERE id = p_id;
+END //
+
+DELIMITER ;
+
+

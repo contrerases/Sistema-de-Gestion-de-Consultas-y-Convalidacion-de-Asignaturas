@@ -38,3 +38,9 @@ class ConvalidationResponse(BaseModel):
     personal_project_name: Optional[str] = None
     file_data: Optional[bytes] = None
     file_name: Optional[str] = None
+
+
+class ConvalidationUpdate(BaseModel):
+    id: int
+    state: str
+    comments: str

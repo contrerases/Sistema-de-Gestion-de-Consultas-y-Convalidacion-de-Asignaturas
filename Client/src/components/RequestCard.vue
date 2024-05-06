@@ -69,31 +69,7 @@
         <div class="title">
           Estado
         </div>
-
-        <Select v-model="convalidation.state">
-          <SelectTrigger class="h-full overflow-hidden">
-            <SelectValue placeholder="Estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="Enviada">
-                Enviada
-              </SelectItem>
-              <SelectItem value="Rechazada">
-                Rechazada
-              </SelectItem>
-              <SelectItem value="Aprobada por DI">
-                Aprobada por DI
-              </SelectItem>
-              <SelectItem value="En espera de DE">
-                En espera de DE
-              </SelectItem>
-              <SelectItem value="Aprobada por DE">
-                Aprobada por DE
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div class="box border rounded-lg p-4 ">{{ convalidation.state }}</div>
       </div>
       
       <div v-if="convalidation.subject !== null" class="item flex flex-col col-span-2">
@@ -151,7 +127,7 @@
   <div v-show="showCard" class="card-show  grid grid-cols-3 gap-y-4 gap-x-10">
     <div class="item flex flex-col row-span-2 col-span-2">
       <div class="title">Comentarios</div>
-      <input v-model="convalidation.comments" class="box border rounded-lg border-primary p-4 w-full h-full text-start align-top">
+      <input disabled v-model="convalidation.comments" class="box border rounded-lg border-primary p-4 w-full h-full text-start align-top">
     </div>
    <div class="item">
     <div class="title">Revisado por</div>
