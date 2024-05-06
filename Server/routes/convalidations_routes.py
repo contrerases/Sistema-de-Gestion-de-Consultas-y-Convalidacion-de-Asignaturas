@@ -37,37 +37,18 @@ async def get_all_convalidations():
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
-@router.get("/wea")
-async def wea():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT file_data FROM convalidations")
-        convalidations = cursor.fetchall()
-        
-        for convalidation in convalidations:
-            pdf_content = convalidation.pop('file_data', None)
-            if pdf_content:
-                convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
-        
-        cursor.close()
-        conn.close()
-        return convalidations
-    except mdb.Error as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
     
 
 @router.post("/")
 async def insert_convalidation(
     id_student: int = Form(...),
     id_convalidation_type: int = Form(...),
-    state: str = Form(...),
+    state: Optional[str] = Form(None),
     comments: Optional[str] = Form(None),
-    creation_date: datetime = Form(...),
+    creation_date: Optional[datetime] = Form(None),
     revision_date: Optional[datetime] = Form(None),
-    id_user_approves: int = Form(...),
-    id_curriculum_course: int = Form(...),
+    id_user_approves: Optional[int] = Form(None),
+    id_curriculum_course: Optional[int] = Form(...),
     id_subject_to_convalidate: Optional[int] = Form(None),
     id_workshop_to_convalidate: Optional[int] = Form(None),
     certified_course_name: Optional[str] = Form(None),

@@ -5,6 +5,7 @@ import type { SubjectBase } from '../models/subject_model';
 import type { TypeCourseBase } from '../models/type_course_model';
 import type { WorkshopBase } from '@/models/workshop_model';
 // RECURSOS
+import { insertConvalidation } from '@/resources/convalidation_api';
 import { getAllCurriculumCourses } from '@/resources/curriculm_course_api';
 import { getAllTypesCourses } from '@/resources/type_course_api';
 import { getAllSubject } from '@/resources/subject_api';
@@ -20,8 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-
-
+import router from '@/router';
 
 
 
@@ -36,7 +36,6 @@ const getCurriculumCoursesHandler =
     (async () => {
         try {
             curriculum_courses.value = await getAllCurriculumCourses();
-            console.log(curriculum_courses.value);
 
         } catch (error) {
             console.error('Error al obtener los cursos del plan de estudios:', error);
@@ -48,7 +47,6 @@ const getSubjectHandler =
     (async () => {
         try {
             subjects.value = await getAllSubject();
-            console.log(subjects.value);
         } catch (error) {
             console.error(error);
         }
@@ -58,7 +56,6 @@ const getTypesCoursesHandler =
     (async () => {
         try {
             types_courses.value = await getAllTypesCourses();
-            console.log(types_courses.value);
         } catch (error) {
             console.error('Error al obtener los tipos de cursos:', error);
         }
@@ -68,7 +65,6 @@ const getWorkshopsHandler =
     (async () => {
         try {
             workshops.value = await getAllWorkshops();
-            console.log(workshops.value);
         } catch (error) {
             console.error('Error al obtener los talleres:', error);
         }
@@ -101,7 +97,7 @@ let convalidation : ConvalidationBase =({
     file_name: null,
 });
 
-const id_student = ref<number>(1);
+const id_student = ref<number>(2);
 const id_convalidation_type = ref<string>('Seleccione un tipo de convalidación');
 const state = ref<string>('Enviada');
 const comments = ref<string | null>(null);
@@ -113,7 +109,7 @@ const id_subject_to_convalidate = ref<string | null>(null);
 const id_workshop_to_convalidate = ref<string | null>(null);
 const certified_course_name = ref<string | null>(null);
 const personal_project_name = ref<string | null>(null);
-const file_data = ref<string | null>(null);
+const file_data = ref<File | null>(null);
 const file_name = ref<string | null>(null);
 
 function updateConvalidation() {
@@ -124,19 +120,39 @@ function updateConvalidation() {
         comments: comments.value,
         creation_date: creation_date.value,
         revision_date: revision_date.value,
-        id_user_approves: Number(id_user_approves.value),
+        id_user_approves: id_user_approves.value ? Number(id_user_approves.value) : null,
         id_curriculum_course: Number(id_curriculum_course.value),
-        id_subject_to_convalidate: Number(id_subject_to_convalidate.value),
-        id_workshop_to_convalidate: Number(id_workshop_to_convalidate.value),
+        id_subject_to_convalidate: id_subject_to_convalidate.value ? Number(id_subject_to_convalidate.value) : null,
+        id_workshop_to_convalidate: id_workshop_to_convalidate.value ? Number(id_workshop_to_convalidate.value) : null,
         certified_course_name: certified_course_name.value,
         personal_project_name: personal_project_name.value,
         file_data: file_data.value,
         file_name: file_name.value,
     };
-
     
     
 }
+
+
+
+function sendConvalidation() {
+    updateConvalidation();
+
+    try {
+        insertConvalidation(convalidation);
+        window.location.reload();
+    } catch (error) {
+        console.error('Error al enviar la convalidación:', error);
+    }
+}
+
+
+function handleFileUpload(event: Event) {
+      const target = event.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        file_data.value = target.files[0];
+      }
+    };
 
 
 
@@ -176,7 +192,7 @@ function updateConvalidation() {
                     </SelectContent>
                 </Select>
             </div>
-            <div v-show="id_convalidation_type == '1'" class="item flex flex-col h-32">
+            <div v-show="id_convalidation_type == '1' || id_convalidation_type == '2'" class="item flex flex-col h-32">
                 <div  class="title text-2xl pb-4"> Asignatura cursada </div>
                 <Select  v-model="id_subject_to_convalidate">
                     <SelectTrigger class="h-full">
@@ -216,9 +232,16 @@ function updateConvalidation() {
             </div>
             <div v-show="id_convalidation_type == '3' || id_convalidation_type == '5' " class="item flex flex-col col-span-2">
                 <div class="title text-2xl pb-4 ">Subir archivo</div>
-                <div class="box border rounded-lg p-4 "></div>
+                <div class="box border rounded-lg p-4 ">
+                    <input type="file" accept=".pdf" @change="handleFileUpload">
+                </div>
               </div>
-        </div>
+              
+                <div class="item flex flex-col col-span-2">
+                    <button @click="sendConvalidation" class="option text-2xl font-mono bg-primary text-white rounded-lg p-4 w-full h-full">Enviar</button>
+                </div>
+
+            </div>
     </main>
 
 </template>

@@ -11,7 +11,7 @@ export interface ConvalidationBase {
   id_workshop_to_convalidate: number | null;
   certified_course_name: string | null;
   personal_project_name: string | null;
-  file_data: string | null;
+  file_data: File | null;
   file_name: string | null;
 }
 

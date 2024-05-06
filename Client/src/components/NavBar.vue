@@ -3,15 +3,15 @@ import ColorMode from '@/components/ColorMode.vue'
 </script>
 
 <template>
-  <nav class="rounded w-auto h-16">
+  <nav class="flex rounded w-auto h-16 justify-center p-10">
     <ul>
       <li>
-        <router-link to="/">Home</router-link>
+        <router-link to="/Admin">Admin</router-link>
       </li>
       <li>
-        about
+        <router-link to="/Student">Student</router-link>
       </li>
-      <ColorMode/>
+      <router-link to="/StudentConvalidation">StudentConvalidation</router-link> 
     </ul>
   </nav>
     

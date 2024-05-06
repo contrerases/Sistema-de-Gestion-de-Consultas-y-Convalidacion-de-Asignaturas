@@ -35,6 +35,7 @@
     const pdfUrl = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = pdfUrl;
+    anchor.target = '_blank';
     anchor.setAttribute('Descargar', 'file');
     document.body.appendChild(anchor);
     anchor.click();
@@ -95,9 +96,22 @@
         </Select>
       </div>
       
-      <div class="item flex flex-col col-span-2">
-        <div class="title">Asignatura cursada</div>
+      <div v-if="convalidation.subject !== null" class="item flex flex-col col-span-2">
+        <div  class="title">Asignatura cursada</div>
         <div class="box border rounded-lg p-4">{{ convalidation.subject }}</div>
+      </div>
+
+      <div  v-if="convalidation.workshop !== null" class="item flex flex-col col-span-2">
+        <div  class="title">Taller cursado</div>
+        <div class="box border rounded-lg p-4">{{ convalidation.workshop }}</div>
+      </div>
+      <div  v-if="convalidation.certified_course_name !== null" class="item flex flex-col col-span-2">
+        <div  class="title">Curso certificado cursado</div>
+        <div class="box border rounded-lg p-4">{{ convalidation.certified_course_name }}</div>
+      </div>
+      <div  v-if="convalidation.personal_project_name !== null" class="item flex flex-col col-span-2">
+        <div  class="title">Proeycto personal cursado</div>
+        <div class="box border rounded-lg p-4">{{ convalidation.personal_project_name }}</div>
       </div>
 
       <div class="item">
@@ -113,11 +127,11 @@
         <div class="box border rounded-lg p-4">{{ convalidation.revision_date ? formatReadableDate(convalidation.revision_date
         ) : '-' }}</div>
       </div>
-      <div v-if="convalidation.convalidation_type == 'Subject INF'" class="item flex flex-col">
+      <div v-if="convalidation.convalidation_type == 'Curso Certificado' || convalidation.convalidation_type == 'Proyecto Personal' " class="item flex flex-col">
         <div class="title">Archivo</div> 
         <div class="box border rounded-lg p-4 flex justify-evenly">
           <div>📁</div>
-          <button @click="downloadPdf(convalidation.file_data)">Descargar Archivo</button>
+          <button @click="downloadPdf(convalidation.file_data)">{{convalidation.file_name}}</button>
         </div>
       </div>
       <div v-else class="item flex flex-col">

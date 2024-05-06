@@ -89,7 +89,7 @@ CREATE TABLE CONVALIDATIONS (
     comments TEXT DEFAULT NULL,
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     revision_date TIMESTAMP,
-    id_user_approves INT NOT NULL,
+    id_user_approves INT DEFAULT NULL,
     id_curriculum_course INT NOT NULL,
     id_subject_to_convalidate INT NULL,
     id_workshop_to_convalidate INT NULL,
@@ -105,3 +105,5 @@ CREATE TABLE CONVALIDATIONS (
     CONSTRAINT fk_subject FOREIGN KEY (id_subject_to_convalidate) REFERENCES SUBJECTS (id),
     CONSTRAINT fk_workshop FOREIGN KEY (id_workshop_to_convalidate) REFERENCES WORKSHOPS (id)
 );
+
+
