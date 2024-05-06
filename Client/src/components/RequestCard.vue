@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import type { ConvalidationResponse } from '@/models/Convalidation';
-  import {formatReadableDate} from '@/models/Convalidation';
+  import type { ConvalidationResponse } from '@/models/convalidation_model';
+  import {formatReadableDate} from '@/models/convalidation_model';
   import { ref } from 'vue';
  
   import {

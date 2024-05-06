@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import HomeView from '../views/HomeView.vue'
-import ConvalidationsView from '../views/ConvalidationsView.vue'
+import AdminReviewView from '../views/AdminReviewView.vue'
+import StudentConvalidationView from '../views/StudentConvalidationView.vue'
+import StudentView from '@/views/StudentView.vue'
 
 
 const router = createRouter({
@@ -12,10 +15,22 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/Convalidations',
-      name: 'Convalidations',
-      component: ConvalidationsView
+      path: '/Admin',
+      name: 'AdminView',
+      component: AdminReviewView
     },
+    {
+      path: '/Student',
+      name: 'StudentView',
+      component: StudentView
+    },
+
+    {
+      path: '/StudentConvalidation',
+      name: 'StudentConvalidationView',
+      component: StudentConvalidationView
+    },
+
   ]
 })
 

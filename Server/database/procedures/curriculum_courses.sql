@@ -5,4 +5,27 @@ BEGIN
     SELECT id, name FROM CURRICULUM_COURSES;
 END//
 
+
+
+CREATE PROCEDURE InsertCurriculumCourse(
+    IN course_name VARCHAR(255)
+)
+BEGIN
+    INSERT INTO CURRICULUM_COURSES (name) VALUES (course_name);
+END//
+
+
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE DeleteCurriculumCourseById(
+    IN course_id INT
+)
+BEGIN
+    DELETE FROM CURRICULUM_COURSES WHERE id = course_id;
+END//
+
 DELIMITER ;

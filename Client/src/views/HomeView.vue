@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import RequestCard from '@/components/RequestCard.vue';
+
+
 
 
 </script>
 
 <template>
-  <main>
-   <RequestCard />
-  </main>
+  <div>
+    <h1>Wena</h1>
+  </div>  
 </template>
 
 <style>

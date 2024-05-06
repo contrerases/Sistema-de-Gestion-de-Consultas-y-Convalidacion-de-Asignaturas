@@ -28,3 +28,55 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE InsertConvalidation(
+    IN p_id_student INT,
+    IN p_id_convalidation_type INT,
+    IN p_id_user_approves INT,
+    IN p_id_curriculum_course INT,
+    IN p_id_subject_to_convalidate INT,
+    IN p_id_workshop_to_convalidate INT,
+    IN p_certified_course_name VARCHAR(255),
+    IN p_personal_project_name VARCHAR(255),
+    IN p_file_data LONGBLOB,
+    IN p_file_name VARCHAR(255),
+    IN p_creation_date TIMESTAMP,
+    IN p_revision_date TIMESTAMP
+)
+BEGIN
+    INSERT INTO CONVALIDATIONS (
+        id_student,
+        id_convalidation_type,
+        state,
+        id_user_approves,
+        id_curriculum_course,
+        id_subject_to_convalidate,
+        id_workshop_to_convalidate,
+        certified_course_name,
+        personal_project_name,
+        file_data,
+        file_name,
+        creation_date,
+        revision_date
+    ) VALUES (
+        p_id_student,
+        p_id_convalidation_type,
+        'Enviada', -- Estado por defecto
+        p_id_user_approves,
+        p_id_curriculum_course,
+        p_id_subject_to_convalidate,
+        p_id_workshop_to_convalidate,
+        p_certified_course_name,
+        p_personal_project_name,
+        p_file_data,
+        p_file_name,
+        p_creation_date,
+        p_revision_date
+    );
+END //
+DELIMITER ;
+
+
+

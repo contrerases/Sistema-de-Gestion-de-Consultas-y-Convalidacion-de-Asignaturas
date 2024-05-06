@@ -14,3 +14,9 @@ class SubjectResponse(BaseModel):
     name: str
     department_name: str
     credits: int
+
+class SubjectPost(BaseModel):
+    acronym: str
+    name: str
+    id_department: int
+    credits: int

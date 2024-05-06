@@ -7,3 +7,27 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE InsertWorkshop(
+    IN workshop_name VARCHAR(255)
+)
+BEGIN
+    INSERT INTO WORKSHOPS (name) VALUES (workshop_name);
+END//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE DeleteWorkshopById(
+    IN workshop_id INT
+)
+BEGIN
+    DELETE FROM WORKSHOPS WHERE id = workshop_id;
+END//
+
+DELIMITER ;

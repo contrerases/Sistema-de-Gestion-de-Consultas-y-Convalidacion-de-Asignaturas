@@ -1,19 +1,18 @@
 export interface ConvalidationBase {
-  id: number;
   id_student: number;
   id_convalidation_type: number;
   state: string;
-  comments?: string | null;
-  creation_date: string;
-  revision_date?: string | null;
-  id_user_approves: number;
+  comments: string | null;
+  creation_date: string | null;
+  revision_date: string | null;
+  id_user_approves: number | null;
   id_curriculum_course: number;
-  id_subject_to_convalidate?: number | null;
-  id_workshop_to_convalidate?: number | null;
-  certified_course_name?: string | null;
-  personal_project_name?: string | null;
-  file_data?: Uint8Array | null;
-  file_name?: string | null;
+  id_subject_to_convalidate: number | null;
+  id_workshop_to_convalidate: number | null;
+  certified_course_name: string | null;
+  personal_project_name: string | null;
+  file_data: string | null;
+  file_name: string | null;
 }
 
 export interface ConvalidationResponse {
@@ -22,17 +21,17 @@ export interface ConvalidationResponse {
   student_rol: string;
   convalidation_type: string;
   state: string;
-  comments?: string | null;
-  creation_date: string;
-  revision_date?: string | null;
-  approves_user: string;
+  comments: string | null;
+  creation_date: string | null;
+  revision_date: string | null;
+  approves_user: string | null;
   curriculum_course: string;
-  subject?: string | null;
-  workshop?: string | null;
-  certified_course_name?: string | null;
-  personal_project_name?: string | null;
-  file_data?: Uint8Array | null;
-  file_name?: string | null;
+  subject: string | null;
+  workshop: string | null;
+  certified_course_name: string | null;
+  personal_project_name: string | null;
+  file_data: string | null;
+  file_name: string | null;
 }
 
 

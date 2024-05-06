@@ -1,9 +1,7 @@
 <script setup lang="ts">
-  import type { ConvalidationResponse } from '@/models/Convalidation';
-  import {formatReadableDate} from '@/models/Convalidation';
+  import type { ConvalidationResponse } from '@/models/convalidation_model';
+  import {formatReadableDate} from '@/models/convalidation_model';
   import { ref } from 'vue';
- 
-
   import {
       Select,
       SelectContent,
@@ -13,7 +11,7 @@
       SelectValue,
 } from '@/components/ui/select'
 
-  const props = defineProps<{
+  defineProps<{
     convalidation: ConvalidationResponse;
   }>()
 
@@ -24,6 +22,24 @@
    
   }
 
+
+  function downloadPdf(binaryPDF: string | null) {
+    if (!binaryPDF) 
+      return;
+    const binaryData = atob(binaryPDF);
+    const bytes = new Uint8Array(binaryData.length);
+    for (let i = 0; i < binaryData.length; i++) {
+        bytes[i] = binaryData.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const pdfUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = pdfUrl;
+    anchor.setAttribute('Descargar', 'file');
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+}
 </script>
 
 
@@ -97,10 +113,19 @@
         <div class="box border rounded-lg p-4">{{ convalidation.revision_date ? formatReadableDate(convalidation.revision_date
         ) : '-' }}</div>
       </div>
-      <div class="item flex flex-col">
-        <div class="title">Archivo</div>
-        <div class="box border rounded-lg p-4">
-          Ícono
+      <div v-if="convalidation.convalidation_type == 'Subject INF'" class="item flex flex-col">
+        <div class="title">Archivo</div> 
+        <div class="box border rounded-lg p-4 flex justify-evenly">
+          <div>📁</div>
+          <button @click="downloadPdf(convalidation.file_data)">Descargar Archivo</button>
+        </div>
+      </div>
+      <div v-else class="item flex flex-col">
+        <div class="title">Archivo</div> 
+        
+        <div class="box border flex justify-evenly rounded-lg p-4">
+          <div>📁</div>
+          <div>No disponible</div>
         </div>
       </div>
   </div>

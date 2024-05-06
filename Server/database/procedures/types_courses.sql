@@ -7,3 +7,26 @@ BEGIN
 END//
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE InsertTypeCourse(
+    IN course_name VARCHAR(255)
+)
+BEGIN
+    INSERT INTO TYPES_COURSES (name) VALUES (course_name);
+END//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE DeleteTypeCourseById(
+    IN course_id INT
+)
+BEGIN
+    DELETE FROM TYPES_COURSES WHERE id = course_id;
+END//
+
+DELIMITER ;
