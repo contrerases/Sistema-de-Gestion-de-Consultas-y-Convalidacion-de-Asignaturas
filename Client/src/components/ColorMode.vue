@@ -2,27 +2,19 @@
 import { useColorMode } from '@vueuse/core'
 import { Icon } from '@iconify/vue'
 import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+
 
 const mode = useColorMode()
+
+const toggleTheme = () => {
+      mode.value = mode.value === 'light' ? 'dark' : 'light';
+    };
 </script>
 
 <template>
-  <DropdownMenu>
-    <DropdownMenuTrigger as-child>
-      <Button variant="outline">
-        <Icon icon="radix-icons:moon" class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Icon icon="radix-icons:sun" class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        <span class="sr-only">Toggle theme</span>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
-      <DropdownMenuItem @click="mode = 'light'">
-        Light
-      </DropdownMenuItem>
-      <DropdownMenuItem @click="mode = 'dark'">
-        Dark
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
+  <Button variant="outline" @click="toggleTheme" class="p-5">
+    <Icon v-if="mode === 'light'" icon="radix-icons:moon" class="h-5 w-5" />
+    <Icon v-else icon="radix-icons:sun" class="h-5 w-5" />
+    <span class="sr-only">Toggle theme</span>
+  </Button>
 </template>

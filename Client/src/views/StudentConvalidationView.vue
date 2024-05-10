@@ -1,10 +1,10 @@
 <template>
-    <div  class=" flex justify-center flex-col max-w-screen-xl mx-auto p-10 m-10 rounded-lg">
-        <RequestCard
+    <div  class=" flex justify-center flex-col rounded-lg">
+        <ConvalidationStudentCard
             class="max-w-[1500px]"
             v-for="convalidation in convalidations"
-            :key="convalidation.id"
-            :convalidation="convalidation"
+              :key="convalidation.id"
+              :convalidation="convalidation"
         />
     </div>
   </template>
@@ -12,7 +12,7 @@
   
   <script setup lang="ts">
       // COMPONENTES
-      import RequestCard from '@/components/RequestCard.vue';
+      import ConvalidationStudentCard from '@/components/ConvalidationStudentCard.vue';
       // MODELOS
       import type { ConvalidationResponse } from '../models/convalidation_model';
       import type { CurriculumCourseBase } from '../models/curriculum_course_model';
@@ -27,6 +27,7 @@
       import { getAllWorkshops } from '@/resources/workshop_api';
       // VUE
       import { ref, onMounted } from 'vue';
+
   
   
       const convalidations = ref<ConvalidationResponse[]>([]);
@@ -88,10 +89,7 @@
       
       
       onMounted(getConvalidationsHandler);
-      onMounted(getCurriculumCoursesHandler);
-      onMounted(getSubjectHandler);
-      onMounted(getTypesCoursesHandler);
-      onMounted(getWorkshopsHandler);
+      
 
 
       
