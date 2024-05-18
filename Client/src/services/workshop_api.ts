@@ -1,4 +1,4 @@
-import type  { WorkshopBase } from '../models/workshop_model';
+import type  { WorkshopBase } from '../interfaces/workshop_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

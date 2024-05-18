@@ -1,4 +1,4 @@
-import type  { CurriculumCourseBase } from '../models/curriculum_course_model';
+import type  { CurriculumCourseBase } from '../interfaces/curriculum_course_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

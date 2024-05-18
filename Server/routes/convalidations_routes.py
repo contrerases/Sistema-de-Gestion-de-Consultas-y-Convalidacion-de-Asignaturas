@@ -1,10 +1,11 @@
 from fastapi import HTTPException, status, APIRouter, Form, UploadFile
-from models import convalidations_model
-from database import get_db_connection
 from typing import List, Optional
-from datetime import datetime
-import mariadb as mdb
 
+import mariadb as mdb
+from database import get_db_connection
+
+from models import convalidations_model
+from datetime import datetime
 import base64
 
 
@@ -26,7 +27,7 @@ async def get_all_convalidations():
         cursor.execute("CALL GetAllConvalidationsProcessedData")
         convalidations = cursor.fetchall()
 
-        # Convertir los datos binarios del PDF a Base64
+      
         for convalidation in convalidations:
             pdf_content = convalidation.pop('file_data', None)
             if pdf_content:
@@ -38,14 +39,56 @@ async def get_all_convalidations():
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
+
+
+@router.get("/state/{state}", response_model=List[RESPONSE_MODEL])
+async def get_convalidations_by_state(state: str):
+    try:
+        conn = get_db_connection()  
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL GetConvalidationsByState(%s)", (state,))
+        convalidations = cursor.fetchall()
+
+        for convalidation in convalidations:
+            pdf_content = convalidation.pop('file_data', None)
+            if pdf_content:
+                convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+        cursor.close()
+        conn.close()  
+        return convalidations
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+#getbyid
+
+@router.get("/{id}", response_model=RESPONSE_MODEL)
+async def get_convalidation_by_id(id: int):
+    try:
+        conn = get_db_connection()  
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL GetConvalidationById(%s)", (id,))
+        convalidation = cursor.fetchone()
+
+        if not convalidation:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convalidation not found")
+
+        pdf_content = convalidation.pop('file_data', None)
+        if pdf_content:
+            convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+        cursor.close()
+        conn.close()  
+        return convalidation
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
     
 
 @router.post("/")
 async def insert_convalidation(
     id_student: int = Form(...),
     id_convalidation_type: int = Form(...),
-    state: Optional[str] = Form(None),
-    comments: Optional[str] = Form(None),
     creation_date: Optional[datetime] = Form(None),
     revision_date: Optional[datetime] = Form(None),
     id_user_approves: Optional[int] = Form(None),
@@ -108,3 +151,5 @@ async def update_convalidation(convalidation: UPDATE_MODEL):
         return {"message": "Convalidación actualizada correctamente"}
     except mdb.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+

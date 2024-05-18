@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
     import AdminCard from '@/components/AdminCard.vue';
-    import type {ConvalidationResponse} from '@/models/convalidation_model';
-    import { getAllConvalidation } from '@/resources/convalidation_api';
+    import type {ConvalidationResponse} from '@/interfaces/convalidation_model';
+    import { getAllConvalidations } from '@/services/convalidation_api';
     import { ref, onMounted} from 'vue';
 
 
@@ -22,7 +22,7 @@
     const getConvalidationsHandler =  
       (async () => {
           try {
-            convalidations.value = await getAllConvalidation();
+            convalidations.value = await getAllConvalidations();
           } catch (error) {
             console.error('Error al obtener las convalidaciones:', error);
           } 

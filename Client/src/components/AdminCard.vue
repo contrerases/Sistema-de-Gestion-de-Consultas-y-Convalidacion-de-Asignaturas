@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import type { ConvalidationResponse, ConvalidationUpdate } from '@/models/convalidation_model';
-  import {formatReadableDate} from '@/models/convalidation_model';
-  import { updateConvalidation } from '@/resources/convalidation_api';
+  import type { ConvalidationResponse, ConvalidationUpdate } from '@/interfaces/convalidation_model';
+  import {formatReadableDate} from '@/interfaces/convalidation_model';
+  import { updateConvalidation } from '@/services/convalidation_api';
   import { ref } from 'vue';
   import {
       Select,

@@ -6,7 +6,7 @@ import NewConvalidation from '@/components/NewConvalidation.vue';
 <template>
   <main>
    <div class="flex m-auto  h-[600px]">
-        <NewConvalidation />
+        <NewConvalidation/>
    </div>
   </main>
 </template>

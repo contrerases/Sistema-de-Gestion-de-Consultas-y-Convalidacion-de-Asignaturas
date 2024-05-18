@@ -1,4 +1,4 @@
-import type  { SubjectResponse } from '../models/subject_model';
+import type  { SubjectResponse } from '../interfaces/subject_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

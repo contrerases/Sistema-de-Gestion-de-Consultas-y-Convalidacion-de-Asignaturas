@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ColorMode from './ColorMode.vue';
+import ColorMode from '@/components/ColorMode.vue';
 
 </script>
 

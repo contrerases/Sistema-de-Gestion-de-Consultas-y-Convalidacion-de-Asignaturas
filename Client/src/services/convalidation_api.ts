@@ -1,13 +1,13 @@
 import axios from "axios";
 import type { AxiosError} from 'axios';
-import type{ ConvalidationResponse, ConvalidationBase, ConvalidationUpdate } from "../models/convalidation_model";
+import type{ ConvalidationResponse, ConvalidationBase, ConvalidationUpdate } from "@/interfaces/convalidation_model";
 
 
 
 const URL = "http://localhost:8000/convalidations/";
 
 
-export async function getAllConvalidation(): Promise<ConvalidationResponse[]> {
+export async function getAllConvalidations(): Promise<ConvalidationResponse[]> {
     try {
         const { data: convalidations } = await axios.get<ConvalidationResponse[]>(URL);
         return convalidations;
@@ -57,6 +57,17 @@ export async function updateConvalidation(convalidation: ConvalidationUpdate): P
     catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error al actualizar convalidación:', axiosError?.response?.data);
+        throw error;
+    }
+}
+
+export async function getConvalidationsByState(state: string): Promise<ConvalidationResponse[]> {
+    try {
+        const { data: convalidations } = await axios.get<ConvalidationResponse[]>(`${URL}?state=${state}`);
+        return convalidations;
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al obtener convalidaciones por estado:', axiosError?.response?.data);
         throw error;
     }
 }

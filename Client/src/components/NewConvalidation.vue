@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { ConvalidationResponse, ConvalidationBase } from '@/models/convalidation_model';
-import type { CurriculumCourseBase } from '../models/curriculum_course_model';
-import type { SubjectBase } from '../models/subject_model';
-import type { TypeCourseBase } from '../models/type_course_model';
-import type { WorkshopBase } from '@/models/workshop_model';
+import type { ConvalidationResponse, ConvalidationBase } from '@/interfaces/convalidation_model';
+import type { CurriculumCourseBase } from '@/interfaces/curriculum_course_model';
+import type { SubjectBase } from '@/interfaces/subject_model';
+import type { TypeCourseBase } from '@/interfaces/type_course_model';
+import type { WorkshopBase } from '@/interfaces/workshop_model';
 // RECURSOS
-import { insertConvalidation } from '@/resources/convalidation_api';
-import { getAllCurriculumCourses } from '@/resources/curriculm_course_api';
-import { getAllTypesCourses } from '@/resources/type_course_api';
-import { getAllSubject } from '@/resources/subject_api';
-import { getAllWorkshops } from '@/resources/workshop_api';
+import { insertConvalidation } from '@/services/convalidation_api';
+import { getAllCurriculumCourses } from '@/services/curriculm_course_api';
+import { getAllTypesCourses } from '@/services/type_course_api';
+import { getAllSubject } from '@/services/subject_api';
+import { getAllWorkshops } from '@/services/workshop_api';
 // VUE
 import { ref, onMounted } from 'vue';
 // COMPONENTES
@@ -21,7 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
-import router from '@/router';
+
 
 
 
