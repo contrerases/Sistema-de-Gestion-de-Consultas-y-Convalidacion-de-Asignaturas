@@ -60,7 +60,6 @@ async def get_convalidations_by_state(state: str):
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
-#getbyid
 
 @router.get("/{id}", response_model=RESPONSE_MODEL)
 async def get_convalidation_by_id(id: int):
@@ -80,6 +79,29 @@ async def get_convalidation_by_id(id: int):
         cursor.close()
         conn.close()  
         return convalidation
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+
+@router.get("/student/{id_student}", response_model=List[RESPONSE_MODEL])
+async def get_convalidations_by_student_rol(student_rol: str):
+    try:
+        conn = get_db_connection()  
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("CALL GetConvalidationsByStudentRol(%s)", (student_rol,))
+        convalidations = cursor.fetchall()
+
+        if not convalidations:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convalidations not found")
+
+        for convalidation in convalidations:
+            pdf_content = convalidation.pop('file_data', None)
+            if pdf_content:
+                convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+        cursor.close()
+        conn.close()  
+        return convalidations
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     

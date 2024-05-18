@@ -34,7 +34,7 @@ export interface ConvalidationResponse {
   file_name: string | null;
 }
 
-export interface ConvalidationUpdate {
+export interface ConvalidationPost {
   id: number;
   state: string;
   comments: string | null;
