@@ -25,7 +25,7 @@ import ColorMode from '@/components/ColorMode.vue';
 </template>
 
 
-<style>
+<style scoped>
 nav {
   width: 100%;
   height: 100px;

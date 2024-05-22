@@ -3,7 +3,7 @@ import type { AxiosError} from 'axios';
 import type{ ConvalidationResponse, ConvalidationBase, ConvalidationPost } from "@/interfaces/convalidation_model";
 
 
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const BASE_URL = "http://localhost:8000/convalidations/";
 const STATE_URL = BASE_URL + "state/";
 const STUDENT_ROL_URL = BASE_URL + "student/";

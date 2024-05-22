@@ -4,7 +4,7 @@
 
 
 <script setup lang="ts">
-import AdminLayout from '@/layouts/AdminLayout.vue';  
+import AdminLayout from '@/layouts/admin/AdminLayout.vue';  
     
 </script>
 

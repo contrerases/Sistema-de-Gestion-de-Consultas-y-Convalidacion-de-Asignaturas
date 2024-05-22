@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { ConvalidationResponse, ConvalidationPost } from '@/interfaces/convalidation_model';
+  import type { ConvalidationResponse, ConvalidationBase, ConvalidationPost } from '@/interfaces/convalidation_model';
   import {formatReadableDate} from '@/interfaces/convalidation_model';
   import { updateConvalidation } from '@/services/convalidation_api';
   import { ref } from 'vue';
@@ -11,13 +11,6 @@
       SelectTrigger,
       SelectValue,
 } from '@/components/ui/select'
-
-import { useToast } from '@/components/ui/toast/use-toast'
-import { Button } from '@/components/ui/button'
-
-const { toast } = useToast()
-
-
 
   const props = defineProps<{
     convalidation: ConvalidationResponse;
@@ -74,7 +67,7 @@ function updateConvalidationHandler() {
 
 
 <template>
-  <main class="main flex flex-col">
+  <main class="request-card-main flex flex-col">
    <div class="p-10">
     <div class="card-show grid grid-cols-3 gap-y-4 gap-x-10">
       <div class="item flex flex-col ">
@@ -205,7 +198,7 @@ function updateConvalidationHandler() {
 </template>
 
 
-<style scoped lang="postcss">
+<style scoped  lang="postcss">
 .box {
   @apply  min-h-14 px-3 py-2 bg-background border border-input rounded-md text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 
@@ -219,8 +212,8 @@ function updateConvalidationHandler() {
   @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pb-2;
 }
 
-.main {
-  @apply flex justify-center mx-auto  m-10 rounded-lg border bg-card w-[1000px];
+.request-card-main {
+  @apply flex justify-center mt-10  bg-card w-full border border-border rounded-xl;
 }
 
 .card-show{

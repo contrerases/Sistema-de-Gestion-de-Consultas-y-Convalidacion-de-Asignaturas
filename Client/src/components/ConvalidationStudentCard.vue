@@ -145,7 +145,7 @@ function downloadPdf(binaryPDF: string | null) {
 </template>
 
 
-<style  lang="postcss">
+<style scoped lang="postcss">
 
 
 .main {
