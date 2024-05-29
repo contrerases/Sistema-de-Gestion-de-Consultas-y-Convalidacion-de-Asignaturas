@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import AdminView from '@/views/AdminView.vue'
-import StudentConvalidationView from '@/views/StudentConvalidationView.vue'
+
 import StudentView from '@/views/StudentView.vue'
 
 import RequestModule from '@/modules/admin/requests/RequestModule.vue'
@@ -72,11 +72,6 @@ const router = createRouter({
       component: StudentView
     },
 
-    {
-      path: '/StudentConvalidations',
-      name: 'StudentConvalidationView',
-      component: StudentConvalidationView
-    },
 
     
 

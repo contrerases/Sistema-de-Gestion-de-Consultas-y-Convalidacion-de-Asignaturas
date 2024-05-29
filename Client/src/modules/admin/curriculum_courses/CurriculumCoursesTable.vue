@@ -1,5 +1,6 @@
 <template>
-  <div class="container">
+  <LoadingSpinner v-if="isLoading"/>
+  <div class="container" v-else>
     <div class="overflow-x-auto">
       <table class="table">
         <thead class="thead">
@@ -22,6 +23,9 @@
   import type { CurriculumCourseResponse } from '@/interfaces/curriculum_course_model';
   import { useCurriculumCourseStore } from '@/stores/curriculum_course_store';
   
+  import LoadingSpinner from '@/common/LoadingSpinner.vue';
+
+  let isLoading = ref<boolean>(true);
   
   const curriculum_courses = ref<CurriculumCourseResponse[]>([]);
 
@@ -35,6 +39,9 @@
     } 
     catch (error) {
         console.error('Error al obtener convalidaciones:', error);
+    }
+    finally {
+        isLoading.value = false;
     }
   }  
 

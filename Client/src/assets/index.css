@@ -28,10 +28,15 @@
     --accent: hsl(60, 4.8%, 95.9%);
     --accent-foreground: hsl(24, 9.8%, 10%);
   
-    --destructive: hsl(0, 84.2%, 60.2%);
+    --destructive: hsl(0, 72.2%, 50.6%);
     --destructive-foreground: hsl(60, 9.1%, 97.8%);
+    --destructive-hover: hsl(0, 72.2%, 60.6%);
+
+    --success: hsl(120, 39.5%, 49.6%);
+    --success-foreground: hsl(60, 9.1%, 97.8%);
+    --success-hover: hsl(120, 39.5%, 59.6%);
   
-    --border: hsl(0, 0%, 29%);  
+    --border: hsl(0, 0%, 60%);  
     --input: hsl(20, 5.9%, 90%);
     --ring: hsl(24.6, 95%, 53.1%);
     --radius: 0.5rem;
@@ -62,6 +67,11 @@
   
     --destructive: hsl(0, 72.2%, 50.6%);
     --destructive-foreground: hsl(60, 9.1%, 97.8%);
+    --destructive-hover: hsl(0, 72.2%, 60.6%);
+
+    --success: hsl(120, 39.5%, 49.6%);
+    --success-foreground: hsl(60, 9.1%, 97.8%);
+    --success-hover: hsl(120, 39.5%, 59.6%);
   
     --border: hsl(12, 6%, 15%); 
     --input: hsl(12, 6.5%, 15.1%);

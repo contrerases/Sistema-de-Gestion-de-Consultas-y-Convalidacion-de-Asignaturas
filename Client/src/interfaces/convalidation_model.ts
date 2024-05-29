@@ -40,18 +40,3 @@ export interface ConvalidationPost {
   comments: string | null;
 }
 
-
-export function formatApprovalDate(date: string | null): string {
-  return date ? date : '-';
-}
-
-export function formatReadableDate(date: string | null): string {
-  const settings: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  };
-  return date ? new Date(date).toLocaleDateString('es-ES', settings) : '-';
-}

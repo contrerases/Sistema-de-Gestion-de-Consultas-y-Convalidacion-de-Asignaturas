@@ -26,20 +26,20 @@ export const useConvalidationsStore = defineStore('convalidations', {
   }),
   getters: {
     allConvalidations: (state) => state.convalidations,
-    studentConvalidations: (state) => state.studentConvalidations,
+    getStudentConvalidations: (state) => state.studentConvalidations,
     isLoading: (state) => state.isLoad,
     hasError: (state) => state.error !== null
   },
   actions: {
     async getAllConvalidationsStore() {
-      if (!this.isLoad){
+ 
         try {
           this.convalidations = await getAllConvalidations()
           this.isLoad = true
         } catch (error) {
           this.error = error as Error
         }
-      }
+      
     },
 
     async getConvalidationsByStateStore(state: string) {

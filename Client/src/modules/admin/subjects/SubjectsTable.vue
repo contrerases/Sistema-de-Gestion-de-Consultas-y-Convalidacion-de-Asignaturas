@@ -13,10 +13,16 @@
           </thead>
           <tbody class="tbody">
             <tr class="tr" v-for="subject in subjects" :key="subject.id" >
-              <td class="td">{{ subject.acronym }}</td>
+              <td class="td acronym">{{ subject.acronym }}</td>
               <td class="td">{{ subject.name }}</td>
               <td class="td">{{ subject.department_name }}</td>
               <td class="td">{{ subject.credits }}</td>
+              <td class="td">
+                <button @click="deleteSubjectHandler(subject.id)">
+                  <Icon class="icon"icon="mdi:trash-can" />
+                </button>
+              </td>
+
             </tr>
           </tbody>
         </table>
@@ -36,6 +42,8 @@
 
   const subjectsStore = useSubjectsStore();
 
+
+
   
   
 
@@ -43,11 +51,22 @@
     try {
         await subjectsStore.getSubjectsStore();
         subjects.value = subjectsStore.allSubjects;
+       
     } 
     catch (error) {
         console.error('Error al obtener convalidaciones:', error);
     }
   }  
+
+  async function deleteSubjectHandler(id: number) {
+    try {
+        await subjectsStore.deleteSubjectStore(id);
+        await getSubjectsStoreHandler();
+    } 
+    catch (error) {
+        console.error('Error al eliminar el subject:', error);
+    }
+}
 
   onMounted(getSubjectsStoreHandler);
 
@@ -93,7 +112,11 @@
 
 
   .icon {
-    @apply text-foreground;
+    @apply text-foreground text-xl;
+  }
+
+  .acronym {
+    @apply font-bold;
   }
  
   </style>

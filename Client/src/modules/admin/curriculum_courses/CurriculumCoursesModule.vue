@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import CurriculumCourseTable from '@/modules/admin/curriculum_courses/CurriculumCourseTable.vue';
+import CurriculumCourseTable from '@/modules/admin/curriculum_courses/CurriculumCoursesTable.vue';
 </script>
 
 <style scoped lang="postcss">

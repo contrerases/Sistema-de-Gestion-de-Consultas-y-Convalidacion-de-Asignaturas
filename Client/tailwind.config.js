@@ -39,7 +39,14 @@ module.exports = {
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
+          hover: "var(--destructive-hover)",
         },
+        success: {
+          DEFAULT: "var(--success)",
+          foreground: "var(--success-foreground)",
+          hover: "var(--success-hover)",
+        },
+
         muted: {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",

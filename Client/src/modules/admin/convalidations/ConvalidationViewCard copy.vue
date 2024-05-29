@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ConvalidationResponse } from '@/interfaces/convalidation_model';
-import { formatReadableDate } from '@/interfaces/convalidation_model';
+import { formatReadableDate } from '@/helpers/format_date';
 import { ref } from 'vue';
+import { Icon } from '@iconify/vue';
 
 const props = defineProps<{
   convalidation: ConvalidationResponse;
@@ -59,8 +60,7 @@ function downloadPdf(binaryPDF: string | null) {
 
         <div class="item">
           <div class="title">Estado</div>
-          <div class="box" 
-            :class="{
+          <div class="box" :class="{
             'border-green-500': props.convalidation.state === 'Aprobada por DI' || props.convalidation.state === 'Aprobada por DE',
             'border-red-500': props.convalidation.state === 'Rechazada',
             'border-yellow-500': props.convalidation.state === 'Enviada'
@@ -95,7 +95,8 @@ function downloadPdf(binaryPDF: string | null) {
         </div>
         <div class="item">
           <div class="title">Fecha de finalización </div>
-          <div class="box">{{ props.convalidation.revision_date ? formatReadableDate(props.convalidation.revision_date) : '-' }}</div>
+          <div class="box">{{ props.convalidation.revision_date ? formatReadableDate(props.convalidation.revision_date)
+            : '-' }}</div>
         </div>
         <div
           v-if="props.convalidation.convalidation_type == 'Curso Certificado' || props.convalidation.convalidation_type == 'Proyecto Personal'"
@@ -116,29 +117,27 @@ function downloadPdf(binaryPDF: string | null) {
       </div>
 
       <div class="border-t-2 mx-2 mt-4 px-4"></div>
+    
 
-      
-     <div class="px-4">
-      <div v-show="showCard" class="card-no-show">
-        <div class="item col-span-2">
-          <div class="title">Comentarios</div>
-          <input disabled v-model="convalidation.comments"
-            class="box  border-primary p-4 ">
+      <div class="px-4">
+        <div v-show="showCard" class="card-no-show">
+          <div class="item col-span-2">
+            <div class="title">Comentarios</div>
+            <input disabled v-model="convalidation.comments" class="box  border-primary p-4 ">
+          </div>
+          <div class="item">
+            <div class="title">Revisado por</div>
+            <div class="box"> {{ convalidation.approves_user }} </div>
+          </div>
         </div>
-        <div class="item">
-          <div class="title">Revisado por</div>
-          <div class="box"> {{ convalidation.approves_user }} </div>
-        </div>
-
-
       </div>
-
-     </div>
     </div>
-    <button @click="toggleCardShow" class="bg-primary rounded-b-lg opacity-80"
-      :class="{ 'bg-secondary': showCard, 'bg-primary': !showCard }">
-      {{ showCard ? '⇑ ' : ' ... ' }}
-    </button>
+
+    <div @click="toggleCardShow" class="rounded-b-lg flex justify-center p-1 opacity-80 cursor-pointer" :class="{ 'bg-input': showCard, 'bg-primary': !showCard }">
+      <Icon icon="teenyicons:up-small-outline" class="icon" v-if="showCard"/>
+      <Icon icon="teenyicons:down-small-outline" class="icon" v-else/>
+    </div>
+
 
   </main>
 
@@ -146,8 +145,6 @@ function downloadPdf(binaryPDF: string | null) {
 
 
 <style scoped lang="postcss">
-
-
 .main {
   @apply flex flex-col;
 }
@@ -166,11 +163,14 @@ function downloadPdf(binaryPDF: string | null) {
 
 
 .card-show {
-  @apply grid grid-cols-3 gap-y-4 gap-x-10;
+  @apply grid grid-cols-4 gap-y-4 gap-x-10;
 }
 
 .card-no-show {
   @apply grid grid-cols-3 gap-y-4 gap-x-10 pt-4;
 }
 
+.icon {
+  @apply text-foreground font-extrabold;
+}
 </style>

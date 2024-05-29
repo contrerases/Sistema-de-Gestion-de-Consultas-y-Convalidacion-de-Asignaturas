@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import SubjectTable from '@/modules/admin/subjects/SubjectTable.vue';
+import SubjectTable from '@/modules/admin/subjects/SubjectsTable.vue';
 </script>
 
 <style scoped lang="postcss">

@@ -22,7 +22,6 @@ export const useSubjectsStore = defineStore('subjects', {
   },
   actions: {
     async getSubjectsStore() {
-     if (this.isLoad) return
       try {
         this.subjects = await getAllSubject()
         this.isLoad = true
@@ -33,7 +32,6 @@ export const useSubjectsStore = defineStore('subjects', {
     async insertSubjectStore(subject: SubjectPost) {
       try {
         await insertSubject(subject)
-        await this.getSubjectsStore()
       } catch (error) {
         this.error = error as Error
       } 
@@ -41,9 +39,10 @@ export const useSubjectsStore = defineStore('subjects', {
     async deleteSubjectStore(subjectId: number) {
       try {
         await deleteSubject(subjectId)
-        await this.getSubjectsStore()
       } catch (error) {
+        console.error('Error en deleteSubjectStore:', this.error);
         this.error = error as Error
+        throw error;
       }
     }
   }
