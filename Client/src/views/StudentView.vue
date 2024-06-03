@@ -1,16 +1,10 @@
-<script setup lang="ts">
-import NewConvalidation from '@/components/NewConvalidation.vue';
-
-</script>
-
 <template>
-  <main>
-   <div class="flex m-auto  h-[600px]">
-        <NewConvalidation/>
-   </div>
-  </main>
+  <StudentLayout/>
 </template>
 
-<style>
 
-</style>
+<script setup lang="ts">
+import StudentLayout from '@/layouts/student/StudentLayout.vue';
+  
+</script>
+
