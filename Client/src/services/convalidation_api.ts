@@ -88,6 +88,7 @@ export async function insertConvalidation(convalidation: ConvalidationBase): Pro
   
   export async function updateConvalidation(convalidation: ConvalidationPost): Promise<void> {
       try {
+        console.log(convalidation)
           await axios.put(BASE_URL, convalidation);
       }
       catch (error) {

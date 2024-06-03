@@ -13,7 +13,7 @@ import AdminSidebar from '@/layouts/admin/components/AdminSidebar.vue';
 
 <style scoped lang="postcss">
     .admin-main {
-        @apply w-screen  h-[800px] max-w-screen-2xl  mx-auto  rounded-2xl flex flex-row border border-border;
+        @apply w-screen  h-[800px] max-w-screen-2xl  mx-auto  rounded-2xl flex flex-row border-2 border-border;
     }
     .admin-content {
         @apply w-9/12 overflow-y-auto ;

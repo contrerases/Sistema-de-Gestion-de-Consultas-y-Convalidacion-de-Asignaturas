@@ -2,6 +2,9 @@
   <div class="flex justify-center flex-col">
     <LoadingSpinner v-if="isLoading"/>
     <template v-else>
+      <div v-if="convalidations.length === 0 && !isLoading" class="flex justify-center items-center h-[50vh] italic text-muted">
+        <p class="text-2xl">No hay nuevas solicitudes</p>
+      </div>
       <ConvalidationViewCard
         class="max-w-[1500px]"
         v-for="convalidation in convalidations"
@@ -35,6 +38,7 @@ async function getConvalidationHandler() {
     console.error('Error al obtener convalidaciones:', error);
   } finally {
     isLoading.value = false;
+
   }
 }  
 

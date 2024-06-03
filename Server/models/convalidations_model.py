@@ -43,4 +43,4 @@ class ConvalidationResponse(BaseModel):
 class ConvalidationUpdate(BaseModel):
     id: int
     state: str
-    comments: str
+    comments: Optional[str] = None

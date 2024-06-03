@@ -1,12 +1,15 @@
 <template>
     <div  class=" flex justify-center flex-col">
-      <LoadingSpinner v-if="isLoading"/>  
+      <LoadingSpinner v-if="isLoading"/>
+      <div v-if="request_convalidations.length === 0 && !isLoading" class="flex justify-center items-center h-[50vh] italic text-muted">
+        <p class="text-2xl">No hay nuevas solicitudes</p>
+      </div>
       <template v-else>
         <RequestReviewCard
-        class="max-w-[1500px] min-w-[1000px]"
         v-for="convalidation in request_convalidations"
           :key="convalidation.id"
           :convalidation="convalidation"
+          @update-list="getConvalidationHandler"
     />
       </template>
     </div>

@@ -75,6 +75,7 @@ export const useConvalidationsStore = defineStore('convalidations', {
         await this.getAllConvalidationsStore()
       } catch (error) {
         this.error = error as Error
+        throw error
       } 
     },
     async updateConvalidationStore(convalidation: ConvalidationPost) {
@@ -83,6 +84,7 @@ export const useConvalidationsStore = defineStore('convalidations', {
         await this.getAllConvalidationsStore()
       } catch (error) {
         this.error = error as Error
+        throw error
       }
     }    
   }
