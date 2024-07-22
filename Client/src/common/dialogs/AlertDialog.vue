@@ -35,7 +35,7 @@ function close() {
 }
 
 .alert-dialog-title {
-    @apply text-xl font-semibold text-destructive;
+    @apply text-2xl font-semibold text-destructive pb-2;
 }
 
 .alert-dialog-button-container {

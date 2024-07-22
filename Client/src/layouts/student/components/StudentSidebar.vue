@@ -2,37 +2,54 @@
   <div class="sidebar">
     <div>
       <ul>
-        <li 
-          v-for="(item, index) in topMenu" 
+        <li
+          v-for="(item, index) in topMenu"
           :key="index"
           :class="{ selected: isSelected(item.route) }"
+          class="flex flex-col items-start w-full"
           @click="selectItem(index, item.route)"
         >
-          <Icon class="icon" :icon="item.icon" />
-          <p>{{ item.text }}</p>
+          <div class="flex align-middle items-center w-full">
+            <Icon class="icon" :icon="item.icon" />
+            <p>{{ item.text }}</p>
+          </div>
+
+          <div
+            @click="pushNewRequest"
+            v-if="
+              item.text === 'Convalidaciones' &&
+              isSelected('/estudiante/convalidaciones')
+            "
+            class="mt-4 pl-10 text-sm w-full hover:text-gray-600"
+            
+          >
+            <div class="border-t border-white w-full h-1 pb-2"></div>
+             + Nueva Solicitud
+            <div class="border-b border-white w-full h-1 pt-2"></div>
+          </div>
         </li>
       </ul>
-    
-      <div class="line"></div>
-  
-    </div>
-  <div class="flex justify-center"> 
-    <button class="bg-primary p-4 rounded-xl hover:opacity-50 w-3/4 top-full font-mono text-xl" @click="pushNewRequest">
-      Nueva solicitud
-    </button>
-  </div>
 
+      <div class="line"></div>
+    </div>
+    <!-- <div class="flex justify-center">
+      <button
+        class="bg-primary p-4 rounded-xl hover:opacity-50 w-3/4 top-full font-mono text-xl"
+        @click="pushNewRequest"
+      >
+        Nueva solicitud
+      </button>
+    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { Icon } from '@iconify/vue';
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Icon } from "@iconify/vue";
 
 const selectedItem = ref<number | null>(0);
 const router = useRouter();
-
 
 const selectItem = (index: number, route: string) => {
   selectedItem.value = index;
@@ -40,7 +57,7 @@ const selectItem = (index: number, route: string) => {
 };
 
 const pushNewRequest = () => {
-  router.push('/estudiante/nueva_solicitud');
+  router.push("/estudiante/nueva_solicitud");
 };
 
 const isSelected = (route: string) => {
@@ -48,11 +65,22 @@ const isSelected = (route: string) => {
 };
 
 const topMenu = [
-  { icon: 'material-symbols:home', text: 'Inicio', route: '/estudiante/inicio' },
-  { icon: 'ph:list-bullets-fill', text: 'Convalidaciones', route: '/estudiante/convalidaciones' },
-  { icon: 'ic:baseline-library-books', text: 'Talleres', route: '/estudiante/talleres' }
+  {
+    icon: "material-symbols:home",
+    text: "Inicio",
+    route: "/estudiante/inicio",
+  },
+  {
+    icon: "ph:list-bullets-fill",
+    text: "Convalidaciones",
+    route: "/estudiante/convalidaciones",
+  },
+  {
+    icon: "ic:baseline-library-books",
+    text: "Talleres",
+    route: "/estudiante/talleres",
+  },
 ];
-
 </script>
 
 <style scoped lang="postcss">
@@ -65,7 +93,7 @@ const topMenu = [
 }
 
 .sidebar li {
-  @apply py-4 px-6 m-1 text-white text-lg font-mono cursor-pointer hover:bg-primary hover:rounded-xl flex items-center;
+  @apply py-4 px-6 m-1 text-white text-lg font-mono cursor-pointer hover:bg-primary hover:rounded-xl flex items-center w-full;
 }
 
 .sidebar li p {

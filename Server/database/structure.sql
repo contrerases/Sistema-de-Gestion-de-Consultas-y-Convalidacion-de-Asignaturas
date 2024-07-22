@@ -14,6 +14,8 @@ DROP TABLE IF EXISTS WORKSHOPS;
 DROP TABLE IF EXISTS DEPARTMENTS;
 DROP TABLE IF EXISTS SUBJECTS;
 
+DROP TABLE IF EXISTS REQUESTS;
+
 SET FOREIGN_KEY_CHECKS = 1;
 
 
@@ -33,6 +35,8 @@ CREATE TABLE ADMINISTRATORS (
 CREATE TABLE STUDENTS (
     id INT AUTO_INCREMENT NOT NULL,
     rol_student VARCHAR(10) UNIQUE NOT NULL,
+    rut_student VARCHAR(12) UNIQUE NOT NULL,
+    campus_student VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     second_name VARCHAR(255) NOT NULL,
     first_last_name VARCHAR(255) NOT NULL,
@@ -80,16 +84,28 @@ CREATE TABLE SUBJECTS (
 );
 
 
+CREATE TABLE REQUESTS (
+    id INT NOT NULL AUTO_INCREMENT,
+    id_student INT NOT NULL,
+    -- rol_student VARCHAR(10) NOT NULL,
+    -- rut_student VARCHAR(12) NOT NULL,
+    -- campus_student VARCHAR(255) NOT NULL,
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    revision_date TIMESTAMP,
+    comments TEXT DEFAULT NULL,
+    id_user_approves INT DEFAULT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_student) REFERENCES STUDENTS (id),
+    FOREIGN KEY (id_user_approves) REFERENCES ADMINISTRATORS (id)
+);
+
+
 
 CREATE TABLE CONVALIDATIONS (
     id INT NOT NULL AUTO_INCREMENT,
-    id_student INT NOT NULL,
+    id_request INT NOT NULL,
     id_convalidation_type INT NOT NULL, -- Asignatura INF, Asignatutra Externa,  Curso Certificado,Taller de INF, Proyecto Personal
     state VARCHAR(50) NOT NULL DEFAULT 'Enviada',  -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
-    comments TEXT DEFAULT NULL,
-    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    revision_date TIMESTAMP,
-    id_user_approves INT DEFAULT NULL,
     id_curriculum_course INT NOT NULL,
     id_subject_to_convalidate INT NULL,
     id_workshop_to_convalidate INT NULL,
@@ -98,12 +114,12 @@ CREATE TABLE CONVALIDATIONS (
     file_data LONGBLOB DEFAULT NULL,
     file_name VARCHAR(255) DEFAULT NULL, 
     PRIMARY KEY (id),
-    FOREIGN KEY (id_student) REFERENCES STUDENTS (id),
+    FOREIGN KEY (id_request) REFERENCES REQUESTS (id),
     FOREIGN KEY (id_convalidation_type) REFERENCES TYPES_COURSES (id),
-    FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id),
-    FOREIGN KEY (id_user_approves) REFERENCES ADMINISTRATORS (id),    
+    FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id),   
     CONSTRAINT fk_subject FOREIGN KEY (id_subject_to_convalidate) REFERENCES SUBJECTS (id),
-    CONSTRAINT fk_workshop FOREIGN KEY (id_workshop_to_convalidate) REFERENCES WORKSHOPS (id)
+    CONSTRAINT fk_workshop FOREIGN KEY (id_workshop_to_convalidate) REFERENCES WORKSHOPS (id),
+    INDEX (id_request)
 );
 
 

@@ -35,7 +35,7 @@
   }
 
   .success-dialog-title {
-      @apply text-xl font-semibold text-success;
+      @apply text-2xl font-semibold text-success pb-2;
   }
 
   .success-dialog-button-container {

@@ -1,6 +1,6 @@
 <template>
     <main class="convalidation-main">
-        <h1 class="convalidation-title">Convalidaciones</h1>
+        <h1 class="convalidation-title">Solicitudes</h1>
         <div class="convalidation-content">
             <ConvalidationsViewCardList />
         </div>

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import convalidations_routes, curriculum_courses_routes, subjects_routes, types_courses_routes, workshops_routes, department_routes
+from routes import curriculum_courses_routes, subjects_routes, types_courses_routes, workshops_routes, department_routes, home_routes, request_routes
 
 
 
@@ -16,8 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(convalidations_routes.router, prefix="/convalidations")
+app.include_router(home_routes.router)
+app.include_router(request_routes.router, prefix="/requests")
 app.include_router(curriculum_courses_routes.router, prefix="/curriculum_courses")
 app.include_router(subjects_routes.router, prefix="/subjects")
 app.include_router(types_courses_routes.router, prefix="/types_courses")

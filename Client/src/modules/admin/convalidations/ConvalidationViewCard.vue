@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ConvalidationResponse } from "@/interfaces/convalidation_model";
-import formatReadableDate from '@/helpers/format_date';
+import formatReadableDate from "@/helpers/format_date";
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import downloadPdf from "@/helpers/download_file";
@@ -14,129 +14,166 @@ const showCard = ref(false);
 function toggleCardShow() {
   showCard.value = !showCard.value;
 }
-
 </script>
 
 <template>
   <main class="main">
     <div class="card">
       <div class="visible-card">
-        <div class="rows grid-cols-7">
-          <div class="item">
+        <div class="rows grid-cols-8">
+          <div class="item col-span-2">
             <div class="title">ID</div>
-            <div class="box">
-              {{ props.convalidation.id }}
-            </div>
+            <div class="box">001</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">ROL ESTUDIANTE</div>
-            <div class="box">
-              {{ props.convalidation.student_rol }}
-            </div>
+          <div class="item col-span-3">
+            <div class="title">RUT</div>
+            <div class="box">20.369.538-1</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">NOMBRE ESTUDIANTE</div>
-            <div class="box">
-              {{ props.convalidation.student_name }}
-            </div>
+          <div class="item col-span-3">
+            <div class="title">NOMBRE</div>
+            <div class="box">CAMILO CONTRERAS ESPINOZA</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">TIPO DE CONVALIDACIÓN</div>
-            <div class="box">
-              {{ props.convalidation.convalidation_type }}
-            </div>
-          </div>       
         </div>
-        
-        <div class="rows grid-cols-3">
+        <div class="rows grid-cols-2">
           <div class="item">
-            <div class="title">CURSO A CONVALIDAR</div>
-            <div class="box">
-              {{ props.convalidation.curriculum_course }}
-            </div>
-          </div>
-          <div v-if="props.convalidation.subject !== null" class="item">
-            <div class="title">ASIGNATURA CURSADA</div>
-            <div class="box">{{ props.convalidation.subject }}</div>
+            <div class="title">ROL</div>
+            <div class="box">201873063-7</div>
           </div>
 
-          <div v-if="props.convalidation.workshop !== null" class="item ">
-            <div class="title">TALLER CURSADO</div>
-            <div class="box">{{ props.convalidation.workshop }}</div>
-          </div>
-          <div v-if="props.convalidation.certified_course_name !== null" class="item">
-            <div class="title">CURSO REALIZADO</div>
-            <div class="box">{{ props.convalidation.certified_course_name }}</div>
-          </div>
-          <div v-if="props.convalidation.personal_project_name !== null" class="item">
-            <div class="title">PROYECTO CURSADO</div>
-            <div class="box">{{ props.convalidation.personal_project_name }}</div>
-          </div>
           <div class="item">
-            <div class="title">Archivo</div>
-            <div class="box">
-              <button class="download-button"
-                v-if="props.convalidation.convalidation_type == 'Curso Certificado'"
-                @click="downloadPdf(props.convalidation.file_data)">
-                📄 Descargar Certificado
-              </button>
-              <button
-                v-else-if="props.convalidation.convalidation_type == 'Proyecto Personal'"
-                @click="downloadPdf(props.convalidation.file_data)">
-                📄 Descargar Proyecto
-              </button>
-              <button v-else disabled> - </button>
-            </div>
+            <div class="title">CAMPUS</div>
+            <div class="box">CASA CENTRAL</div>
           </div>
         </div>
       </div>
       <transition name="accordion">
         <div v-show="showCard" class="hidden-card">
-          <div class="grid grid-cols-2 gap-5">
+          <div class="rows grid-cols-2">
             <div class="item">
               <div class="title">FECHA DE CREACIÓN</div>
-              <div class="box">
-                {{ formatReadableDate(props.convalidation.creation_date) }}
-              </div>
+              <div class="box">20 de Julio de 2021</div>
             </div>
+
             <div class="item">
-              <div class="title">FECHA DE APROBACIÓN</div>
-              <div class="box">
-                {{ formatReadableDate(props.convalidation.revision_date) }}
-              </div>
+              <div class="title">FECHA DE REVISIÓN</div>
+              <div class="box">21 de Julio de 2021</div>
             </div>
           </div>
+          
+          <div class="text-4xl font-bold py-4">
+            Convalidaciones
+          </div>
+          <div class="line mt-4"></div>
+          <div class="rows grid-cols-5">
+            <div class="title-table">TIPO DE CONVALIDACION</div>
+            <div class="title-table">ASIGNATURA A CONVALIDAR</div>
+            <div class="title-table">ASIGNATURA  <br> CURSADA</div>
+            <div class="title-table">ARCHIVO <br> ADJUNTO</div>
+            <div class="title-table">ESTADO DE <br> SOLICITUD</div>
+          </div>
+
           <div class="line"></div>
-          <div class="rows grid-cols-3">
-            <div class="item col-span-2 row-span-2">
-              <div class="title">COMENTARIOS</div>
-              <div class="box">
-                {{ props.convalidation.comments }}
-              </div>
-            </div>
+
+          <div class="rows grid-cols-5">
             <div class="item">
-              <div class="title">ESTADO</div>
-              <div class="state-box" :class="{
-                'border-success': props.convalidation.state === 'Aprobada por DI' || props.convalidation.state === 'Aprobada por DE',
-                'border-destructive': props.convalidation.state === 'Rechazada',
-                'border border-yellow-500': props.convalidation.state === 'Enviada'
-              }">{{ props.convalidation.state }}</div>
+              <div class="box">Curso Certificado</div>
             </div>
+
             <div class="item">
-              <div class="title">APROBADA POR</div>
-              <div class="box">
-                {{ props.convalidation.approves_user ? props.convalidation.approves_user : '-' }}
-              </div>
+              <div class="box">LIBRE I</div>
+            </div>
+
+            <div class="item">
+              <div class="box">Javascript</div>
+            </div>
+
+            <div class="item">
+              <div class="box">📄 archivo.pdf</div>
+            </div>
+
+            <div class="item">
+              <div class="box">ENVIADA</div>
+            </div>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="rows grid-cols-5">
+            <div class="item">
+              <div class="box">Asignatura INF</div>
+            </div>
+
+            <div class="item">
+              <div class="box">ELECTIVO I</div>
+            </div>
+
+            <div class="item">
+              <div class="box">INF-234</div>
+            </div>
+
+            <div class="item">
+              <div class="box">🚫 No Disponible</div>
+            </div>
+
+            <div class="item">
+              <div class="box">RECHAZADA</div>
+            </div>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="rows grid-cols-5">
+            <div class="item">
+              <div class="box">Asignatura INF</div>
+            </div>
+
+            <div class="item">
+              <div class="box">ELECTIVO II</div>
+            </div>
+
+            <div class="item">
+              <div class="box">INF-244</div>
+            </div>
+
+            <div class="item">
+              <div class="box">🚫 No Disponible</div>
+            </div>
+
+            <div class="item">
+              <div class="box">RECHAZADA</div>
             </div>
           </div>
         </div>
       </transition>
     </div>
-    <div @click="toggleCardShow" class="rounded-b-lg flex justify-center p-1 opacity-80 cursor-pointer bg-primary">
+    <div
+      @click="toggleCardShow"
+      class="rounded-b-lg flex justify-center p-1 opacity-80 cursor-pointer bg-primary"
+    >
       <Icon icon="teenyicons:up-small-outline" class="icon" v-if="showCard" />
       <Icon icon="teenyicons:down-small-outline" class="icon" v-else />
     </div>
   </main>
+
+  <!-- <div class="box">
+    <button class="download-button"
+      v-if="props.convalidation.convalidation_type == 'Curso Certificado'"
+      @click="downloadPdf(props.convalidation.file_data)">
+      📄 Descargar Certificado
+    </button>
+    <button
+      v-else-if="props.convalidation.convalidation_type == 'Proyecto Personal'"
+      @click="downloadPdf(props.convalidation.file_data)">
+      📄 Descargar Proyecto
+    </button>
+    <button v-else disabled> - </button>
+  </div> 
+   <div class="item">
+            <div class="title">CURSO A CONVALIDAR</div>
+            <div class="box">
+              {{ props.convalidation.curriculum_course }}
+            </div>
+          </div>-->
 </template>
 
 <style scoped lang="postcss">
@@ -157,9 +194,12 @@ function toggleCardShow() {
 }
 
 .title {
-  @apply font-bold text-xs pl-1;
+  @apply font-bold text-lg pl-1;
 }
 
+.title-table {
+  @apply font-bold text-sm;
+}
 .box {
   @apply flex rounded-lg p-2 mt-1 h-full bg-input;
 }
@@ -169,17 +209,16 @@ function toggleCardShow() {
 }
 
 .hidden-card {
-  @apply flex flex-col;
+  @apply flex flex-col pb-4;
 }
 
 .line {
-  @apply border-t-2 mt-8 mb-6;
+  @apply border-t-2 pb-4;
 }
 
 .download-button {
   @apply hover:text-blue-500;
 }
-
 
 .accordion-enter-active,
 .accordion-leave-active {
@@ -197,6 +236,4 @@ function toggleCardShow() {
   max-height: 500px;
   opacity: 1;
 }
-
-
 </style>
