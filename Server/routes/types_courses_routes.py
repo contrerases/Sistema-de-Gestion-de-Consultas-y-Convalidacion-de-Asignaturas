@@ -14,7 +14,7 @@ async def get_all_types_courses():
     try:
         conn = get_db_connection()  #
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("CALL GetAllTypeCourses")
+        cursor.callproc("GetAllTypeCourses")
         types_courses = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -22,19 +22,6 @@ async def get_all_types_courses():
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
-#delete
-@router.delete("/{type_course_id}")
-async def delete_type_course(type_course_id: int):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("CALL DeleteTypeCourseById(?)", (type_course_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except mdb.Error as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    return {"message": "Type Course has been deleted successfully."}
 
 #post 
 @router.post("/")
@@ -42,7 +29,7 @@ async def insert_type_course(type_course: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("CALL InsertTypeCourse(?)", (type_course.name,))
+        cursor.callproc("InsertTypeCourse", (type_course.name,))
         conn.commit()
         cursor.close()
         conn.close()

@@ -58,4 +58,6 @@ VALUES
         id_user_approves
     );
 
+SELECT LAST_INSERT_ID() AS id;
+
 END

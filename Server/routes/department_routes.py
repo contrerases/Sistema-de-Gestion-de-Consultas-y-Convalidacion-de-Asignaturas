@@ -17,24 +17,11 @@ POST_MODEL = departments_model.DepartmentPost
 async def get_departments():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("CALL GetAllDepartments")
+    cursor.callproc("GetAllDepartments")
     departments = cursor.fetchall()
     conn.close()
     return departments
 
-#delete
-@router.delete("/departments/{department_id}")
-async def delete_department(department_id: int):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("CALL DeleteDepartmentById(?)", (department_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except mdb.Error as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    return {"message": "Department has been deleted successfully."}
 
 #post
 @router.post("/departments")
@@ -42,7 +29,7 @@ async def add_department(department: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("CALL InsertDepartment(?)", (department.name,))
+        cursor.callproc("InsertDepartment", (department.name,))
         conn.commit()
         cursor.close()
         conn.close()

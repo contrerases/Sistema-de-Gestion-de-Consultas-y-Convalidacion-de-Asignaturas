@@ -15,7 +15,7 @@ async def get_all_subjects():
     try:
         conn = get_db_connection() 
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("CALL GetAllSubjectsProcessedData")
+        cursor.callproc("GetAllSubjectsProcessedData")
         subjects = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -24,19 +24,7 @@ async def get_all_subjects():
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
 
-#delete
-@router.delete("/{subject_id}")
-async def delete_subject(subject_id: int):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("CALL DeleteSubjectById(?)", (subject_id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except mdb.Error as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    return {"message": "Subject has been deleted successfully."}
+
 
 #post 
 @router.post("/")
@@ -44,7 +32,7 @@ async def add_subject(subject: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("CALL InsertSubject(?, ?, ?, ?)", (subject.acronym,subject.name ,subject.id_department, subject.credits))
+        cursor.callproc("CALL InsertSubject", (subject.acronym,subject.name ,subject.id_department, subject.credits))
         conn.commit()
         cursor.close()
         conn.close()

@@ -10,6 +10,7 @@ from database import get_db_connection
 
 BASE_MODEL = requests_model.Request
 RESPONSE_MODEL = requests_model.RequestResponse
+INSERT_MODEL = requests_model.RequestInsert
 
 router = APIRouter()
 
@@ -20,26 +21,21 @@ async def get_all_requests():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Obtener todas las solicitudes
+    
         cursor.callproc("GetAllRequestsProcessed")
         requests = cursor.fetchall()
 
         for request in requests:
             request_id = request['id']
 
-            # Obtener convalidaciones para cada solicitud
             cursor.callproc("GetConvalidationsByRequestID", (request_id,))
             convalidations = cursor.fetchall()
 
-            # Mapear nombres de campos
             for convalidation in convalidations:
                 pdf_content = convalidation.pop('file_data', None)
                 if pdf_content:
-                    # Convertir el archivo a Base64
-                    convalidation['file_data'] = base64.b64encode(
-                        pdf_content).decode('utf-8')
-
-            # Añadir convalidaciones a la solicitud
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+        
             request['convalidations'] = convalidations
 
         cursor.close()
@@ -80,8 +76,8 @@ async def get_request_by_id(request_id: int):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
-@router.post("/", response_model=BASE_MODEL)
-async def insert_request(request: BASE_MODEL):
+@router.post("/")
+async def insert_request(request: INSERT_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -93,7 +89,7 @@ async def insert_request(request: BASE_MODEL):
             request.comments,
             request.id_user_approves,
         ))
-        
+
         id_request = cursor.fetchone()['id']
 
         for convalidation in request.convalidations:
@@ -114,7 +110,7 @@ async def insert_request(request: BASE_MODEL):
         cursor.close()
         conn.close()
 
-        return request
+        return {"Convalidation Inserted Successfully"}
     except mdb.Error as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
