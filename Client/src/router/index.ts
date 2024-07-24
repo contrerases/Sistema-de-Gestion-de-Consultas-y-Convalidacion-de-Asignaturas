@@ -5,7 +5,7 @@ import AdminView from '@/views/AdminView.vue'
 import StudentView from '@/views/StudentView.vue'
 
 import RequestModule from '@/modules/admin/requests/RequestModule.vue'
-import ConvalidationsModule from '@/modules/admin/convalidations/ConvalidationsModule.vue'
+import HistoryModule from '@/modules/admin/history/HistoryModule.vue'
 import CurriculumCoursesModule from '@/modules/admin/curriculum_courses/CurriculumCoursesModule.vue'
 import StatsModule from '@/modules/admin/stats/StatsModule.vue'
 import SubjectsModule from '@/modules/admin/subjects/SubjectsModule.vue'
@@ -38,9 +38,9 @@ const router = createRouter({
         },
 
         {
-          path: 'convalidaciones',
-          name: 'Convalidaciones',
-          component: ConvalidationsModule
+          path: 'historial',
+          name: 'Historial',
+          component: HistoryModule
         },
 
         {

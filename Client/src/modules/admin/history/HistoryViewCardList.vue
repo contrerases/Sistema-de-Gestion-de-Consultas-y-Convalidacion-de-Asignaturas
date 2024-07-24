@@ -5,7 +5,7 @@
       <div v-if="wea.length === 0 && !isLoading" class="flex justify-center items-center h-[50vh] italic text-muted">
         <p class="text-2xl">No hay nuevas solicitudes</p>
       </div>
-      <ConvalidationViewCard
+      <HistoryViewCard
         class="max-w-[1500px]"
         v-for="wea in wea"
         :key="wea.id"
@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import ConvalidationViewCard from '@/modules/admin/convalidations/ConvalidationViewCard.vue';
+import HistoryViewCard from '@/modules/admin/history/HistoryViewCard.vue';
 import LoadingSpinner from '@/common/LoadingSpinner.vue'; 
 
-import type { ConvalidationResponse } from '@/interfaces/convalidation_model';
+// import type { ConvalidationResponse } from '@/interfaces/convalidation_model';
 import { useConvalidationsStore } from '@/stores/convalidation_store';
 import { ref, onMounted } from 'vue';
 
@@ -27,7 +27,7 @@ const isLoading = ref<boolean>(true);
 
 const convalidationsStore = useConvalidationsStore();
 
-const convalidations = ref<ConvalidationResponse[]>([]);
+// const convalidations = ref<ConvalidationResponse[]>([]);
 
 const wea = ref<any>([]);
 

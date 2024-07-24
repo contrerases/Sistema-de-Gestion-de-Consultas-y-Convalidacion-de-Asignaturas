@@ -90,6 +90,7 @@ CREATE TABLE REQUESTS (
     -- rol_student VARCHAR(10) NOT NULL,
     -- rut_student VARCHAR(12) NOT NULL,
     -- campus_student VARCHAR(255) NOT NULL,
+    state VARCHAR(50) NOT NULL DEFAULT 'Enviada', -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     revision_date TIMESTAMP,
     comments TEXT DEFAULT NULL,

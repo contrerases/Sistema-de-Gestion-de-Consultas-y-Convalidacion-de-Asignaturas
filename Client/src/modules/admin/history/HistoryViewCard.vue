@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ConvalidationResponse } from "@/interfaces/convalidation_model";
+//import type { ConvalidationResponse } from "@/interfaces/convalidation_model";
 import formatReadableDate from "@/helpers/format_date";
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
 import downloadPdf from "@/helpers/download_file";
 
-const props = defineProps<{
-  convalidation: ConvalidationResponse;
-}>();
+//const props = defineProps<{
+//  convalidation: ConvalidationResponse;
+//}>();
 
 const showCard = ref(false);
 

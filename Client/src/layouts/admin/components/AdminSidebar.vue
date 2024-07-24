@@ -49,7 +49,7 @@ const isSelected = (route: string) => {
 const topMenu = [
   { icon: 'gridicons:stats-alt', text: 'Estadísticas', route: '/administrador/estadisticas' },
   { icon: 'lets-icons:order', text: 'Solicitudes', route: '/administrador/solicitudes' },
-  { icon: 'ph:list-bullets-fill', text: 'Convalidaciones', route: '/administrador/convalidaciones' }
+  { icon: 'ph:list-bullets-fill', text: 'Historial', route: '/administrador/historial' }
 ];
 
 const bottomMenu = [

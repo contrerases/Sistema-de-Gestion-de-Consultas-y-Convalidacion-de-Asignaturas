@@ -11,6 +11,7 @@ from database import get_db_connection
 BASE_MODEL = requests_model.Request
 RESPONSE_MODEL = requests_model.RequestResponse
 INSERT_MODEL = requests_model.RequestInsert
+UPDATE_MODEL = requests_model.RequestUpdate
 
 router = APIRouter()
 
@@ -75,6 +76,136 @@ async def get_request_by_id(request_id: int):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
+@router.get("/student/rut/{student_rut}", response_model=List[RESPONSE_MODEL])
+async def get_request_by_student_id(student_rut: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("GetRequestsByStudentRUT", (student_rut,))
+        requests = cursor.fetchall()
+
+        for request in requests:
+            request_id = request['id']
+
+            cursor.callproc("GetConvalidationsByRequestID", (request_id,))
+            convalidations = cursor.fetchall()
+
+            for convalidation in convalidations:
+                pdf_content = convalidation.pop('file_data', None)
+                if pdf_content:
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+            request['convalidations'] = convalidations
+
+        cursor.close()
+        conn.close()
+
+        return requests
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+
+#student_rol
+
+@router.get("/student/rol/{student_rol}", response_model=List[RESPONSE_MODEL])
+async def get_request_by_student_rol(student_rol: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("GetRequestsByStudentROL", (student_rol,))
+        requests = cursor.fetchall()
+
+        for request in requests:
+            request_id = request['id']
+
+            cursor.callproc("GetConvalidationsByRequestID", (request_id,))
+            convalidations = cursor.fetchall()
+
+            for convalidation in convalidations:
+                pdf_content = convalidation.pop('file_data', None)
+                if pdf_content:
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+            request['convalidations'] = convalidations
+
+        cursor.close()
+        conn.close()
+
+        return requests
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+#range creation date
+
+@router.get("/creation_date/{start_date}/{end_date}", response_model=List[RESPONSE_MODEL])
+async def get_request_by_range_creation_date(start_date: str, end_date: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("GetRequestsByDateRangeCreation", (start_date, end_date,))
+        requests = cursor.fetchall()
+
+        for request in requests:
+            request_id = request['id']
+
+            cursor.callproc("GetConvalidationsByRequestID", (request_id,))
+            convalidations = cursor.fetchall()
+
+            for convalidation in convalidations:
+                pdf_content = convalidation.pop('file_data', None)
+                if pdf_content:
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+            request['convalidations'] = convalidations
+
+        cursor.close()
+        conn.close()
+
+        return requests
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+
+#get request by state 
+
+@router.get("/state/{state}", response_model=List[RESPONSE_MODEL])
+async def get_request_by_state(state: str):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("GetRequestsByState", (state,))
+        requests = cursor.fetchall()
+
+        for request in requests:
+            request_id = request['id']
+
+            cursor.callproc("GetConvalidationsByRequestID", (request_id,))
+            convalidations = cursor.fetchall()
+
+            for convalidation in convalidations:
+                pdf_content = convalidation.pop('file_data', None)
+                if pdf_content:
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+            request['convalidations'] = convalidations
+
+        cursor.close()
+        conn.close()
+
+        return requests
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+
 
 @router.post("/")
 async def insert_request(request: INSERT_MODEL):
@@ -111,6 +242,32 @@ async def insert_request(request: INSERT_MODEL):
         conn.close()
 
         return {"Convalidation Inserted Successfully"}
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+
+#revision de solicitud - only changue comments, state and id_user_approves
+
+@router.put("/")
+async def update_request(request: UPDATE_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("UpdateRequest", (
+            request.id,
+            request.comments,
+            request.state,
+            request.id_user_approves
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return {"Request Updated Successfully"}
     except mdb.Error as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -7,6 +7,7 @@ from models.convalidations_model import Convalidation
 
 class RequestInsert(BaseModel):
     id_student: int
+    state: str
     creation_date: datetime
     revision_date: Optional[datetime] = None
     comments: Optional[str] = None
@@ -21,4 +22,10 @@ class RequestResponse(Request):
     rut_student: str
     campus_student: str
 
+class RequestUpdate(BaseModel):
+    id: int
+    state: str
+    comments: str 
+    revision_date: Optional[datetime] 
+    id_user_approves: int 
 
