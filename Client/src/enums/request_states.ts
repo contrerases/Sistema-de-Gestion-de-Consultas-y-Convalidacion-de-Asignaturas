@@ -1,4 +1,4 @@
-export enum ConvalidationStates {
+export enum RequestStates {
     ENVIADA = 'Enviada',
     RECHAZADA = 'Rechazada',
     APROBADA_DI = 'Aprobada por DI',

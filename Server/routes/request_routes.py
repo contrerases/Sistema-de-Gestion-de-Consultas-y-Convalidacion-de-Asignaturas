@@ -54,7 +54,7 @@ async def get_request_by_id(request_id: int):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        cursor.callproc("GetRequestByIDProcessed", (request_id,))
+        cursor.callproc("GetRequestByID", (request_id,))
         request = cursor.fetchone()
 
         cursor.callproc("GetConvalidationsByRequestID", (request_id,))
@@ -248,7 +248,7 @@ async def insert_request(request: INSERT_MODEL):
 
 
 
-#revision de solicitud - only changue comments, state and id_user_approves
+
 
 @router.put("/")
 async def update_request(request: UPDATE_MODEL):
@@ -256,12 +256,19 @@ async def update_request(request: UPDATE_MODEL):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
+        print(request)
+
         cursor.callproc("UpdateRequest", (
             request.id,
             request.comments,
-            request.state,
-            request.id_user_approves
+            request.id_user_approver
         ))
+
+        for convalidation in request.convalidations:
+            cursor.callproc("UpdateConvalidation", (
+                convalidation.id,
+                convalidation.state
+            ))
 
         conn.commit()
         cursor.close()

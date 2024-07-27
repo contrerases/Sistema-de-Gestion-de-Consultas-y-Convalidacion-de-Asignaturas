@@ -1,32 +1,55 @@
-
-import { defineStore } from 'pinia'
-import {getConvalidationsByState} from '@/services/convalidation_api'
-
-import type { ConvalidationResponse, ConvalidationBase, ConvalidationPost } from '@/interfaces/convalidation_model'
-import { ConvalidationStates } from '@/enums/convalidation_states'
+import { defineStore } from "pinia";
+import type {
+  Request,
+  RequestInsert,
+  RequestResponse,
+  RequestUpdate,
+} from "@/interfaces/request_model";
+import { getRequestsByState, insertRequest, updateRequest } from "@/services/request_api";
+import { RequestStates } from "@/enums/request_states";
 
 interface State {
-  request_convalidations: ConvalidationResponse[]
-  error: Error | null
+  requests: RequestResponse[];
+  error: Error | null;
 }
 
-export const useRequestConvalidationsStore = defineStore('request_convalidations', {
+export const useRequestStore = defineStore("request", {
   state: (): State => ({
-    request_convalidations: [],
-    error: null
+    requests: [],
+    error: null,
   }),
   getters: {
-    allRequestConvalidations: (state) => state.request_convalidations,
+    allSendRequests: (state) => state.requests,
   },
   actions: {
-    async getAllRequestConvalidationsStore() {
-        try {
-          this.request_convalidations = await getConvalidationsByState(ConvalidationStates.ENVIADA)
-        } catch (error) {
-          this.error = error as Error
-          throw error
-        }
-    },
-  }
-})
 
+    async getSendRequestsStore() {
+      try {
+        this.requests = await getRequestsByState(RequestStates.ENVIADA);
+      } catch (error) {
+        this.error = error as Error;
+        throw error;
+      }
+    },
+
+    async insertRequestStore(request: RequestInsert) {
+      try {
+        await insertRequest(request);
+        await this.getSendRequestsStore();
+      } catch (error) {
+        this.error = error as Error;
+        throw error;
+      }
+    },
+
+    async updateRequestStore(request: RequestUpdate) {
+      try {
+        await updateRequest(request);
+        await this.getSendRequestsStore();
+      } catch (error) {
+        this.error = error as Error;
+        throw error;
+      }
+    }
+  },
+});

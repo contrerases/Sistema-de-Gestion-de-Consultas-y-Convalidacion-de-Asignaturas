@@ -1,260 +1,280 @@
 <script setup lang="ts">
-import type { ConvalidationResponse, ConvalidationBase, ConvalidationPost } from "@/interfaces/convalidation_model";
-import formatReadableDate from '@/helpers/format_date';
 import { ref } from "vue";
-import { useConvalidationsStore } from '@/stores/convalidation_store';
+
+import type {
+  RequestInsert,
+  RequestResponse,
+  RequestUpdate,
+  Request,
+} from "@/interfaces/request_model";
+
+import formatReadableDate from "@/helpers/format_date";
+import downloadPdf from "@/helpers/download_file";
+
 import { Icon } from "@iconify/vue";
+
 import ConfirmationDialog from "@/common/dialogs/ConfirmationDialog.vue";
 import AlertDialog from "@/common/dialogs/AlertDialog.vue";
 import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
-import downloadPdf from "@/helpers/download_file";
-
-
 
 import {
-      Select,
-      SelectContent,
-      SelectGroup,
-      SelectItem,
-      SelectTrigger,
-      SelectValue,
-} from '@/common/select'
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/common/select";
 
-import { ConvalidationStates } from "@/enums/convalidation_states";
-
-
-const emit = defineEmits(['update-list']);
+import { RequestStates } from "@/enums/request_states";
+import { useRequestStore } from "@/stores/request_convalidation_store";
 
 const props = defineProps<{
-  convalidation: ConvalidationResponse;
+  request: RequestResponse;
 }>();
+
+console.log(props.request);
+
+const emit = defineEmits(["update-list"]);
+
+const showConfirmationDialog = ref<boolean>(false);
 
 const showCard = ref(false);
 
-function toggleCardShow() {
-  showCard.value = !showCard.value;
-}
+const showAlertDialog = ref<boolean>(false);
+const messageAlert = ref<string>("");
+const showSuccessDialog = ref<boolean>(false);
 
+const request_store = useRequestStore();
 
-
-
-const convalidationsStore = useConvalidationsStore();
-
-async function updateConvalidationHandler() {
-  if (props.convalidation.state === ConvalidationStates.ENVIADA) {
-    toggleConfirmationDialog();
-    toggleAlertDialog("El estado de la convalidación no ha cambiado");
-    return;
-  }
-
-  let update_data = {
-    id: props.convalidation.id,
-    state: props.convalidation.state,
-    comments: props.convalidation.comments,
-  };
-
-  try {
-    await convalidationsStore.updateConvalidationStore(update_data);
-    toggleConfirmationDialog();
-    toggleSuccessDialog();
-  } catch (error) {
-    toggleConfirmationDialog();
-    toggleAlertDialog("No se pudo enviar la convalidación");
-  }
-}
-
-
-
-const showConfirmationDialog = ref<boolean>(false);  
 
 
 function toggleConfirmationDialog() {
   showConfirmationDialog.value = !showConfirmationDialog.value;
 }
 
-const showAlertDialog = ref<boolean>(false);
-const messageAlert = ref<string>('');
+function toggleCardShow() {
+  showCard.value = !showCard.value;
+}
 
-function toggleAlertDialog(message: string ) {
+function toggleAlertDialog(message: string) {
   messageAlert.value = message;
   showAlertDialog.value = !showAlertDialog.value;
 }
 
-
-const showSuccessDialog = ref<boolean>(false);
-
 function toggleSuccessDialog() {
   if (showSuccessDialog.value) {
     showSuccessDialog.value = false;
-    emit('update-list');
+    emit("update-list");
   } else {
     showSuccessDialog.value = true;
   }
 }
 
+async function updateRequestHandler() { 
+  let convalidations = props.request.convalidations;
+  let canSend = true;
+  for (let i = 0; i < convalidations.length; i++) {
+    if (convalidations[i].state == RequestStates.ENVIADA) {
+      canSend = false;
+      break;
+    }
+  }
 
+  if (!canSend) {
+    toggleConfirmationDialog();
+    toggleAlertDialog("Algunas convalidaciones no han cambiado su estado");
+    return;
+  }
+ 
+  
+  
+  let requestUpdate: RequestUpdate = {
+    id: props.request.id,
+    comments: props.request.comments,
+    id_user_approver: 1,
+    convalidations: props.request.convalidations.map((convalidation) => {
+      return {
+        id: convalidation.id,
+        state: convalidation.state,
+      };
+    }),
+  };
 
-
+ 
+  try {
+    await request_store.updateRequestStore(requestUpdate);
+    toggleConfirmationDialog();
+    toggleSuccessDialog();
+  } catch (error) {
+    toggleConfirmationDialog();
+    toggleAlertDialog("Error al enviar la revisión");
+  }
+}
 
 
 </script>
 
 <template>
+  <ConfirmationDialog :isOpen="showConfirmationDialog" title="Enviar revisión"
+    message="¿Está seguro de terminar la revisíon?" @confirm="updateRequestHandler"
+    @cancel="toggleConfirmationDialog" />
 
-  <ConfirmationDialog
-    :isOpen="showConfirmationDialog"
-    title="Enviar Convalidación"
-    message="¿Está seguro de enviar la convalidación?"
-    @confirm="updateConvalidationHandler"
-    @cancel="toggleConfirmationDialog"
-  />
+  <AlertDialog :isOpen="showAlertDialog" title="Error" :message="messageAlert" @close="toggleAlertDialog" />
 
-  <AlertDialog
-    :isOpen="showAlertDialog"
-    title="Error"
-    :message="messageAlert"
-    @close="toggleAlertDialog"
-  />
-
-  <SuccessDialog
-    :isOpen="showSuccessDialog"
-    title="Convalidación Enviada"
-    message="La convalidación ha sido enviada correctamente"
-    @close="toggleSuccessDialog"
-  />
-
+  <SuccessDialog :isOpen="showSuccessDialog" title="Convalidación Enviada"
+    message="La convalidación ha sido enviada correctamente" @close="toggleSuccessDialog" />
   <main class="main">
     <div class="card">
       <div class="visible-card">
-        <div class="rows grid-cols-7">
-          <div class="item">
+        <div class="rows grid-cols-8">
+          <div class="item col-span-2">
             <div class="title">ID</div>
-            <div class="box">
-              {{ props.convalidation.id }}
-            </div>
+            <div class="box">{{ request.id }}</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">ROL ESTUDIANTE</div>
-            <div class="box">
-              {{ props.convalidation.student_rol }}
-            </div>
+          <div class="item col-span-3">
+            <div class="title">RUT</div>
+            <div class="box">{{ request.rut_student }}</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">NOMBRE ESTUDIANTE</div>
-            <div class="box">
-              {{ props.convalidation.student_name }}
-            </div>
+          <div class="item col-span-3">
+            <div class="title">NOMBRE</div>
+            <div class="box">{{ request.name_student }}</div>
           </div>
-          <div class="item col-span-2">
-            <div class="title">TIPO DE CONVALIDACIÓN</div>
-            <div class="box">
-              {{ props.convalidation.convalidation_type }}
-            </div>
-          </div>       
         </div>
-        
-        <div class="rows grid-cols-3">
+        <div class="rows grid-cols-2">
           <div class="item">
-            <div class="title">CURSO A CONVALIDAR</div>
-            <div class="box">
-              {{ props.convalidation.curriculum_course }}
-            </div>
-          </div>
-          <div v-if="props.convalidation.subject !== null" class="item">
-            <div class="title">ASIGNATURA CURSADA</div>
-            <div class="box">{{ props.convalidation.subject }}</div>
+            <div class="title">ROL</div>
+            <div class="box">{{ request.rol_student }}</div>
           </div>
 
-          <div v-if="props.convalidation.workshop !== null" class="item ">
-            <div class="title">TALLER CURSADO</div>
-            <div class="box">{{ props.convalidation.workshop }}</div>
-          </div>
-          <div v-if="props.convalidation.certified_course_name !== null" class="item">
-            <div class="title">CURSO REALIZADO</div>
-            <div class="box">{{ props.convalidation.certified_course_name }}</div>
-          </div>
-          <div v-if="props.convalidation.personal_project_name !== null" class="item">
-            <div class="title">PROYECTO CURSADO</div>
-            <div class="box">{{ props.convalidation.personal_project_name }}</div>
-          </div>
           <div class="item">
-            <div class="title">Archivo</div>
-            <div class="box">
-              <button class="download-button"
-                v-if="props.convalidation.convalidation_type == 'Curso Certificado'"
-                @click="downloadPdf(props.convalidation.file_data)">
-                📄 Descargar Certificado
-              </button>
-              <button
-                v-else-if="props.convalidation.convalidation_type == 'Proyecto Personal'"
-                @click="downloadPdf(props.convalidation.file_data)">
-                📄 Descargar Proyecto
-              </button>
-              <button v-else disabled> - </button>
-            </div>
+            <div class="title">CAMPUS</div>
+            <div class="box">{{ request.campus_student }}</div>
           </div>
         </div>
       </div>
       <transition name="accordion">
         <div v-show="showCard" class="hidden-card">
-          <div class="grid grid-cols-2 gap-5">
+          <div class="rows grid-cols-2">
             <div class="item">
               <div class="title">FECHA DE CREACIÓN</div>
               <div class="box">
-                {{ formatReadableDate(props.convalidation.creation_date) }}
+                {{ formatReadableDate(request.creation_date) }}
               </div>
             </div>
+
             <div class="item">
-              <div class="title">FECHA DE APROBACIÓN</div>
+              <div class="title">FECHA DE REVISIÓN</div>
               <div class="box">
-                {{ formatReadableDate(props.convalidation.revision_date) }}
+                {{ formatReadableDate(request.revision_date) }}
               </div>
             </div>
           </div>
+
+          <div class="text-4xl font-bold py-2 font-mono">Convalidaciones</div>
+          <div class="line mt-2"></div>
+          <div class="rows grid-cols-5 font-mono">
+            <div class="title-table">TIPO DE CONVALIDACION</div>
+            <div class="title-table">ASIGNATURA A CONVALIDAR</div>
+            <div class="title-table">
+              ASIGNATURA <br />
+              CURSADA
+            </div>
+            <div class="title-table">
+              ARCHIVO <br />
+              ADJUNTO
+            </div>
+            <div class="title-table">
+              ESTADO DE <br />
+              SOLICITUD
+            </div>
+          </div>
+
           <div class="line"></div>
-          <div class="rows grid-cols-3">
-            <div class="item col-span-2 row-span-2">
-              <div class="title">COMENTARIOS</div>
-              <input v-model="props.convalidation.comments" class="comment-box"></input>
-            </div>
-            
-            <div class="item flex">
-              <div class="title">
-                Estado
+
+          <div v-for="convalidation in request.convalidations">
+            <div class="rows grid-cols-5">
+
+              <div class="item">
+                <div class="box">{{ convalidation.convalidation_type }}</div>
               </div>
-      
-              <Select v-model="convalidation.state">
-                <SelectTrigger class="h-full overflow-hidden mt-1">
-                  <SelectValue placeholder="Estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="Enviada">
-                      Enviada
-                    </SelectItem>
-                    <SelectItem value="Rechazada">
-                      Rechazada
-                    </SelectItem>
-                    <SelectItem value="Aprobada por DI">
-                      Aprobada por DI
-                    </SelectItem>
-                    <SelectItem value="En espera de DE">
-                      En espera de DE
-                    </SelectItem>
-                    <SelectItem value="Aprobada por DE">
-                      Aprobada por DE
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+
+              <div class="item">
+                <div class="box">{{ convalidation.curriculum_course }}</div>
+              </div>
+
+              <!--  --------------------------------------------------- -->
+
+              <div v-if="convalidation.id_subject_to_convalidate != null" class="item">
+                <div class="box">{{ convalidation.subject }}</div>
+              </div>
+
+              <div v-if="convalidation.id_workshop_to_convalidate != null" class="item">
+                <div class="box">{{ convalidation.workshop }}</div>
+              </div>
+
+              <div v-if="convalidation.certified_course_name != null" class="item">
+                <div class="box">{{ convalidation.certified_course_name }}</div>
+              </div>
+
+              <div v-if="convalidation.personal_project_name != null" class="item">
+                <div class="box">{{ convalidation.personal_project_name }}</div>
+              </div>
+
+              <!-- ---------------------------------------------------- -->
+
+
+              <div class="item">
+                <button @click="downloadPdf(convalidation.file_data)" class="box">📄 {{ convalidation.file_name }}</button>
+              </div>
+
+              <div class="item">
+                <Select v-model="convalidation.state">
+                  <SelectTrigger class="h-full overflow-hidden mt-1">
+                    <SelectValue placeholder="Estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="Enviada">
+                        Enviada
+                      </SelectItem>
+                      <SelectItem value="Rechazada">
+                        Rechazada
+                      </SelectItem>
+                      <SelectItem value="Aprobada por DI">
+                        Aprobada por DI
+                      </SelectItem>
+                      <SelectItem value="En espera de DE">
+                        En espera de DE
+                      </SelectItem>
+                      <SelectItem value="Aprobada por DE">
+                        Aprobada por DE
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-
-            <button class="send-button" @click="toggleConfirmationDialog">
-                Enviar Revisión
-            </button>
+            <div class="line"></div>
           </div>
+
+          <div class="item mb-5">
+            <div class="title pb-2">COMENTARIOS</div>
+            <div class="grid grid-cols-3 gap-5 grid-rows-2">
+              <input v-model="request.comments" class="comment-box col-span-2 row-span-2"></input>
+              <button class="send-button row-span-2" @click="toggleConfirmationDialog">
+                Enviar Revisión
+              </button>
+            </div>
+          </div>
+
+
+
+
+
         </div>
+
       </transition>
     </div>
     <div @click="toggleCardShow" class="rounded-b-lg flex justify-center p-1 opacity-80 cursor-pointer bg-primary">
@@ -286,7 +306,7 @@ function toggleSuccessDialog() {
 }
 
 .box {
-  @apply flex rounded-lg p-2 mt-1 h-full bg-input;
+  @apply flex rounded-lg p-2 mt-1 h-full bg-input text-center items-center ;
 }
 
 .state-box {
@@ -294,12 +314,11 @@ function toggleSuccessDialog() {
 }
 
 .comment-box {
-  @apply  flex rounded-lg p-2 mt-1 h-full bg-input border border-primary text-sm ring-offset-background   placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-
+  @apply flex rounded-lg p-2 pb-4 h-full bg-input border border-primary text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .hidden-card {
-  @apply flex flex-col;
+  @apply flex flex-col pb-3;
 }
 
 .line {
@@ -311,9 +330,8 @@ function toggleSuccessDialog() {
 }
 
 .send-button {
-  @apply bg-primary text-foreground rounded-lg p-2 mt-1 hover:opacity-80;
+  @apply bg-primary text-foreground rounded-md hover:opacity-80;
 }
-
 
 .accordion-enter-active,
 .accordion-leave-active {
@@ -331,6 +349,4 @@ function toggleSuccessDialog() {
   max-height: 500px;
   opacity: 1;
 }
-
-
 </style>

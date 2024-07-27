@@ -18,7 +18,7 @@ import RequestReviewCardList from '@/modules/admin/requests/RequestReviewCardLis
 }
 
 .request-title {
-  @apply text-5xl text-foreground font-bold mb-10;
+  @apply text-5xl text-foreground font-bold mb-10 font-mono;
 }
 
 .request-content {

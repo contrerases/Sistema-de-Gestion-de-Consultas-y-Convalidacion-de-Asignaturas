@@ -87,10 +87,6 @@ CREATE TABLE SUBJECTS (
 CREATE TABLE REQUESTS (
     id INT NOT NULL AUTO_INCREMENT,
     id_student INT NOT NULL,
-    -- rol_student VARCHAR(10) NOT NULL,
-    -- rut_student VARCHAR(12) NOT NULL,
-    -- campus_student VARCHAR(255) NOT NULL,
-    state VARCHAR(50) NOT NULL DEFAULT 'Enviada', -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     revision_date TIMESTAMP,
     comments TEXT DEFAULT NULL,
@@ -106,7 +102,7 @@ CREATE TABLE CONVALIDATIONS (
     id INT NOT NULL AUTO_INCREMENT,
     id_request INT NOT NULL,
     id_convalidation_type INT NOT NULL, -- Asignatura INF, Asignatutra Externa,  Curso Certificado,Taller de INF, Proyecto Personal
-    state VARCHAR(50) NOT NULL DEFAULT 'Enviada',  -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
+      state ENUM('Enviada', 'Rechazada', 'Aprobada por DI', 'En espera de DE', 'Aprobada por DE') NOT NULL DEFAULT 'Enviada',  -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
     id_curriculum_course INT NOT NULL,
     id_subject_to_convalidate INT NULL,
     id_workshop_to_convalidate INT NULL,
