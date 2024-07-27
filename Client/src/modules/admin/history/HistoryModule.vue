@@ -1,6 +1,6 @@
 <template>
     <main class="history-main">
-        <h1 class="history-title">Solicitudes</h1>
+        <h1 class="history-title">Historial</h1>
         <div class="history-content">
             <HistoryViewCardList/>
         </div>
@@ -18,7 +18,7 @@ import HistoryViewCardList from '@/modules/admin/history/HistoryViewCardList.vue
 }
 
 .history-title {
-  @apply text-5xl text-foreground font-bold mb-10;
+  @apply text-5xl text-foreground font-bold mb-10 font-mono;
 }
 
 .history-content {

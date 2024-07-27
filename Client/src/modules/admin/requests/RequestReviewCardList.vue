@@ -24,7 +24,7 @@
   import LoadingSpinner from '@/common/LoadingSpinner.vue';
 
 
-  import { useRequestStore } from '@/stores/request_convalidation_store';
+  import { useRequestStore } from '@/stores/request_store';
   
 
 

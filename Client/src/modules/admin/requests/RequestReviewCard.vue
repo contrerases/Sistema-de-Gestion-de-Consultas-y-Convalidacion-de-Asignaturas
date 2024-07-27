@@ -27,7 +27,7 @@ import {
 } from "@/common/select";
 
 import { RequestStates } from "@/enums/request_states";
-import { useRequestStore } from "@/stores/request_convalidation_store";
+import { useRequestStore } from "@/stores/request_store";
 
 const props = defineProps<{
   request: RequestResponse;
@@ -173,7 +173,7 @@ async function updateRequestHandler() {
 
           <div class="text-4xl font-bold py-2 font-mono">Convalidaciones</div>
           <div class="line mt-2"></div>
-          <div class="rows grid-cols-5 font-mono">
+          <div class="rows grid-cols-5">
             <div class="title-table">TIPO DE CONVALIDACION</div>
             <div class="title-table">ASIGNATURA A CONVALIDAR</div>
             <div class="title-table">
@@ -302,33 +302,35 @@ async function updateRequestHandler() {
 }
 
 .title {
-  @apply font-bold text-xs pl-1;
+  @apply font-bold text-lg pl-1;
 }
 
+.title-table {
+  @apply font-bold text-sm;
+}
 .box {
-  @apply flex rounded-lg p-2 mt-1 h-full bg-input text-center items-center ;
+  @apply flex rounded-lg p-2 mt-1 h-full bg-input;
 }
 
 .state-box {
   @apply flex items-center border-2 rounded-lg p-2 mt-1 bg-input;
 }
 
-.comment-box {
-  @apply flex rounded-lg p-2 pb-4 h-full bg-input border border-primary text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-}
-
 .hidden-card {
-  @apply flex flex-col pb-3;
+  @apply flex flex-col pb-4;
 }
 
 .line {
-  @apply border-t mt-8 mb-6;
+  @apply border-t-2 pb-4;
 }
 
 .download-button {
   @apply hover:text-blue-500;
 }
 
+.comment-box {
+  @apply flex rounded-lg p-2 pb-4 h-full bg-input border border-primary text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+}
 .send-button {
   @apply bg-primary text-foreground rounded-md hover:opacity-80;
 }

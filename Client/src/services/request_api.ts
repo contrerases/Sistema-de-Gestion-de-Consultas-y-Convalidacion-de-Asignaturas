@@ -34,7 +34,7 @@ export async function getRequestByID(id: number): Promise<RequestResponse> {
 
 // getrequeststudentrol
 
-export async function getRequestByStudentRol(student_rol: string): Promise<RequestResponse> {
+export async function getRequestByStudentRut(student_rol: string): Promise<RequestResponse> {
     try {
         const { data: request } = await axios.get<RequestResponse>(`${BASE_URL}student/rut/${student_rol}`);
         return request;
@@ -47,7 +47,7 @@ export async function getRequestByStudentRol(student_rol: string): Promise<Reque
 
 // byrol
 
-export async function getRequestsByRol(rol: string): Promise<RequestResponse[]> {
+export async function getRequestsByStudentRol(rol: string): Promise<RequestResponse[]> {
     try {
         const { data: requests } = await axios.get<RequestResponse[]>(`${BASE_URL}student/rol/${rol}`);
         return requests;
@@ -83,6 +83,9 @@ export async function getRequestsByState(state: string): Promise<RequestResponse
         throw error;
     }
 }
+
+//by rut 
+
 
 // insert
 
