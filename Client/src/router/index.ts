@@ -21,43 +21,43 @@ const router = createRouter({
       path: '/administrador',
       name: 'Administrador',
       component: AdminView,
-      redirect: {name: 'Estadisticas'},
+      redirect: {name: 'a/estadisticas'},
 
       children: [
 
         {
           path: 'estadisticas',
-          name: 'Estadisticas',
+          name: 'a/estadisticas',
           component: StatsModule
         },
 
         {
           path: 'solicitudes',
-          name: 'Solicitudes',
+          name: 'a/solicitudes',
           component: RequestModule
         },
 
         {
           path: 'historial',
-          name: 'Historial',
+          name: 'a/historial',
           component: HistoryModule
         },
 
         {
           path: 'talleres',
-          name: 'Talleres',
+          name: 'a/talleres',
           component: WorkshopsModule
         },
         
         {
           path: 'cursos',
-          name: 'Cursos',
+          name: 'a/cursos',
           component: CurriculumCoursesModule
         },
 
         {
           path: 'asignaturas',
-          name: 'Asignaturas',
+          name: 'a/asignaturas',
           component: SubjectsModule
         },
 
@@ -72,31 +72,31 @@ const router = createRouter({
       path: '/estudiante',
       name: 'Estudiante',
       component: StudentView,
-      redirect: {name: 'S-Inicio'},
+      redirect: {name: 's/inicio'},
 
       children: [
     
         {
           path: 'inicio',
-          name: 'S-Inicio',
+          name: 's/inicio',
           component: CurriculumCoursesModule
         }, 
 
         {
           path: 'convalidaciones',
-          name: 'S-Convalidaciones',
+          name: 's/convalidaciones',
           component: CurriculumCoursesModule
         }, 
 
         {
           path: 'talleres',
-          name: 'S-Talleres',
+          name: 's/talleres',
           component: CurriculumCoursesModule
         },  
 
         {
           path: 'nueva_solicitud',
-          name: 'S-NuevaSolicitud',
+          name: 's/nueva_solicitud',
           component: NewRequestModule
         },
 

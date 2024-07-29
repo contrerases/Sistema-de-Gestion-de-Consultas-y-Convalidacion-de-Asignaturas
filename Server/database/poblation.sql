@@ -1,66 +1,70 @@
-INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password) VALUES
-('Ana', 'Maria', 'Lopez', 'Martinez', 'ana.lopez@example.com', 'password123'),
-('Luis', 'Carlos', 'Gomez', 'Fernandez', 'luis.gomez@example.com', 'password123'),
-('Sofia', 'Elena', 'Ramirez', 'Mendez', 'sofia.ramirez@example.com', 'password123');
 
 
-INSERT INTO STUDENTS (rol_student, rut_student, campus_student, first_name, second_name, first_last_name, second_last_name, email, password) VALUES
-('2021001', '12345678-9', 'Campus Norte', 'Juan', 'Pablo', 'Pérez', 'García', 'juan.perez@example.com', 'password123'),
-('2021002', '23456789-0', 'Campus Sur', 'María', 'José', 'González', 'Vásquez', 'maria.gonzalez@example.com', 'password123'),
-('2021003', '34567890-1', 'Campus Centro', 'Carlos', 'Andrés', 'Martínez', 'Ortega', 'carlos.martinez@example.com', 'password123'),
-('2021004', '45678901-2', 'Campus Este', 'Laura', 'Cristina', 'Fernández', 'Castro', 'laura.fernandez@example.com', 'password123'),
-('2021005', '56789012-3', 'Campus Oeste', 'Pedro', 'Alejandro', 'Ramírez', 'Jara', 'pedro.ramirez@example.com', 'password123');
+-- Insertar datos de prueba en la tabla ADMINISTRATORS
+INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password)
+VALUES 
+('Juan', 'Carlos', 'Pérez', 'González', 'juan.perez@example.com', 'password123'),
+('Ana', 'María', 'López', 'Fernández', 'ana.lopez@example.com', 'password456');
 
+-- Insertar datos de prueba en la tabla STUDENTS
+INSERT INTO STUDENTS (rol_student, rut_student, campus_student, first_name, second_name, first_last_name, second_last_name, email, password)
+VALUES 
+('20210001', '12345678-9', 'Santiago', 'Luis', 'Alberto', 'García', 'Mendoza', 'luis.garcia@example.com', 'password789'),
+('20210002', '98765432-1', 'Valparaíso', 'María', 'José', 'Rodríguez', 'López', 'maria.rodriguez@example.com', 'password321');
 
-INSERT INTO TYPES_COURSES (name) VALUES
+-- Insertar datos de prueba en la tabla TYPES_CONVALIDATIONS
+INSERT INTO TYPES_CONVALIDATIONS (name)
+VALUES 
 ('Asignatura INF'),
 ('Asignatura Externa'),
 ('Curso Certificado'),
 ('Taller de INF'),
 ('Proyecto Personal');
 
+-- Insertar datos de prueba en la tabla TYPES_CURRICULM_COURSES
+INSERT INTO TYPES_CURRICULM_COURSES (name)
+VALUES 
+('Libre'),
+('Electivo Informática'),
+('Electivo');
 
-INSERT INTO DEPARTMENTS (name) VALUES
-('Departamento de Ingeniería'),
-('Departamento de Ciencias Sociales'),
-('Departamento de Humanidades');
+-- Insertar datos de prueba en la tabla CURRICULUM_COURSES
+INSERT INTO CURRICULUM_COURSES (name, id_type_curriculum_course)
+VALUES 
+('Libre 1', 1),
+('Libre 2', 1),
+('Electivo 1', 3),
+('Electivo de Informática 1', 2);
 
-INSERT INTO CURRICULUM_COURSES (name) VALUES
-('Matemáticas Avanzadas'),
-('Historia Contemporánea'),
-('Literatura Inglesa');
+-- Insertar datos de prueba en la tabla DEPARTMENTS
+INSERT INTO DEPARTMENTS (name)
+VALUES 
+('Departamento de Informática'),
+('Departamento de Matemáticas');
 
+-- Insertar datos de prueba en la tabla WORKSHOPS
+INSERT INTO WORKSHOPS (name)
+VALUES 
+('Taller de Desarrollo Web'),
+('Taller de Robótica');
 
-INSERT INTO WORKSHOPS (name) VALUES
-('Taller de Programación'),
-('Taller de Escritura Creativa');
+-- Insertar datos de prueba en la tabla SUBJECTS
+INSERT INTO SUBJECTS (acronym, name, id_department, credits)
+VALUES 
+('INF101', 'Introducción a la Informática', 1, 6),
+('MAT101', 'Cálculo I', 2, 8);
 
+-- Insertar datos de prueba en la tabla REQUESTS
+INSERT INTO REQUESTS (id_student, creation_date, revision_date, comments, id_user_approves)
+VALUES 
+(1, '2023-01-01 10:00:00', '2023-01-05 14:00:00', 'Solicitud de convalidación', 1),
+(2, '2023-02-01 11:00:00', '2023-02-05 15:00:00', 'Solicitud de convalidación', 2);
 
-INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES
-('MAT201', 'Matemáticas II', 1, 6),
-('HIS102', 'Historia del Mundo', 2, 5),
-('LIT303', 'Literatura Contemporánea', 3, 4);
+-- Insertar datos de prueba en la tabla CONVALIDATIONS
+INSERT INTO CONVALIDATIONS (id_request, id_convalidation_type, state, id_curriculum_course, id_subject_to_convalidate, id_workshop_to_convalidate, certified_course_name, personal_project_name, file_data, file_name)
+VALUES 
+(1, 1, 'Enviada', 1, 1, NULL, NULL, NULL, NULL, NULL),
+(2, 3, 'Enviada', 3, NULL, 1, 'Curso de Programación', NULL, NULL, NULL);
 
-
-INSERT INTO REQUESTS (id_student, creation_date, revision_date, comments, id_user_approves) VALUES
-(1, NOW(), NULL, 'Solicitud para convalidar Matemáticas Avanzadas.', 1),
-(2, NOW(), NULL, 'Convalidación de Historia Contemporánea.', 2),
-(3, NOW(), NULL, 'Solicitud de convalidación de Literatura Inglesa.', 3),
-(4, NOW(), NULL, 'Petición para convalidar Taller de Programación.', 1),
-(5, NOW(), NULL, 'Solicitud para convalidar Proyecto Personal.', 2);
-
-INSERT INTO CONVALIDATIONS (id_request, id_convalidation_type, state, id_curriculum_course, id_subject_to_convalidate, id_workshop_to_convalidate, certified_course_name, personal_project_name, file_data, file_name) VALUES
--- Convalidaciones para la primera solicitud
-(1, 1, 'Enviada', 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(1, 2, 'Enviada', 1, 1, NULL, NULL, NULL, NULL, NULL),
--- Convalidaciones para la segunda solicitud
-(2, 3, 'Enviada', 1, NULL, NULL, NULL, NULL, NULL, NULL),
--- Convalidaciones para la tercera solicitud
-(3, 1, 'Enviada', 1, 3, NULL, NULL, NULL, NULL, NULL),
--- Convalidaciones para la cuarta solicitud
-(4, 4, 'Enviada', 1, NULL, 1, NULL, NULL, NULL, NULL),
--- Convalidaciones para la quinta solicitud
-(5, 5, 'Enviada', 1, NULL, NULL, NULL, 'Proyecto Innovador', NULL, NULL);
-
-
-
+-- Reactivar restricciones de claves foráneas
+SET FOREIGN_KEY_CHECKS = 1;

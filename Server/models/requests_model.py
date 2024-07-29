@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-from models.convalidations_model import Convalidation, ConvalidationUpdate
+from models.convalidations_model import Convalidation, ConvalidationUpdate, ConvalidationResponse
 
 
 class RequestInsert(BaseModel):
@@ -22,6 +22,7 @@ class RequestResponse(Request):
     campus_student: str
     creation_date: Optional[datetime] = None
     revision_date: Optional[datetime] = None
+    convalidations: List[ConvalidationResponse]
 
 class RequestUpdate(BaseModel):
     id: int

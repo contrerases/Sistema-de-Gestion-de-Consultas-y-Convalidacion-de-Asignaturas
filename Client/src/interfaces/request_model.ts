@@ -1,10 +1,10 @@
-import type { Convalidation, ConvalidationUpdate } from "./convalidation_model";
+import type { Convalidation, ConvalidationUpdate, ConvalidationResponse, ConvalidationInsert } from "./convalidation_model";
 
 export interface RequestInsert {
   id_student : number;
   comments : string | null;
   id_user_approver : number | null;
-  convalidations : Convalidation[];
+  convalidations : ConvalidationInsert[];
 }
 
 export interface Request extends RequestInsert {
@@ -19,6 +19,7 @@ export interface RequestResponse extends Request {
   user_approver: string | null;
   creation_date: string | null;
   revision_date: string | null;
+  convalidations: ConvalidationResponse[];
 }
 
 export interface RequestUpdate {
