@@ -13,7 +13,7 @@ BASE_MODEL = departments_model.DepartmentBase
 RESPONSE_MODEL = departments_model.DepartmentResponse
 POST_MODEL = departments_model.DepartmentPost
 
-@router.get("/departments", response_model=List[RESPONSE_MODEL])
+@router.get("/", response_model=List[RESPONSE_MODEL])
 async def get_departments():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -24,7 +24,7 @@ async def get_departments():
 
 
 #post
-@router.post("/departments")
+@router.post("/")
 async def add_department(department: POST_MODEL):
     try:
         conn = get_db_connection()

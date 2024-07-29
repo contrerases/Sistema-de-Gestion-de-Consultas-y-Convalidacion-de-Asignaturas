@@ -5,7 +5,7 @@ BEGIN
         CONVALIDATIONS.id_request,
         CONVALIDATIONS.state,
         CONVALIDATIONS.id_convalidation_type,
-        TYPES_COURSES.name AS convalidation_type,
+        TYPES_CONVALIDATIONS.name AS convalidation_type,
         CONVALIDATIONS.id_curriculum_course,
         CURRICULUM_COURSES.name AS curriculum_course,
         CONVALIDATIONS.id_subject_to_convalidate,
@@ -19,7 +19,7 @@ BEGIN
     FROM
         CONVALIDATIONS
     LEFT JOIN 
-        TYPES_COURSES ON CONVALIDATIONS.id_convalidation_type = TYPES_COURSES.id
+        TYPES_CONVALIDATIONS ON CONVALIDATIONS.id_convalidation_type = TYPES_CONVALIDATIONS.id
     LEFT JOIN 
         CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id
     LEFT JOIN 

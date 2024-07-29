@@ -1,9 +1,8 @@
-DELIMITER //
 
 CREATE PROCEDURE GetAllCurriculumCourses()
 BEGIN
-    SELECT id, name FROM CURRICULUM_COURSES;
-END//
+    SELECT id, name, id_type_curriculum_course FROM CURRICULUM_COURSES;
+END
 
 
 
@@ -12,20 +11,15 @@ CREATE PROCEDURE InsertCurriculumCourse(
 )
 BEGIN
     INSERT INTO CURRICULUM_COURSES (name) VALUES (course_name);
-END//
+END
 
 
 
-DELIMITER ;
-
-
-DELIMITER //
 
 CREATE PROCEDURE DeleteCurriculumCourseById(
     IN course_id INT
 )
 BEGIN
     DELETE FROM CURRICULUM_COURSES WHERE id = course_id;
-END//
+END
 
-DELIMITER ;
