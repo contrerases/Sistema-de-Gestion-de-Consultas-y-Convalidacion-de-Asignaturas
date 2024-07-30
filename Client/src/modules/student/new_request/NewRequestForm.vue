@@ -34,15 +34,15 @@
       <div v-for="(convalidation, index) in convalidations" :key="index" class="rows grid-cols-6">
 
 
-        <Select v-model="lee">
+        <Select v-model="tcc">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="L">Libre</SelectItem>
-              <SelectItem value="E">Electivo</SelectItem>
-              <SelectItem value="EI">Electivo Informática</SelectItem>
+              <SelectItem v-for="type in types_curriculum_courses" :key="type.id" :value="String(type.id)">
+                {{ type.name }}
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -56,16 +56,16 @@
             <SelectItem value="INF">
               {{ CourseConvalidationTypes.INF }}
             </SelectItem>
-            <SelectItem value="EXTERNA" v-if="lee != 'EI'">
+            <SelectItem value="EXTERNA" v-if="tcc != 'EI'">
               {{ CourseConvalidationTypes.EXTERNA }}
             </SelectItem>
-            <SelectItem value="TALLER" v-if="lee === 'L'">
+            <SelectItem value="TALLER" v-if="tcc === 'L'">
               {{ CourseConvalidationTypes.TALLER }}
             </SelectItem>
-            <SelectItem value="PROYECTO" v-if="lee === 'L'">
+            <SelectItem value="PROYECTO" v-if="tcc === 'L'">
               {{ CourseConvalidationTypes.PROYECTO }}
             </SelectItem>
-            <SelectItem value="CERTIFICADO" v-if="lee === 'L'">
+            <SelectItem value="CERTIFICADO" v-if="tcc === 'L'">
               {{ CourseConvalidationTypes.CERTIFICADO }}
             </SelectItem>
           </SelectContent>
@@ -181,20 +181,22 @@ import {
 
 import { CourseConvalidationTypes } from "@/enums/courses_convalidation_types";
 
-import type { Convalidation, ConvalidationResponse, ConvalidationInsert } from "@/interfaces/convalidation_model";
+import type { Convalidation, ConvalidationResponse, ConvalidationUpdate } from "@/interfaces/convalidation_model";
 import type { RequestInsert } from "@/interfaces/request_model";
 
 
 import type { CurriculumCourseBase } from "@/interfaces/curriculum_course_model";
 import type { SubjectBase } from "@/interfaces/subject_model";
-import type { TypeCourseBase } from "@/interfaces/type_course_model";
+import type { TypeConvalidationBase } from "@/interfaces/type_convalidation_model";
 import type { WorkshopBase } from "@/interfaces/workshop_model";
+import type { TypeCurriculumCourseBase } from "@/interfaces/type_curriculum_course_model";
 
 // RECURSOS
 import { getAllCurriculumCourses } from "@/services/curriculm_course_api";
-import { getAllTypesCourses } from "@/services/type_course_api";
+import { getAllTypesConvalidations } from "@/services/type_convalidation_api";
 import { getAllSubject } from "@/services/subject_api";
 import { getAllWorkshops } from "@/services/workshop_api";
+import { getAllTypesCurriculumCourses } from "@/services/type_curriculum_course_api";
 
 
 import AlertDialog from "@/common/dialogs/AlertDialog.vue";
@@ -206,8 +208,9 @@ const router = useRouter();
 
 const curriculum_courses = ref<CurriculumCourseBase[]>([]);
 const subjects = ref<SubjectBase[]>([]);
-const types_courses = ref<TypeCourseBase[]>([]);
+const types_convalidations = ref<TypeConvalidationBase[]>([]);
 const workshops = ref<WorkshopBase[]>([]);
+const types_curriculum_courses = ref<TypeCurriculumCourseBase[]>([]);
 
 const getCurriculumCoursesHandler = async () => {
   try {
@@ -225,13 +228,6 @@ const getSubjectHandler = async () => {
   }
 };
 
-const getTypesCoursesHandler = async () => {
-  try {
-    types_courses.value = await getAllTypesCourses();
-  } catch (error) {
-    console.error("Error al obtener los tipos de cursos:", error);
-  }
-};
 
 const getWorkshopsHandler = async () => {
   try {
@@ -241,15 +237,33 @@ const getWorkshopsHandler = async () => {
   }
 };
 
+const getTypesConvalidationsHandler = async () => {
+  try {
+    types_convalidations.value = await getAllTypesConvalidations();
+  } catch (error) {
+    console.error("Error al obtener los tipos de convalidaciones:", error);
+  }
+};
+
+
+const getTypesCurriculumCoursesHandler = async () => {
+  try {
+    types_curriculum_courses.value = await getAllTypesCurriculumCourses();
+  } catch (error) {
+    console.error("Error al obtener los tipos de cursos:", error);
+  }
+};
+
 
 onMounted(getCurriculumCoursesHandler);
 onMounted(getSubjectHandler);
-onMounted(getTypesCoursesHandler);
+onMounted(getTypesCurriculumCoursesHandler);
 onMounted(getWorkshopsHandler);
+onMounted(getTypesConvalidationsHandler);
 
 
 
-const lee = ref<string>("");
+const tcc = ref<string>("");
 
 
 const convalidations = reactive([

@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
-import { getAllTypesCourses, deleteTypeCourse } from '@/services/type_convalidation_api'
-import type { TypeConvalidationBase, TypeConvalidationResponse} from '@/interfaces/type_convalidation_model'
+import {getAllTypesCourses } from '@/services/type_curriculum_course_api'
+import type { TypeCurriculumCourseBase, TypeCurriculumCourseResponse } from '@/interfaces/type_curriculum_course_model'
 
 interface State {
-  typesCourses: TypeConvalidationResponse[]
+  typesCourses: TypeCurriculumCourseResponse[]
   isLoad: boolean
   error: Error | null
 }
@@ -25,15 +25,6 @@ export const useTypesCoursesStore = defineStore('typesCourses', {
       try {
         this.typesCourses = await getAllTypesCourses()
         this.isLoad = true
-      } catch (error) {
-        this.error = error as Error
-      }
-    },
-    
-    async deleteTypeCourseStore(typeCourseId: number) {
-      try {
-        await deleteTypeCourse(typeCourseId)
-        await this.getTypesCoursesStore()
       } catch (error) {
         this.error = error as Error
       }

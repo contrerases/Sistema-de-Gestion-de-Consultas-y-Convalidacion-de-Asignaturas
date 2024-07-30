@@ -10,3 +10,5 @@ class TypeCurriculumCourseBase(BaseModel):
 class TypeCurriculumCourseResponse(TypeCurriculumCourseBase):
     pass
 
+    
+

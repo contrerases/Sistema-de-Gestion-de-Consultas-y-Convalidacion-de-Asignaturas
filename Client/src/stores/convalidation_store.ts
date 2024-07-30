@@ -8,7 +8,7 @@ import {getAllConvalidations,
         updateConvalidation 
 } from '@/services/convalidation_api'
 
-import type { ConvalidationResponse, ConvalidationBase, ConvalidationPost } from '@/interfaces/convalidation_model'
+import type { ConvalidationResponse, ConvalidationInsert, ConvalidationUpdate, Convalidation } from '@/interfaces/convalidation_model'
 
 interface State {
   convalidations: ConvalidationResponse[]
@@ -69,7 +69,7 @@ export const useConvalidationsStore = defineStore('convalidations', {
       }
     },
     
-    async insertConvalidationStore(convalidation: ConvalidationBase) {
+    async insertConvalidationStore(convalidation: Convalidation) {
       try {
         await insertConvalidation(convalidation)
         await this.getAllConvalidationsStore()
@@ -78,7 +78,7 @@ export const useConvalidationsStore = defineStore('convalidations', {
         throw error
       } 
     },
-    async updateConvalidationStore(convalidation: ConvalidationPost) {
+    async updateConvalidationStore(convalidation: ConvalidationUpdate) {
       try {
         await updateConvalidation(convalidation)
         await this.getAllConvalidationsStore()

@@ -7,13 +7,13 @@ import mariadb as mdb
 
 router = APIRouter()
 
-BASE_MODEL = types_curriculum_courses_model.TypeCurriculumCourseResponse
+RESPONSE_MODEL = types_curriculum_courses_model.TypeCurriculumCourseResponse
 
-@router.get("/", response_model=List[BASE_MODEL])
+@router.get("/", response_model=List[RESPONSE_MODEL])
 async def get_all_types_curriculum_courses():
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.callproc("GetAllTypesCurriculumCourses")
         types_curriculum_courses = cursor.fetchall()
         cursor.close()

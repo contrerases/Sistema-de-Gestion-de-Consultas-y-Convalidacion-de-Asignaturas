@@ -2,12 +2,12 @@
 import type { ConvalidationResponse, ConvalidationBase } from '@/interfaces/convalidation_model';
 import type { CurriculumCourseBase } from '@/interfaces/curriculum_course_model';
 import type { SubjectBase } from '@/interfaces/subject_model';
-import type { TypeCourseBase } from '@/interfaces/type_course_model';
+import type { TypeCourseBase } from '@/interfaces/type_convalidation_model';
 import type { WorkshopBase } from '@/interfaces/workshop_model';
 // RECURSOS
 import { insertConvalidation } from '@/services/convalidation_api';
 import { getAllCurriculumCourses } from '@/services/curriculm_course_api';
-import { getAllTypesCourses } from '@/services/type_course_api';
+import { getAllTypesCourses } from '@/services/type_convalidation_api';
 import { getAllSubject } from '@/services/subject_api';
 import { getAllWorkshops } from '@/services/workshop_api';
 // VUE
