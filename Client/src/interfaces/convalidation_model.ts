@@ -1,7 +1,6 @@
 
 export interface ConvalidationInsert {
-  id_request : number;
-  state : string;
+  
   id_convalidation_type : number;
   id_curriculum_course : number;
   id_subject_to_convalidate : number | null;
@@ -14,6 +13,8 @@ export interface ConvalidationInsert {
 
 export interface Convalidation extends ConvalidationInsert {
   id : number;
+  id_request : number;
+  state : string;
 }
 
 export interface ConvalidationResponse extends Convalidation {

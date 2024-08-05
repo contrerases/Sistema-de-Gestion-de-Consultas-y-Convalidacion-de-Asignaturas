@@ -2,14 +2,14 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-from models.convalidations_model import Convalidation, ConvalidationUpdate, ConvalidationResponse
+from models.convalidations_model import  ConvalidationUpdate, ConvalidationResponse, ConvaldiationInsert
 
 
 class RequestInsert(BaseModel):
     id_student: int
-    comments: Optional[str] = None
+    comments: Optional[str] = None 
     id_user_approves: Optional[int] = None
-    convalidations: List[Convalidation]
+    convalidations: List[ConvaldiationInsert]
 
 class Request(RequestInsert):
     id: int

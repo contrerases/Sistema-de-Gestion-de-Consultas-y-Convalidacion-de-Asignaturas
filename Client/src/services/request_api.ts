@@ -98,6 +98,7 @@ export async function insertRequest(request: RequestInsert): Promise<void> {
     });
 
     try {
+        console.log(formData);
         await axios.post(BASE_URL, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
