@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel
+from fastapi import UploadFile, File
 
 
 class ConvaldiationInsert(BaseModel):
@@ -10,7 +11,7 @@ class ConvaldiationInsert(BaseModel):
     id_workshop_to_convalidate: Optional[int] = None
     certified_course_name: Optional[str] = None
     personal_project_name: Optional[str] = None
-    file_data: Optional[bytes] = None
+    file_data: Optional[str] = None
     file_name: Optional[str] = None
 
 class Convalidation(ConvaldiationInsert):

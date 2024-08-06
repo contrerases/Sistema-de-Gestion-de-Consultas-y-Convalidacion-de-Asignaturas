@@ -90,18 +90,11 @@ export async function getRequestsByState(state: string): Promise<RequestResponse
 // insert
 
 export async function insertRequest(request: RequestInsert): Promise<void> {
-    const formData = new FormData();
-    Object.entries(request).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-            formData.append(key, value);
-        }
-    });
-
+    
     try {
-        console.log(formData);
-        await axios.post(BASE_URL, formData, {
+        await axios.post(BASE_URL, request, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
             },
         });
   

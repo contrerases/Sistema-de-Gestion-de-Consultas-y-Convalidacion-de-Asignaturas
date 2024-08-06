@@ -10,7 +10,7 @@
     <div class="text-4xl font-bold py-2 font-mono">Convalidaciones</div>
     <div class="line mt-2"></div>
     <div class="rows grid-cols-6">
-      <div class="title-table">LEE</div>
+      <div class="title-table">TIPO DE CURSO A CONVALIDAR</div>
       <div class="title-table">TIPO DE CONVALIDACION</div>
       <div class="title-table">ASIGNATURA A CONVALIDAR</div>
       <div class="title-table">
@@ -31,7 +31,7 @@
       <div v-for="(convalidation, index) in convalidations_precooked" :key="index" class="rows grid-cols-6">
 
 
-        <Select v-model="tcc">
+        <Select v-model="tcc[index]">
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -51,19 +51,19 @@
           </SelectTrigger>
           <SelectContent>
   
-            <SelectItem value="INF">
+            <SelectItem value="1">
               {{ CourseConvalidationTypes.INF }}
             </SelectItem>
-            <SelectItem value="EXTERNA" v-if="tcc != '2'">
+            <SelectItem value="2" v-if="tcc[index] != '2'">
               {{ CourseConvalidationTypes.EXTERNA }}
             </SelectItem>
-            <SelectItem value="TALLER" v-if="tcc === '1'">
+            <SelectItem value="3" v-if="tcc[index] === '1'">
               {{ CourseConvalidationTypes.TALLER }}
             </SelectItem>
-            <SelectItem value="PROYECTO" v-if="tcc === '1'">
+            <SelectItem value="4" v-if="tcc[index] === '1'">
               {{ CourseConvalidationTypes.PROYECTO }}
             </SelectItem>
-            <SelectItem value="CERTIFICADO" v-if="tcc === '1'">
+            <SelectItem value="5" v-if="tcc[index] === '1'">
               {{ CourseConvalidationTypes.CERTIFICADO }}
             </SelectItem>
           </SelectContent>
@@ -80,26 +80,26 @@
           <SelectContent>
             <SelectGroup>
 
-              <div v-if="tcc === '1'">
+              <div v-if="tcc[index] === '1'">
                 <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc">
+                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
                     {{ course.name }}
                   </SelectItem>
                 </div>
 
               </div>
 
-              <div v-if="tcc === '2'">
+              <div v-if="tcc[index] === '2'">
                 <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc">
+                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
                     {{ course.name }}
                   </SelectItem>
                 </div>
               </div>
 
-              <div v-if="tcc === '3'">
+              <div v-if="tcc[index] === '3'">
                 <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc">
+                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
                     {{ course.name }}
                   </SelectItem>
                 </div>
@@ -110,7 +110,7 @@
           </SelectContent>
         </Select>
 
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === 'INF'">
+        <div class="pb-8" v-if="convalidation.id_convalidation_type === '2'">
 
           <Select v-model="convalidation.id_subject_to_convalidate">
             <SelectTrigger>
@@ -124,10 +124,36 @@
           </Select>
         </div>
 
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === 'TALLER'">
-          <h1 class="text-xl font-mono pb-2">
-            Selecciona el taller cursado:
-          </h1>
+        <div class="pb-8" v-if="convalidation.id_convalidation_type === '1'">
+
+          <Select v-model="convalidation.id_subject_to_convalidate">
+            <SelectTrigger>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
+                {{ subject.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div class="pb-8" v-if="convalidation.id_convalidation_type === '5'">
+
+          <Select v-model="convalidation.id_subject_to_convalidate">
+            <SelectTrigger>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
+                {{ subject.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div class="pb-8" v-if="convalidation.id_convalidation_type === '3'">
+          
 
           <Select v-model="convalidation.id_workshop_to_convalidate">
             <SelectTrigger>
@@ -141,8 +167,10 @@
           </Select>
         </div>
 
+        
+
         <div "
-      v-if="convalidation.id_convalidation_type === 'PROYECTO'"
+      v-if="convalidation.id_convalidation_type === '4'"
     >
   
         <input type=" text" class="bg-input border w-full rounded-lg p-2"
@@ -150,7 +178,7 @@
 
       </div>
 
-      <div class="pb-8 flex justify-between w-full" v-if="convalidation.id_convalidation_type === 'CERTIFICADO'">
+      <div class="pb-8 flex justify-between w-full" v-if="convalidation.id_convalidation_type === '5'">
 
 
         <input type="text" class="bg-input border w-full rounded-lg p-2"
@@ -158,7 +186,8 @@
       </div>
 
       <div class="box border rounded-lg">
-        <input type="file" accept=".pdf" ref="fileInput" @change="fileUploadHandler($event, index)" class="" />
+        <!-- <input type="file" accept=".pdf"  @change="fileUploadHandler($event, index)" class="" /> -->
+         <div class="flex text-center m-auto justify-center">📁 File </div>
       </div>
 
       <!-- <button @click="eliminateConvalidation(index)">-</button> -->
@@ -221,11 +250,16 @@ import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
 
 const router = useRouter();
 
+
+
 const curriculum_courses = ref<CurriculumCourseBase[]>([]);
 const subjects = ref<SubjectBase[]>([]);
 const types_convalidations = ref<TypeConvalidationBase[]>([]);
 const workshops = ref<WorkshopBase[]>([]);
 const types_curriculum_courses = ref<TypeCurriculumCourseBase[]>([]);
+
+const showSuccessDialog = ref<boolean>(false);
+const showErrorDialog = ref<boolean>(false);
 
 const getCurriculumCoursesHandler = async () => {
   try {
@@ -270,6 +304,21 @@ const getTypesCurriculumCoursesHandler = async () => {
 };
 
 
+function toggleErrorDialog() {
+  showErrorDialog.value = !showErrorDialog.value;
+}
+
+function toggleSuccessDialog() {
+  if (showSuccessDialog.value) {
+    showSuccessDialog.value = false;
+    router.push({ name: "s/inicio" });
+  } else {
+    showSuccessDialog.value = true;
+  }
+}
+
+
+
 onMounted(getCurriculumCoursesHandler);
 onMounted(getSubjectHandler);
 onMounted(getTypesCurriculumCoursesHandler);
@@ -278,9 +327,10 @@ onMounted(getTypesConvalidationsHandler);
 
 
 
-const tcc = ref<string>("");
 
+const tcc = ref<string[]>([]);
 
+const convalidations_cooked = reactive<ConvalidationInsert[]>([]);
 
 const convalidations_precooked = reactive([
   {
@@ -296,15 +346,12 @@ const convalidations_precooked = reactive([
 ]);
 
 
-const convalidations_cooked = reactive<ConvalidationInsert[]>([
- 
-]);
 
 const request = reactive<RequestInsert>({
   id_student: 1,
   comments: null,
   id_user_approver: 1,
-  convalidations: []
+  convalidations: convalidations_cooked
 });
 
 
@@ -327,9 +374,65 @@ const eliminateConvalidation = (index: number) => {
 
 
 
+// const fileUploadHandler = (event: Event, index: number) => {
+//   const input = event.target as HTMLInputElement;
+//   if (input.files && input.files[0]) {
+//     const file = input.files[0];
+//     convalidations_precooked[index].file_data = file;
+//     convalidations_precooked[index].file_name = file.name;
+//   }
+// };
+
+
+// const convertFileToBase64 = (file: File): Promise<string> => {
+//     return new Promise((resolve, reject) => {
+//       const reader = new FileReader();
+//       reader.onload = () => {
+//         const base64String = (reader.result as string).split(',')[1]; // Extraer Base64
+//         resolve(base64String);
+//       };
+//       reader.onerror = reject;
+//       reader.readAsDataURL(file);
+//     });
+//   };
+
+
+
+
+async function cook_convalidations_insert() {
+  
+  for (const convalidation of convalidations_precooked) {
+    try {
+      // const fileData = convalidation.file_data
+      //   ? await convertFileToBase64(convalidation.file_data as File)
+      //   : null;
+
+      const convalidation_cooked: ConvalidationInsert = {
+        id_convalidation_type: Number(convalidation.id_convalidation_type),
+        id_curriculum_course: Number(convalidation.id_curriculum_course),
+        id_subject_to_convalidate: convalidation.id_subject_to_convalidate ? Number(convalidation.id_subject_to_convalidate) : null,
+        id_workshop_to_convalidate: convalidation.id_workshop_to_convalidate ? Number(convalidation.id_workshop_to_convalidate) : null,
+        certified_course_name: convalidation.certified_course_name? convalidation.certified_course_name : null,
+        personal_project_name: convalidation.personal_project_name? convalidation.personal_project_name : null,
+        file_data: null,
+        file_name: convalidation.file_data ? (convalidation.file_data as File).name : '',
+      };
+
+  
+      convalidations_cooked.push(convalidation_cooked);
+
+     
+      
+    } catch (error) {
+      console.error('Error processing file:', error);
+    }
+  }
+};
+    
+
 async function sendRequest() {
   try {
-    request.convalidations = convalidations_cooked;
+    await cook_convalidations_insert();
     console.log(request);
     await insertRequest(request);
     toggleSuccessDialog();
@@ -339,55 +442,12 @@ async function sendRequest() {
   }
 }
 
-function fileUploadHandler(event: Event, index: number) {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    convalidations_precooked[index].file_data = target.files[0];
-  }
-}
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
 
-function toggleSuccessDialog() {
-  if (showSuccessDialog.value) {
-    showSuccessDialog.value = false;
-    router.push({ name: "s/inicio" });
-  } else {
-    showSuccessDialog.value = true;
-  }
-}
 
-function cook_convalidations_insert() {
-  convalidations_precooked.forEach((convalidation) => {
-    const convalidation_cooked: ConvalidationInsert = {
-      id_convalidation_type: Number(convalidation.id_convalidation_type),
-      id_curriculum_course: Number(convalidation.id_curriculum_course),
-      id_subject_to_convalidate: convalidation.id_subject_to_convalidate ? Number(convalidation.id_subject_to_convalidate): null,
-      id_workshop_to_convalidate: convalidation.id_workshop_to_convalidate ? Number(convalidation.id_workshop_to_convalidate) : null,
-      certified_course_name: convalidation.certified_course_name,
-      personal_project_name: convalidation.personal_project_name,
-      file_data: convalidation.file_data,
-      file_name: convalidation.file_data.name,
-    };
-    convalidations_cooked.push(convalidation_cooked);
-  });
-}
 
-const showSuccessDialog = ref<boolean>(false);
 
-function toggleErrorDialog() {
-  showErrorDialog.value = !showErrorDialog.value;
-}
 
-const showErrorDialog = ref<boolean>(false);
 
 </script>
 

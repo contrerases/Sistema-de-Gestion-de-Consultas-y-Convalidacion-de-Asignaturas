@@ -215,8 +215,6 @@ async def insert_request(request: INSERT_MODEL):
 
         cursor.callproc("InsertRequest", (
             request.id_student,
-            request.creation_date,
-            request.revision_date,
             request.comments,
             request.id_user_approves,
         ))
@@ -224,16 +222,19 @@ async def insert_request(request: INSERT_MODEL):
         id_request = cursor.fetchone()['id']
 
         for convalidation in request.convalidations:
+            file_data_bytes = convalidation.file_data
+            if convalidation.file_data:
+                file_data_bytes = base64.b64decode(convalidation.file_data)
+            
             cursor.callproc("InsertConvalidation", (
                 id_request,
                 convalidation.id_convalidation_type,
-                convalidation.state, 
                 convalidation.id_curriculum_course, 
                 convalidation.id_subject_to_convalidate,
                 convalidation.id_workshop_to_convalidate, 
                 convalidation.certified_course_name, 
                 convalidation.personal_project_name,
-                convalidation.file_data, 
+                file_data_bytes, 
                 convalidation.file_name))
                                                  
 
