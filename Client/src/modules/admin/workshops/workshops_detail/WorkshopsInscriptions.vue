@@ -26,6 +26,12 @@
               </table>
             </div>
           </div>
+
+          <div>
+            <input type="file" ref="fileInput" accept=".xlsx" />
+            <button @click="processExcel">Subir y Procesar Excel</button>
+          </div>
+          
     </main>
 </template>
 
@@ -54,6 +60,56 @@ async function getWorkshopsInscriptionsByWorkshopIdHandler() : Promise<void> {
 }
 
 onMounted(getWorkshopsInscriptionsByWorkshopIdHandler);
+
+import * as XLSX from 'xlsx';
+
+const fileInput = ref<HTMLInputElement | null>(null);
+
+interface ExcelData {
+  rut: string;
+  nota: string;
+}
+
+const processExcel = () => {
+  if (fileInput.value && fileInput.value.files.length > 0) {
+    const file = fileInput.value.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData: ExcelData[] = XLSX.utils.sheet_to_json(sheet) as ExcelData[];
+
+      // Crear nuevo array de datos
+      const result = workshops_inscriptions.value.map(item => {
+        // Buscar la nota en los datos del archivo Excel subido
+        const match = jsonData.find(row => row.rut === item.rut_student);
+        return {
+          RUT: item.rut_student,
+          NOMBRE: item.name_student.split(' ')[0], // Asumiendo que el nombre está antes del apellido
+          APELLIDO: item.name_student.split(' ')[1], // Asumiendo que el apellido está después del nombre
+          NOTA: match ? match.nota : '', // Nota obtenida del archivo subido
+          LIBRE: item.curriculum_course,
+        };
+      });
+
+      // Crear y descargar nuevo archivo Excel
+      const newWorkbook = XLSX.utils.book_new();
+      const newWorksheet = XLSX.utils.json_to_sheet(result);
+      XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Sheet1');
+      XLSX.writeFile(newWorkbook, 'resultado.xlsx');
+    };
+    
+    reader.readAsArrayBuffer(file);
+  } else {
+    alert('Por favor, selecciona un archivo Excel.');
+  }
+};
+
+
+
 
 
 
