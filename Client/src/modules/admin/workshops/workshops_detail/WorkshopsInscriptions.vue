@@ -27,9 +27,9 @@
             </div>
           </div>
 
-          <div>
+          <div class="pt-10">
             <input type="file" ref="fileInput" accept=".xlsx" />
-            <button @click="processExcel">Subir y Procesar Excel</button>
+            <button class="bg-primary p-4 rounded hover:bg-opacity-45" @click="processExcel">Subir y Procesar Excel</button>
           </div>
           
     </main>
