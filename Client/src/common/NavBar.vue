@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import ColorMode from '@/components/ColorMode.vue';
 import { Icon } from "@iconify/vue";
+import { useAuthStore } from '@/stores/auth_store';
+
+const auth_store = useAuthStore();
 </script>
 
 <template>
@@ -13,7 +16,7 @@ import { Icon } from "@iconify/vue";
  
     <ColorMode />
     <button class="user-spec">
-        username
+      {{ auth_store.username }}
         <Icon icon="teenyicons:down-small-outline" class="icon"/>
     </button>
 

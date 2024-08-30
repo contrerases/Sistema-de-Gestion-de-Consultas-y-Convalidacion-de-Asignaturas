@@ -6,18 +6,18 @@ import mariadb as mdb
 
 router = APIRouter()
 
-BASE_MODEL = workshops_inscriptions_model.WorkshopInscriptionBase
-POST_MODEL = workshops_inscriptions_model.WorkshopInscriptionPost
-RESPONSE_MODEL = workshops_inscriptions_model.WorkshopInscriptionResponse
+BASE_MODEL = workshops_inscriptions_model.WorkshopsInscriptionsBase
+POST_MODEL = workshops_inscriptions_model.WorkshopsInscriptionsPost
+RESPONSE_MODEL = workshops_inscriptions_model.WorkshopsInscriptionsResponse
 
 #GetByIdWorkshop
-@router.get("/{id}", response_model=RESPONSE_MODEL)
-async def get_workshop_inscription_by_id(id: int):
+@router.get("/{id}", response_model=List[RESPONSE_MODEL])
+async def get_workshop_inscriptions_by_id(id: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.callproc("GetWorkshopInscriptionById", (id,))
-        workshop_inscription = cursor.fetchone()
+        cursor.callproc("GetWorkshopsInscriptionsByWorkshopID", (id,))
+        workshop_inscription = cursor.fetchall()
         cursor.close()
         conn.close()
         return workshop_inscription
@@ -30,25 +30,28 @@ async def get_workshop_inscriptions_by_student(id_student: int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.callproc("GetWorkshopInscriptionsByStudent", (id_student,))
+        cursor.callproc("GetWorkshopsInscriptionsByStudentID", (id_student,))
         workshop_inscriptions = cursor.fetchall()
         cursor.close()
         conn.close()
         return workshop_inscriptions
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+ 
+
     
 
 #InsertWorkshopInscription
 @router.post("/")
-async def insert_workshop_inscription(workshop_inscription):
+async def insert_workshop_inscription(workshop_inscription: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.callproc("InsertWorkshopInscription", (workshop_inscription.id_student, workshop_inscription.id_workshop))
+        cursor.callproc("InsertWorkshopInscription", (workshop_inscription.id_student, workshop_inscription.id_workshop,workshop_inscription.id_curriculum_course, workshop_inscription.is_convalidated ))
         conn.commit()
         cursor.close()
         conn.close()
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     return {"message": "Workshop inscription has been inserted successfully."}
+

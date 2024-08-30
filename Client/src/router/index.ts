@@ -11,8 +11,10 @@ import StatsModule from '@/modules/admin/stats/StatsModule.vue'
 import SubjectsModule from '@/modules/admin/subjects/SubjectsModule.vue'
 import WorkshopsModule from '@/modules/admin/workshops/WorkshopsModule.vue'
 
-import NewRequestModule from '@/modules/student/new_request/NewRequestModule.vue'
 
+import WorkshopsModuleStudent from '@/modules/student/workshops/WorkshopsModuleStudent.vue'
+import NewRequestModule from '@/modules/student/new_request/NewRequestModule.vue'
+ 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,7 +93,7 @@ const router = createRouter({
         {
           path: 'talleres',
           name: 's/talleres',
-          component: CurriculumCoursesModule
+          component: WorkshopsModuleStudent
         },  
 
         {

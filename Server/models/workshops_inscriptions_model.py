@@ -1,21 +1,12 @@
-# CREATE TABLE WORKSHOPS_INSCRIPTIONS (
-#     id INT AUTO_INCREMENT NOT NULL,
-#     id_student INT NOT NULL,
-#     id_workshop INT NOT NULL,
-#     id_curriculum_course INT NOT NULL,
-#     is_convalidated BOOLEAN NOT NULL DEFAULT FALSE,
-#     PRIMARY KEY (id),
-#     FOREIGN KEY (id_student) REFERENCES STUDENTS (id),
-#     FOREIGN KEY (id_workshop) REFERENCES WORKSHOPS (id),
-#     FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id)
-# );
+
+from typing import Optional
 from pydantic import BaseModel
 
 class WorkshopsInscriptionsBase(BaseModel):
     id : int
     id_student: int
     id_workshop: int
-    id_curriculum_course: int
+    id_curriculum_course: Optional[int] = None
     is_convalidated: bool
 
 #isnert
@@ -23,7 +14,7 @@ class WorkshopsInscriptionsBase(BaseModel):
 class WorkshopsInscriptionsPost(BaseModel):
     id_student: int
     id_workshop: int
-    id_curriculum_course: int
+    id_curriculum_course: Optional[int] = None
     is_convalidated: bool
 
 #update
@@ -31,6 +22,10 @@ class WorkshopsInscriptionsPost(BaseModel):
 class WorkshopsInscriptionsResponse(BaseModel):
     id : int
     id_student: int
+    name_student: str #Nombre Apellido
+    rut_student: str
     id_workshop: int
-    id_curriculum_course: int
+    workshop: str
+    id_curriculum_course: Optional[int] = None
+    curriculum_course: Optional[str] = None
     is_convalidated: bool

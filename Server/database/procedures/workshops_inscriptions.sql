@@ -1,26 +1,57 @@
 
 
-CREATE PROCEDURE GetByIdWorkshop(IN p_id_workshop INT)
-BEGIN
-    SELECT *
-    FROM WORKSHOPS_INSCRIPTIONS
-    WHERE id_workshop = p_id_workshop;
-END
-
-CREATE PROCEDURE GetByIdStudent(IN p_id_student INT)
-BEGIN
-    SELECT *
-    FROM WORKSHOPS_INSCRIPTIONS
-    WHERE id_student = p_id_student;
-END
-
-CREATE PROCEDURE InsertWorkshopInscription(
-    IN p_id_student INT,
-    IN p_id_workshop INT,
-    IN p_id_curriculum_course INT,
-    IN p_is_convalidated BOOLEAN
+CREATE PROCEDURE GetWorkshopsInscriptionsByWorkshopID(
+    IN workshop_id INT
 )
 BEGIN
-    INSERT INTO WORKSHOPS_INSCRIPTIONS (id_student, id_workshop, id_curriculum_course, is_convalidated)
-    VALUES (p_id_student, p_id_workshop, p_id_curriculum_course, p_is_convalidated);
-END
+    SELECT 
+        WORKSHOPS_INSCRIPTIONS.id AS id,
+        WORKSHOPS_INSCRIPTIONS.id_student AS id_student,
+        CONCAT(STUDENTS.first_name, ' ', STUDENTS.first_last_name) AS name_student,
+        STUDENTS.rut_student AS rut_student,
+        WORKSHOPS_INSCRIPTIONS.id_workshop AS id_workshop,
+        WORKSHOPS.name AS workshop,
+        WORKSHOPS_INSCRIPTIONS.id_curriculum_course AS id_curriculum_course,
+        CURRICULUM_COURSES.name AS curriculum_course,
+        WORKSHOPS_INSCRIPTIONS.is_convalidated AS is_convalidated
+    FROM 
+        WORKSHOPS_INSCRIPTIONS
+    JOIN 
+        STUDENTS ON WORKSHOPS_INSCRIPTIONS.id_student = STUDENTS.id
+    JOIN 
+        WORKSHOPS ON WORKSHOPS_INSCRIPTIONS.id_workshop = WORKSHOPS.id
+    LEFT JOIN 
+        CURRICULUM_COURSES ON WORKSHOPS_INSCRIPTIONS.id_curriculum_course = CURRICULUM_COURSES.id
+    WHERE 
+        WORKSHOPS_INSCRIPTIONS.id_workshop = workshop_id;
+END 
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetEnrolledAvailableWorkshopsByStudent(
+    IN student_id INT
+)
+BEGIN
+    SELECT 
+        WORKSHOPS.id,
+        WORKSHOPS.name,
+        WORKSHOPS.semester,
+        WORKSHOPS.year,
+        WORKSHOPS.professor,
+        WORKSHOPS.initial_date,
+        WORKSHOPS.file_data,
+        WORKSHOPS.available
+    FROM 
+        WORKSHOPS
+    JOIN 
+        WORKSHOPS_INSCRIPTIONS ON WORKSHOPS.id = WORKSHOPS_INSCRIPTIONS.id_workshop
+    WHERE 
+        WORKSHOPS_INSCRIPTIONS.id_student = student_id
+        AND WORKSHOPS.available = TRUE;
+END //
+
+DELIMITER ;
+
+
+

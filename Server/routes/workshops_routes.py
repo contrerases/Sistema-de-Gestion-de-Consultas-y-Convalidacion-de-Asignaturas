@@ -25,6 +25,18 @@ async def get_all_workshops():
     
 
 
+@router.get("/student/{id_student}/available", response_model=List[RESPONSE_MODEL])
+async def get_available_workshops_not_enrolled_by_student(id_student: int):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.callproc("GetAvailableWorkshopsNotEnrolledByStudent", (id_student,))
+        available_workshops = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return available_workshops
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 #post
 @router.post("/")
@@ -32,7 +44,7 @@ async def insert_workshop(workshop: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.callproc("InsertWorkshop", (workshop.name,))
+        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year, workshop.professor, workshop.initial_date, workshop.file_data))
         conn.commit()
         cursor.close()
         conn.close()
@@ -96,3 +108,32 @@ async def update_workshop_available(id: int, available: bool):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     return {"message": "Workshop has been updated successfully."}
 
+
+#GetCompletedWorkshopsByStudent
+
+@router.get("/student/{id_student}/completed", response_model=List[RESPONSE_MODEL])
+async def get_completed_workshops_by_student(id_student: int):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.callproc("GetCompletedWorkshopsByStudent", (id_student,))
+        workshops = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return workshops
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+#GetEnrolledAvailableWorkshopsByStudent
+@router.get("/student/{id_student}/enrolled/available", response_model=List[RESPONSE_MODEL])
+async def get_enrolled_available_workshops_by_student(id_student: int):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.callproc("GetEnrolledAvailableWorkshopsByStudent", (id_student,))
+        workshops = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return workshops
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -135,6 +135,7 @@ CREATE TABLE WORKSHOPS (
     name VARCHAR(255) NOT NULL UNIQUE,
     semester ENUM('1', '2') NOT NULL,
     year INT NOT NULL,
+    professor VARCHAR(255) NOT NULL,
     initial_date TIMESTAMP NOT NULL,
     file_data LONGBLOB DEFAULT NULL,
     available BOOLEAN NOT NULL DEFAULT TRUE,
@@ -146,7 +147,7 @@ CREATE TABLE WORKSHOPS_INSCRIPTIONS (
     id INT AUTO_INCREMENT NOT NULL,
     id_student INT NOT NULL,
     id_workshop INT NOT NULL,
-    id_curriculum_course INT NOT NULL,
+    id_curriculum_course INT NOT NULL, -- libre 
     is_convalidated BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
     FOREIGN KEY (id_student) REFERENCES STUDENTS (id),

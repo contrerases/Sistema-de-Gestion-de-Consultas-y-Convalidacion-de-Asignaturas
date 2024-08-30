@@ -6,9 +6,9 @@ import mariadb as mdb
 
 router = APIRouter()
 
-BASE_MODEL = workshops_grades_models.WorkshopGradeBase
-POST_MODEL = workshops_grades_models.WorkshopGradePost
-RESPONSE_MODEL = workshops_grades_models.WorkshopGradeResponse
+BASE_MODEL = workshops_grades_models.WorkshopsGradesBase
+POST_MODEL = workshops_grades_models.WorkshopsGradesPost
+RESPONSE_MODEL = workshops_grades_models.WorkshopsGradesResponse
 
 #GetWorkshopGradeByStudentID
 @router.get("/student/{id_student}", response_model=List[RESPONSE_MODEL])
@@ -42,7 +42,7 @@ async def get_workshop_grades_by_workshop(id_workshop: int):
 #InsertWorkshopGrade
 
 @router.post("/")
-async def insert_workshop_grade(workshop_grade):
+async def insert_workshop_grade(workshop_grade: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
