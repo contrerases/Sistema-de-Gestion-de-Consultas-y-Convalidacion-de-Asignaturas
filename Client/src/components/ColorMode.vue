@@ -1,20 +1,28 @@
 <script setup lang="ts">
-import { useColorMode } from '@vueuse/core'
-import { Icon } from '@iconify/vue'
-import { Button } from '@/components/ui/button'
+import { useColorMode } from '@vueuse/core';
+import { computed } from 'vue';
 
-
-const mode = useColorMode()
+const mode = useColorMode();
+const isDarkMode = computed(() => mode.value === 'dark');
 
 const toggleTheme = () => {
-      mode.value = mode.value === 'light' ? 'dark' : 'light';
-    };
+  mode.value = isDarkMode.value ? 'light' : 'dark';
+};
 </script>
 
 <template>
-  <Button variant="outline" @click="toggleTheme" class="p-5">
-    <Icon v-if="mode === 'light'" icon="radix-icons:moon" class="h-5 w-5" />
-    <Icon v-else icon="radix-icons:sun" class="h-5 w-5" />
-    <span class="sr-only">Toggle theme</span>
-  </Button>
+  <div 
+    @click="toggleTheme" 
+    class="flex items-center cursor-pointer w-16 h-8 rounded-full p-1 transition-colors duration-300"
+    :class="isDarkMode ? 'bg-primary' : 'bg-gray-400'"
+  >
+    <div 
+      class="h-6 w-6 bg-white rounded-full shadow-md transform transition-all duration-300 ease-in-out"
+      :class="isDarkMode ? 'translate-x-8 bg-foregorund' : 'translate-x-0'"
+    ></div>
+  </div>
 </template>
+
+<style scoped>
+/* Estilos adicionales si se requieren */
+</style>
