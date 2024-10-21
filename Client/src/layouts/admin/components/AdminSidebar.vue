@@ -55,7 +55,9 @@ const topMenu = [
 const bottomMenu = [
   { icon: 'ic:baseline-library-books', text: 'Talleres', route: '/administrador/talleres' },
   { icon: 'uiw:document', text: 'Cursos', route: '/administrador/cursos' },
-  { icon: 'wpf:books', text: 'Asignaturas', route: '/administrador/asignaturas' }
+  { icon: 'wpf:books', text: 'Asignaturas', route: '/administrador/asignaturas' },
+  { icon: 'wpf:books', text: 'Departamentos', route: '/administrador/departamentos'}
+
 ];
 </script>
 

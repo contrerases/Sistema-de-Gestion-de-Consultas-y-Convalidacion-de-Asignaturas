@@ -21,23 +21,22 @@ export async function getAllSubject(): Promise<SubjectResponse[]> {
 }
 
 
-export async function deleteSubject(subject_id: number): Promise<void> {
-    try {
-        await axios.delete(`${BASE_URL}${subject_id}`);
-    } catch (error) {
-        const axiosError = error as AxiosError;
-        console.error('Error al eliminar Subject', axiosError?.response?.data);
-        throw error;
-    }
-}
-
-
 export async function insertSubject(subject: SubjectPost): Promise<void> {
     try {
         await axios.post(BASE_URL, subject);
     } catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error al insertar Subject', axiosError?.response?.data);
+        throw error;
+    }
+}
+
+export async function updateSubject(subject: SubjectBase): Promise<void> {
+    try {
+        await axios.put(BASE_URL + subject.id, subject);
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al actualizar Subject', axiosError?.response?.data);
         throw error;
     }
 }

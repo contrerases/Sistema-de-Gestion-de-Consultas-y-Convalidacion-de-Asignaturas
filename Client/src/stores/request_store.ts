@@ -10,6 +10,7 @@ import { RequestStates } from "@/enums/request_states";
 
 interface State {
   requests: RequestResponse[];
+  count_pending_requests: number;
   filter_requests: RequestResponse[];
   error: Error | null;
 }
@@ -17,11 +18,13 @@ interface State {
 export const useRequestStore = defineStore("request", {
   state: (): State => ({
     requests: [],
+    count_pending_requests: 0,
     filter_requests: [],
     error: null,
   }),
   getters: {
     allSendRequests: (state) => state.requests,
+    countPendingRequests: (state) => state.count_pending_requests,
     filterRequests: (state) => state.filter_requests,
   },
   actions: {
@@ -29,6 +32,7 @@ export const useRequestStore = defineStore("request", {
     async getSendRequestsStore() {
       try {
         this.requests = await getRequestsByState(RequestStates.ENVIADA);
+        this.count_pending_requests = this.requests.length;
       } catch (error) {
         this.error = error as Error;
         throw error;
@@ -89,6 +93,6 @@ export const useRequestStore = defineStore("request", {
         this.error = error as Error;
         throw error;
       }
-    },  
+    },
   },
 });

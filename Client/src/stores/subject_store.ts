@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {getAllSubject, deleteSubject, insertSubject  } from '@/services/subject_api'
+import {getAllSubject,  insertSubject  } from '@/services/subject_api'
 
 import type { SubjectResponse, SubjectBase, SubjectPost } from '@/interfaces/subject_model'
 
@@ -36,14 +36,6 @@ export const useSubjectsStore = defineStore('subjects', {
         this.error = error as Error
       } 
     },
-    async deleteSubjectStore(subjectId: number) {
-      try {
-        await deleteSubject(subjectId)
-      } catch (error) {
-        console.error('Error en deleteSubjectStore:', this.error);
-        this.error = error as Error
-        throw error;
-      }
-    }
+    
   }
 })

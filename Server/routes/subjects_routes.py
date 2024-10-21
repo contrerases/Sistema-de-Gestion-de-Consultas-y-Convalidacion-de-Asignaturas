@@ -39,3 +39,17 @@ async def add_subject(subject: POST_MODEL):
         return { "message": "Subject has been added successfully."}
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+#put
+@router.put("/{id}")
+async def update_subject(id: int, subject: POST_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.callproc("UpdateSubjectByID", (id, subject.acronym,subject.name ,subject.id_department, subject.credits))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return { "message": "Subject has been updated successfully."}
+    except mdb.Error as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

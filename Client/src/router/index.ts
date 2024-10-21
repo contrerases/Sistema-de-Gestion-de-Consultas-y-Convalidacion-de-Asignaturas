@@ -10,6 +10,7 @@ import CurriculumCoursesModule from '@/modules/admin/curriculum_courses/Curricul
 import StatsModule from '@/modules/admin/stats/StatsModule.vue'
 import SubjectsModule from '@/modules/admin/subjects/SubjectsModule.vue'
 import WorkshopsModule from '@/modules/admin/workshops/WorkshopsModule.vue'
+import DepartmentModule from '@/modules/admin/department/DepartmentModule.vue'
 
 
 import WorkshopsModuleStudent from '@/modules/student/workshops/WorkshopsModuleStudent.vue'
@@ -61,6 +62,12 @@ const router = createRouter({
           path: 'asignaturas',
           name: 'a/asignaturas',
           component: SubjectsModule
+        },
+
+        {
+          path: 'departamentos',
+          name: 'a/departamentos',
+          component: DepartmentModule
         },
 
         {

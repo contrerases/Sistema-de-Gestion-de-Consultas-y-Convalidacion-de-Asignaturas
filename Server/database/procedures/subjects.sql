@@ -42,3 +42,28 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateSubjectByID(
+    IN p_id INT,
+    IN p_acronym VARCHAR(255),
+    IN p_name VARCHAR(255),
+    IN p_id_department INT,
+    IN p_credits INT
+)
+BEGIN
+    UPDATE SUBJECTS
+    SET 
+        acronym = p_acronym,
+        name = p_name,
+        id_department = p_id_department,
+        credits = p_credits
+    WHERE 
+        id = p_id;
+END $$
+
+DELIMITER ;
+
+

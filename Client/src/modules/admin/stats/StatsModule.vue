@@ -22,9 +22,10 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import AlertDialog from '@/common/dialogs/AlertDialog.vue';
     import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
+   
 
   
   const isAlertDialogOpen = ref(false);
@@ -50,11 +51,15 @@
   }
   
   function performAction() {
-    // Aquí puedes realizar la acción que deseas confirmar
+  
     console.log('Action confirmed!');
 
-    // Mostrar el diálogo de éxito
     openSuccessDialog();
   }
+
+
+
+
+
   </script>
   

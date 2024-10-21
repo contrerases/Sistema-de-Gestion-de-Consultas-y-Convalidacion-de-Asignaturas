@@ -12,7 +12,7 @@ export async function getAllCurriculumCourses(): Promise<CurriculumCourseRespons
         const { data: curriculum_courses } = await axios.get<CurriculumCourseResponse[]>(BASE_URL);
         return curriculum_courses;
       } 
-    
+      
       catch (error) {
         const axiosError = error as AxiosError;
         console.error('Error al obtener Cursos Curriculares:', axiosError?.response?.data);

@@ -18,7 +18,7 @@
               <td class="td">{{ subject.department_name }}</td>
               <td class="td">{{ subject.credits }}</td>
               <td class="td">
-                <button @click="deleteSubjectHandler(subject.id)">
+                <button>
                   <Icon class="icon"icon="mdi:trash-can" />
                 </button>
               </td>
@@ -58,15 +58,8 @@
     }
   }  
 
-  async function deleteSubjectHandler(id: number) {
-    try {
-        await subjectsStore.deleteSubjectStore(id);
-        await getSubjectsStoreHandler();
-    } 
-    catch (error) {
-        console.error('Error al eliminar el subject:', error);
-    }
-}
+  
+
 
   onMounted(getSubjectsStoreHandler);
 
