@@ -6,12 +6,21 @@
         <thead class="thead">
           <tr class="tr-up">
             <th class="th">Nombre</th>
+            <th class="th">
+              <Icon class="icon" icon="uiw:setting" />
+            </th>
           </tr>
         </thead>
         <tbody class="tbody">
           <tr class="tr" v-for="curriculum_course in curriculum_courses" :key="curriculum_course.id" >
             <td class="td">{{ curriculum_course.name }}</td>
+            <td class="td">
+              <button>
+                <Icon icon="akar-icons:pencil" />
+              </button>
+            </td>
           </tr>
+          
         </tbody>
       </table>
     </div>
@@ -22,6 +31,8 @@
   import { ref, onMounted } from 'vue';
   import type { CurriculumCourseResponse } from '@/interfaces/curriculum_course_model';
   import { useCurriculumCourseStore } from '@/stores/curriculum_course_store';
+
+  import { Icon } from '@iconify/vue';
   
   import LoadingSpinner from '@/common/LoadingSpinner.vue';
 

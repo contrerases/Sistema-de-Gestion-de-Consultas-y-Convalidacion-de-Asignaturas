@@ -1,6 +1,6 @@
 <template>
     <main class="courses-main">
-        <h1 class="courses-title">Asignaturas Curriculares</h1>
+        <h1 class="courses-title">Cursos Curriculares</h1>
         <div class="courses-content">   
             <CurriculumCourseTable />
         </div>
