@@ -1,214 +1,210 @@
 <template>
-  <SuccessDialog :isOpen="showSuccessDialog" title="Solicitud Enviada"
-    message="La solicitud ha sido enviada correctamente" @close="toggleSuccessDialog" />
+  <SuccessDialog
+    :isOpen="showSuccessDialog"
+    title="Solicitud Enviada"
+    message="La solicitud ha sido enviada correctamente"
+    @close="toggleSuccessDialog"
+  />
 
-  <AlertDialog :isOpen="showErrorDialog" title="Error"
-    message="No se pudo enviar la solicitud, por favor intenta de nuevo" @close="toggleErrorDialog" />
+  <AlertDialog
+    :isOpen="showErrorDialog"
+    title="Error"
+    message="No se pudo enviar la solicitud, por favor intenta de nuevo"
+    @close="toggleErrorDialog"
+  />
 
-
-  <main class="pr-2">
+  <main class="pr-2 bg-background">
     <div class="text-4xl font-bold py-2 font-mono">Convalidaciones</div>
     <div class="line mt-2"></div>
-    <div class="rows grid-cols-6">
-      <div class="title-table">TIPO DE CURSO A CONVALIDAR</div>
-      <div class="title-table">TIPO DE CONVALIDACION</div>
-      <div class="title-table">ASIGNATURA A CONVALIDAR</div>
-      <div class="title-table">
-        ASIGNATURA <br />
-        CURSADA
-      </div>
-      <div class="title-table">
-        ARCHIVO <br />
-        ADJUNTO
-      </div>
 
+    <div class="flex flex-col">
+      <div
+        v-for="(convalidation, index) in convalidations_precooked"
+        :key="index"
+        class="bg-card shadow-lg rounded-lg flex p-10 border border-border font-mono"
+      >
+        <div class="flex flex-col w-full">
+          <h3 class="font-bold text-xl mb-8 font-mono">Convalidación {{ index + 1 }}</h3>
 
+          <label class="font-semibold my-2">Tipo de curso a convalidar:</label>
+          <Select v-model="tcc[index]" class="mb-4">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem
+                  v-for="type in types_curriculum_courses"
+                  :key="type.id"
+                  :value="String(type.id)"
+                >
+                  {{ type.name }}
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <label class="font-semibold my-2">Tipo de convalidación:</label>
+          <Select v-model="convalidation.id_convalidation_type" class="mb-4">
+            <SelectTrigger>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">{{ CourseConvalidationTypes.INF }}</SelectItem>
+              <SelectItem value="2" v-if="tcc[index] != '2'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
+              <SelectItem value="3" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
+              <SelectItem value="4" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
+              <SelectItem value="5" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <label class="font-semibold my-2">Asignatura a convalidar:</label>
+          <Select v-model="convalidation.id_curriculum_course" class="mb-8">
+            <SelectTrigger>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <div v-if="tcc[index] === '1'">
+                  <div v-for="course in curriculum_courses" :key="course.id">
+                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      {{ course.name }}
+                    </SelectItem>
+                  </div>
+                </div>
+                <div v-if="tcc[index] === '2'">
+                  <div v-for="course in curriculum_courses" :key="course.id">
+                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      {{ course.name }}
+                    </SelectItem>
+                  </div>
+                </div>
+                <div v-if="tcc[index] === '3'">
+                  <div v-for="course in curriculum_courses" :key="course.id">
+                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      {{ course.name }}
+                    </SelectItem>
+                  </div>
+                </div>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <div class="pb-8" v-if="convalidation.id_convalidation_type === '2'">
+            <label class="font-semibold my-2">Asignatura cursada:</label>
+            <Select v-model="convalidation.id_subject_to_convalidate" class="mb-4">
+              <SelectTrigger>
+                <SelectValue placeholder="..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="subject in subjects"
+                  :key="subject.id"
+                  :value="String(subject.id)"
+                >
+                  {{ subject.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="pb-8" v-if="convalidation.id_convalidation_type === '1'">
+            <label class="font-semibold my-2">Asignatura cursada:</label>
+            <Select v-model="convalidation.id_subject_to_convalidate" class="mb-4">
+              <SelectTrigger>
+                <SelectValue placeholder="..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="subject in subjects"
+                  :key="subject.id"
+                  :value="String(subject.id)"
+                >
+                  {{ subject.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="pb-8" v-if="convalidation.id_convalidation_type === '5'">
+            <label class="font-semibold my-2">Nombre del Curso Certificado:</label>
+            <input
+              type="text"
+              class="bg-input border w-full rounded-lg p-2 mb-4"
+              v-model="convalidation.certified_course_name"
+            />
+          </div>
+
+          <div v-if="convalidation.id_convalidation_type === '3'">
+            <label class="font-semibold my-2">Taller a Convalidar:</label>
+            <Select v-model="convalidation.id_workshop_to_convalidate" class="mb-4">
+              <SelectTrigger>
+                <SelectValue placeholder="..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="workshop in workshops"
+                  :key="workshop.id"
+                  :value="String(workshop.id)"
+                >
+                  {{ workshop.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="pb-8" v-if="convalidation.id_convalidation_type === '4'">
+            <label class="font-semibold my-2">Nombre del Proyecto Personal:</label>
+            <input
+              type="text"
+              class="bg-input border w-full rounded-lg p-2 mb-4"
+              v-model="convalidation.personal_project_name"
+            />
+          </div>
+
+          <div class="pb-8">
+            <label class="font-semibold my-2">Archivo:</label>
+            <div class="flex text-center rounded-lg p-2 justify-center border border-border">📁 File </div>
+          </div>
+        </div>
+
+        <!-- Botón para eliminar la convalidación (opcional) -->
+        <div class="flex items-center">
+          <button
+            @click="eliminateConvalidation(index)"
+            class="m-10 text-destructive hover:underline text-center w-auto"
+          >
+            <Icon icon="material-symbols:delete" class="text-[50px] hover:opacity-80"/>
+          </button>
+        </div>
+      </div>
     </div>
 
-
-
-    <div>
-      <div v-for="(convalidation, index) in convalidations_precooked" :key="index" class="rows grid-cols-6">
-
-
-        <Select v-model="tcc[index]">
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem v-for="type in types_curriculum_courses" :key="type.id" :value="String(type.id)">
-                {{ type.name }}
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-
-        <Select v-model="convalidation.id_convalidation_type">
-          <SelectTrigger>
-            <SelectValue placeholder="..." />
-          </SelectTrigger>
-          <SelectContent>
-  
-            <SelectItem value="1">
-              {{ CourseConvalidationTypes.INF }}
-            </SelectItem>
-            <SelectItem value="2" v-if="tcc[index] != '2'">
-              {{ CourseConvalidationTypes.EXTERNA }}
-            </SelectItem>
-            <SelectItem value="3" v-if="tcc[index] === '1'">
-              {{ CourseConvalidationTypes.TALLER }}
-            </SelectItem>
-            <SelectItem value="4" v-if="tcc[index] === '1'">
-              {{ CourseConvalidationTypes.PROYECTO }}
-            </SelectItem>
-            <SelectItem value="5" v-if="tcc[index] === '1'">
-              {{ CourseConvalidationTypes.CERTIFICADO }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-
-
-
-
-        <Select v-model="convalidation.id_curriculum_course">
-          <SelectTrigger>
-            <SelectValue placeholder="..." />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-
-              <div v-if="tcc[index] === '1'">
-                <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
-                    {{ course.name }}
-                  </SelectItem>
-                </div>
-
-              </div>
-
-              <div v-if="tcc[index] === '2'">
-                <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
-                    {{ course.name }}
-                  </SelectItem>
-                </div>
-              </div>
-
-              <div v-if="tcc[index] === '3'">
-                <div v-for="course in curriculum_courses" :key="course.id">
-                  <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
-                    {{ course.name }}
-                  </SelectItem>
-                </div>
-              </div>
-            </SelectGroup>
-
-
-          </SelectContent>
-        </Select>
-
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === '2'">
-
-          <Select v-model="convalidation.id_subject_to_convalidate">
-            <SelectTrigger>
-              <SelectValue placeholder="..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                {{ subject.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === '1'">
-
-          <Select v-model="convalidation.id_subject_to_convalidate">
-            <SelectTrigger>
-              <SelectValue placeholder="..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                {{ subject.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === '5'">
-
-          <Select v-model="convalidation.id_subject_to_convalidate">
-            <SelectTrigger>
-              <SelectValue placeholder="..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                {{ subject.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div class="pb-8" v-if="convalidation.id_convalidation_type === '3'">
-          
-
-          <Select v-model="convalidation.id_workshop_to_convalidate">
-            <SelectTrigger>
-              <SelectValue placeholder="..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="workshop in workshops" :key="workshop.id" :value="String(workshop.id)">
-                {{ workshop.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        
-
-        <div "
-      v-if="convalidation.id_convalidation_type === '4'"
+    <button
+      class="rounded-full bg-primary py-2 px-4 mt-4 font-semibold text-sm uppercase items-center flex justify-center hover:opacity-80"
+      @click="addConvalidation"
     >
-  
-        <input type=" text" class="bg-input border w-full rounded-lg p-2"
-          v-model="convalidation.personal_project_name" />
-
-      </div>
-
-      <div class="pb-8 flex justify-between w-full" v-if="convalidation.id_convalidation_type === '5'">
-
-
-        <input type="text" class="bg-input border w-full rounded-lg p-2"
-          v-model="convalidation.certified_course_name" />
-      </div>
-
-      <div class="box border rounded-lg">
-        <!-- <input type="file" accept=".pdf"  @change="fileUploadHandler($event, index)" class="" /> -->
-         <div class="flex text-center m-auto justify-center">📁 File </div>
-      </div>
-
-      <!-- <button @click="eliminateConvalidation(index)">-</button> -->
-    </div>
-    <button @click="addConvalidation">+</button>
-    </div>
+      Agregar convalidación
+    </button>
 
     <!-- sendrequestbutton -->
     <div class="flex justify-end">
-      <button @click="sendRequest" class="bg-primary
-        text-white font-bold rounded-lg p-2 mt-4">Enviar Solicitud</button>
+      <button
+        @click="sendRequest"
+        class="bg-primary text-white font-bold rounded-lg p-4 mt-6 hover:opacity-80"
+      >
+        Enviar Solicitud
+      </button>
     </div>
-
-
-
   </main>
 </template>
+
+
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { ref, reactive, onMounted } from "vue";
+import { Icon } from "@iconify/vue";
 
 import {
   Select,
@@ -400,7 +396,7 @@ const eliminateConvalidation = (index: number) => {
 
 
 async function cook_convalidations_insert() {
-  
+
   for (const convalidation of convalidations_precooked) {
     try {
       // const fileData = convalidation.file_data
@@ -412,23 +408,23 @@ async function cook_convalidations_insert() {
         id_curriculum_course: Number(convalidation.id_curriculum_course),
         id_subject_to_convalidate: convalidation.id_subject_to_convalidate ? Number(convalidation.id_subject_to_convalidate) : null,
         id_workshop_to_convalidate: convalidation.id_workshop_to_convalidate ? Number(convalidation.id_workshop_to_convalidate) : null,
-        certified_course_name: convalidation.certified_course_name? convalidation.certified_course_name : null,
-        personal_project_name: convalidation.personal_project_name? convalidation.personal_project_name : null,
+        certified_course_name: convalidation.certified_course_name ? convalidation.certified_course_name : null,
+        personal_project_name: convalidation.personal_project_name ? convalidation.personal_project_name : null,
         file_data: null,
         file_name: convalidation.file_data ? (convalidation.file_data as File).name : '',
       };
 
-  
+
       convalidations_cooked.push(convalidation_cooked);
 
-     
-      
+
+
     } catch (error) {
       console.error('Error processing file:', error);
     }
   }
 };
-    
+
 
 async function sendRequest() {
   try {
