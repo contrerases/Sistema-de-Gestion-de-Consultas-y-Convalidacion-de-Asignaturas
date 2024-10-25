@@ -69,6 +69,9 @@ const logout = () => {
   // Implementa la lógica de cierre de sesión aquí
 };
 
+
+
+
 </script>
 
 <template>
@@ -79,7 +82,7 @@ const logout = () => {
     </div>
  
     <div class="flex h-full justify-center items-center gap-10"> 
-      <div class="relative inline-block" ref="tooltipRef">
+      <div v-if="auth_store.isAdmin" class="relative inline-block" ref="tooltipRef">
         <Icon
           icon="ci:notification"
           class="text-3xl cursor-pointer"

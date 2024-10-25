@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('user', {
     username: 'cecontre',  
     email: 'camilo.contreras@sansano.usm.cl', 
     name: 'Camilo Contreras',  
-    role: 'student', 
+    role: 'admin', 
   }),
 
 

@@ -1,16 +1,28 @@
 <template>
 
-  
+    <SubjectsCreation 
+    :isOpen="showSubjectCreationModal"
+    @close="toggleSubjectCreationModal"
+    @create="insertSubjectHandler"
+  />
+
+  <AlertDialog
+    :isOpen="showAlertDialog"
+    @close="toggleAlertDialog"
+    :message="messageAlert"
+  />
+
+  <SuccessDialog
+    :isOpen="showSuccessDialog"
+    @close="toggleSuccessDialog"
+    :message="messageSuccess"
+  />
 
     <main class="subjects-main">
-      <SubjectsCreation 
-      :visible="isModalVisible"
-        @close="isModalVisible = false"
-        @insert="refresh"
-      />
+     
        <div class="flex justify-between border-b pb-5 mb-5">
         <h1 class="subjects-title">Asignaturas</h1>
-        <button @click="createModal" class="bg-primary rounded-lg border border-border p-5">
+        <button @click="toggleSubjectCreationModal" class="bg-primary rounded-lg border border-border p-5">
           Añadir asignatura
         </button>
        </div>
@@ -25,12 +37,44 @@ import { ref } from 'vue';
 import SubjectTable from '@/modules/admin/subjects/SubjectsTable.vue';
 import SubjectsCreation from '@/modules/admin/subjects/SubjectsCreation.vue';
 
-const isModalVisible = ref(false);
+import type { SubjectPost } from '@/interfaces/subject_model';
 
-const createModal = () => {
-  isModalVisible.value = true;
-};
+import AlertDialog from '@/common/dialogs/AlertDialog.vue';
+import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
 
+import { insertSubject } from '@/services/subject_api';
+
+const showSubjectCreationModal = ref(false);
+const messageAlert = ref('');
+const messageSuccess = ref('');
+const showAlertDialog = ref(false);
+const showSuccessDialog = ref(false);
+
+
+function toggleSubjectCreationModal() {
+  showSubjectCreationModal.value = !showSubjectCreationModal.value;
+}
+
+function toggleAlertDialog() {
+  showAlertDialog.value = !showAlertDialog.value;
+}
+
+function toggleSuccessDialog() {
+  showSuccessDialog.value = !showSuccessDialog.value;
+}
+
+async function insertSubjectHandler(subject: SubjectPost) {
+  try {
+    await insertSubject(subject);
+    messageSuccess.value = 'Asignatura creada correctamente';
+    toggleSubjectCreationModal()
+    toggleSuccessDialog();
+  } catch (error) {
+    toggleSubjectCreationModal()
+    messageAlert.value = 'Error al crear la asignatura';
+    toggleAlertDialog();
+  }
+}
 
 </script>
 

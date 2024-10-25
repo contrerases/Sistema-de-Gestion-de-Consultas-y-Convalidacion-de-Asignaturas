@@ -21,3 +21,11 @@ export interface SubjectPost {
     id_department: number;
     credits: number;
 }
+
+export interface SubjectUpdate {
+    id: number;
+    acronym: string;
+    name: string;
+    id_department: number;
+    credits: number;
+}

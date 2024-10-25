@@ -32,7 +32,7 @@ async def add_subject(subject: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.callproc("CALL InsertSubject", (subject.acronym,subject.name ,subject.id_department, subject.credits))
+        cursor.callproc("InsertSubject", (subject.acronym,subject.name ,subject.id_department, subject.credits))
         conn.commit()
         cursor.close()
         conn.close()

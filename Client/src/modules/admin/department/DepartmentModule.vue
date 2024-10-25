@@ -64,7 +64,8 @@ async function insertDepartmentHandler(department: DepartmentPost) {
     await insertDepartment(department);  
     messageSuccess.value = 'Departamento creado correctamente';
     toggleInsertDepartmentDialog();
-    toggleSuccessDialog(); 
+    toggleSuccessDialog();
+     
   } catch (error) {
     toggleInsertDepartmentDialog();
     messageAlert.value = 'Error al crear departamento';
