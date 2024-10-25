@@ -43,3 +43,4 @@ export async function updateDepartment(department_id: number, department: Depart
         throw error;
     }
 }
+

@@ -24,10 +24,11 @@ import type { DepartmentResponse, DepartmentPost, DepartmentBase } from '@/inter
 
 
 const props = defineProps({
-    isOpen: Boolean,
-    department: {
-        type: Object as () => DepartmentBase,
-        required: true
+  isOpen: Boolean,
+  department: {
+    type: Object as () => DepartmentBase,
+    required: true,
+    default: () => ({})
   }
 });
 

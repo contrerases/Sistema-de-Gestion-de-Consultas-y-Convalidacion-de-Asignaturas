@@ -28,7 +28,7 @@ function close() {
 
 <style scoped lang="postcss">
 .alert-container {
-    @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50;
+    @apply fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50;
 }
 .alert-dialog-card {
     @apply bg-background border-destructive border-2 rounded-xl p-8 max-w-md w-full;
