@@ -29,3 +29,11 @@ export interface RequestUpdate {
   convalidations: ConvalidationUpdate[];
 }
 
+
+export interface RequestFiltered {
+  name_student?: string | null;
+  rut_student?: string | null;
+  rol_student?: string | null;
+  date_lower_bound?: Date | null;
+  date_upper_bound?: Date | null;
+}

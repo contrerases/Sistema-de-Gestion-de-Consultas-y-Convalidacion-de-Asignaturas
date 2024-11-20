@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { AxiosError} from 'axios';
 
-import type { RequestResponse, RequestInsert, RequestUpdate } from "@/interfaces/request_model";
+import type { RequestResponse, RequestInsert, RequestUpdate, RequestFiltered } from "@/interfaces/request_model";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -120,4 +120,17 @@ export async function updateRequest(request: RequestUpdate): Promise<void> {
           console.error('Error al actualizar convalidación:', axiosError?.response?.data);
           throw error;
       }
+}
+
+// getfiltered
+
+export async function getFilteredRequests(request: RequestFiltered): Promise<RequestResponse[]> {
+    try {
+        const { data: requests } = await axios.post<RequestResponse[]>(`${BASE_URL}filtered`, request);
+        return requests;
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al obtener solicitud por filtro:', axiosError?.response?.data);
+        throw error;
+    }
 }

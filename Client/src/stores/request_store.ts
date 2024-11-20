@@ -4,8 +4,9 @@ import type {
   RequestInsert,
   RequestResponse,
   RequestUpdate,
+  RequestFiltered,
 } from "@/interfaces/request_model";
-import { getRequestsByState, insertRequest, updateRequest, getRequestByID, getRequestByStudentRut, getRequestsByDateRange, getRequestsByStudentRol } from "@/services/request_api";
+import { getRequestsByState, insertRequest, updateRequest, getRequestByID, getRequestByStudentRut, getRequestsByDateRange, getRequestsByStudentRol, getFilteredRequests } from "@/services/request_api";
 import { RequestStates } from "@/enums/request_states";
 
 interface State {
@@ -89,6 +90,15 @@ export const useRequestStore = defineStore("request", {
     async getRequestsByStudentRolStore(rol: string) {
       try {
         return await getRequestsByStudentRol(rol);
+      } catch (error) {
+        this.error = error as Error;
+        throw error;
+      }
+    },
+
+    async getFilteredRequestsStore(filter: RequestFiltered) {
+      try {
+        this.filter_requests = await getFilteredRequests(filter);
       } catch (error) {
         this.error = error as Error;
         throw error;

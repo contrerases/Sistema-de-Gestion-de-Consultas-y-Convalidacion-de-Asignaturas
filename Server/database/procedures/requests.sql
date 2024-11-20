@@ -208,3 +208,45 @@ BEGIN
     WHERE 
         id = p_request_id;
 END 
+
+
+
+CREATE PROCEDURE GetFilteredRequests (
+    IN p_first_name VARCHAR(255),    -- Nombre del estudiante
+    IN p_rut_student VARCHAR(12),    -- RUT del estudiante
+    IN p_rol_student VARCHAR(10),    -- Rol del estudiante
+    IN p_date_lower_bound DATE,      -- Cota fecha inferior
+    IN p_date_upper_bound DATE       -- Cota fecha superior
+)
+BEGIN
+    SELECT
+        REQUESTS.ID AS id,
+        REQUESTS.id_student,
+        REQUESTS.CREATION_DATE AS creation_date,
+        REQUESTS.REVISION_DATE AS revision_date,
+        REQUESTS.COMMENTS AS comments,
+        CONCAT(ADMINISTRATORS.FIRST_NAME, ' ', ADMINISTRATORS.SECOND_NAME, ' ', ADMINISTRATORS.FIRST_LAST_NAME, ' ', ADMINISTRATORS.SECOND_LAST_NAME) AS user_approves,
+        STUDENTS.ROL_STUDENT AS rol_student,
+        CONCAT(STUDENTS.FIRST_NAME, ' ', STUDENTS.SECOND_NAME, ' ', STUDENTS.FIRST_LAST_NAME, ' ', STUDENTS.SECOND_LAST_NAME) AS name_student,
+        STUDENTS.RUT_STUDENT AS rut_student,
+        STUDENTS.CAMPUS_STUDENT AS campus_student
+    FROM
+        REQUESTS
+    INNER JOIN STUDENTS ON REQUESTS.ID_STUDENT = STUDENTS.ID
+    LEFT JOIN ADMINISTRATORS ON REQUESTS.ID_USER_APPROVES = ADMINISTRATORS.ID
+    WHERE
+        -- Aplicar filtros opcionales
+        (p_first_name IS NULL OR STUDENTS.FIRST_NAME LIKE CONCAT('%', p_first_name, '%'))
+        AND (p_rut_student IS NULL OR STUDENTS.RUT_STUDENT = p_rut_student)
+        AND (p_rol_student IS NULL OR STUDENTS.ROL_STUDENT = p_rol_student)
+        AND (p_date_lower_bound IS NULL OR REQUESTS.CREATION_DATE >= p_date_lower_bound)
+        AND (p_date_upper_bound IS NULL OR REQUESTS.CREATION_DATE <= p_date_upper_bound)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM CONVALIDATIONS
+            WHERE CONVALIDATIONS.ID_REQUEST = REQUESTS.ID
+              AND CONVALIDATIONS.STATE = 'Enviada'
+        )
+    ORDER BY REQUESTS.CREATION_DATE DESC;
+END //
+

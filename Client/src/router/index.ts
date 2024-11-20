@@ -4,6 +4,7 @@ import AdminView from '@/views/AdminView.vue'
 
 import StudentView from '@/views/StudentView.vue'
 
+
 import RequestModule from '@/modules/admin/requests/RequestModule.vue'
 import HistoryModule from '@/modules/admin/history/HistoryModule.vue'
 import CurriculumCoursesModule from '@/modules/admin/curriculum_courses/CurriculumCoursesModule.vue'
@@ -13,9 +14,14 @@ import WorkshopsModule from '@/modules/admin/workshops/WorkshopsModule.vue'
 import DepartmentModule from '@/modules/admin/department/DepartmentModule.vue'
 
 
+
 import WorkshopsModuleStudent from '@/modules/student/workshops/WorkshopsModuleStudent.vue'
 import NewRequestModule from '@/modules/student/new_request/NewRequestModule.vue'
- 
+import HomeModule from '@/modules/student/home/HomeModule.vue'
+import HistoryModuleStudent from '@/modules/student/history/HistoryModuleStudent.vue'
+
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -88,13 +94,13 @@ const router = createRouter({
         {
           path: 'inicio',
           name: 's/inicio',
-          component: CurriculumCoursesModule
+          component: HomeModule
         }, 
 
         {
           path: 'convalidaciones',
           name: 's/convalidaciones',
-          component: CurriculumCoursesModule
+          component: HistoryModuleStudent
         }, 
 
         {

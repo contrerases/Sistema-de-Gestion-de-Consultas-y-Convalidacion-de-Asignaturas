@@ -29,3 +29,12 @@ class RequestUpdate(BaseModel):
     comments:Optional[str] 
     id_user_approver: int 
     convalidations: List[ConvalidationUpdate]
+
+class RequestFiltered(BaseModel):
+    name_student: Optional[str] = None
+    rut_student: Optional[str] = None
+    rol_student: Optional[str] = None
+    date_lower_bound: Optional[datetime] = None
+    date_upper_bound: Optional[datetime] = None
+    
+

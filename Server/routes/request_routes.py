@@ -12,6 +12,7 @@ BASE_MODEL = requests_model.Request
 RESPONSE_MODEL = requests_model.RequestResponse
 INSERT_MODEL = requests_model.RequestInsert
 UPDATE_MODEL = requests_model.RequestUpdate
+FILTERED_MODEL = requests_model.RequestFiltered
 
 router = APIRouter()
 
@@ -172,7 +173,38 @@ async def get_request_by_range_creation_date(start_date: str, end_date: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
 
-#get request by state 
+#FILTERED 
+@router.post("/filtered", response_model=List[RESPONSE_MODEL])
+async def get_filtered_requests(filter: FILTERED_MODEL):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("GetFilteredRequests", (filter.name_student, filter.rut_student, filter.rol_student, filter.date_lower_bound, filter.date_upper_bound))
+        requests = cursor.fetchall()
+
+        for request in requests:
+            request_id = request['id']
+
+            cursor.callproc("GetConvalidationsByRequestID", (request_id,))
+            convalidations = cursor.fetchall()
+
+            for convalidation in convalidations:
+                pdf_content = convalidation.pop('file_data', None)
+                if pdf_content:
+                    convalidation['file_data'] = base64.b64encode(pdf_content).decode('utf-8')
+
+            request['convalidations'] = convalidations
+
+        cursor.close()
+        conn.close()
+
+        return requests
+    except mdb.Error as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
 
 @router.get("/state/{state}", response_model=List[RESPONSE_MODEL])
 async def get_request_by_state(state: str):

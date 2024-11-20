@@ -14,32 +14,20 @@
             <p>{{ item.text }}</p>
           </div>
 
-          <div
-            @click="pushNewRequest"
-            v-if="
-              item.text === 'Convalidaciones' &&
-              isSelected('/estudiante/convalidaciones')
-            "
-            class="mt-4 pl-10 text-sm w-full hover:text-gray-600"
-            
-          >
-            <div class="border-t border-white w-full h-1 pb-2"></div>
-             + Nueva Solicitud
-            <div class="border-b border-white w-full h-1 pt-2"></div>
-          </div>
         </li>
       </ul>
 
       <div class="line"></div>
-    </div>
-    <!-- <div class="flex justify-center">
+
       <button
-        class="bg-primary p-4 rounded-xl hover:opacity-50 w-3/4 top-full font-mono text-xl"
+        class="flex items
+        -center justify-center w-full py-4 px-6 m-1 text-foregorund text-lg font-mono cursor-pointer rounded-lg  border border-primary hover:bg-primary hover:rounded-xl"
         @click="pushNewRequest"
-      >
-        Nueva solicitud
+      > 
+        <p>+ Nueva solicitud</p>
       </button>
-    </div> -->
+
+    </div>
   </div>
 </template>
 
@@ -72,7 +60,7 @@ const topMenu = [
   },
   {
     icon: "ph:list-bullets-fill",
-    text: "Convalidaciones",
+    text: "Mis Convalidaciones",
     route: "/estudiante/convalidaciones",
   },
   {

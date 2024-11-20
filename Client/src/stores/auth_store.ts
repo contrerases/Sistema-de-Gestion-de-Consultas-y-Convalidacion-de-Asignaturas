@@ -5,6 +5,7 @@ interface AuthState {
   username: string;
   email: string;
   name: string;
+  rut: string;
   role: 'admin' | 'student';
 }
 
@@ -14,7 +15,8 @@ export const useAuthStore = defineStore('user', {
     id: 1,
     username: 'cecontre',  
     email: 'camilo.contreras@sansano.usm.cl', 
-    name: 'Camilo Contreras',  
+    name: 'Camilo Contreras',
+    rut: '98765432-1',
     role: 'admin', 
   }),
 
