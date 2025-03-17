@@ -4,6 +4,9 @@ import AdminView from '@/views/AdminView.vue'
 
 import StudentView from '@/views/StudentView.vue'
 
+import HomeView from '@/views/HomeView.vue'
+
+
 
 import RequestModule from '@/modules/admin/requests/RequestModule.vue'
 import HistoryModule from '@/modules/admin/history/HistoryModule.vue'
@@ -12,7 +15,8 @@ import StatsModule from '@/modules/admin/stats/StatsModule.vue'
 import SubjectsModule from '@/modules/admin/subjects/SubjectsModule.vue'
 import WorkshopsModule from '@/modules/admin/workshops/WorkshopsModule.vue'
 import DepartmentModule from '@/modules/admin/department/DepartmentModule.vue'
-
+import WorkshopsCurrentList from '@/modules/admin/workshops/WorkshopsCurrentList.vue'
+import WorkshopsPastList from '@/modules/admin/workshops/WorkshopsPastList.vue'
 
 
 import WorkshopsModuleStudent from '@/modules/student/workshops/WorkshopsModuleStudent.vue'
@@ -21,16 +25,25 @@ import HomeModule from '@/modules/student/home/HomeModule.vue'
 import HistoryModuleStudent from '@/modules/student/history/HistoryModuleStudent.vue'
 
 
+import { useAuthStore } from '@/stores/auth_store';
+
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Inicio',
+      component: HomeView,
+    },
+    {
       path: '/administrador',
       name: 'Administrador',
       component: AdminView,
+      meta: { requiresAdmin: true },
       redirect: {name: 'a/estadisticas'},
+      
 
       children: [
 
@@ -55,7 +68,22 @@ const router = createRouter({
         {
           path: 'talleres',
           name: 'a/talleres',
-          component: WorkshopsModule
+          component: WorkshopsModule,
+
+          children: [
+            
+            {
+              path: "actuales",
+              name: "a/actuales",
+              component: WorkshopsCurrentList,
+            },
+            {
+              path: "pasados",
+              name: "a/pasados",
+              component: WorkshopsPastList,
+            },
+          ],
+
         },
         
         {
@@ -87,6 +115,7 @@ const router = createRouter({
       path: '/estudiante',
       name: 'Estudiante',
       component: StudentView,
+      meta: { requiresStudent: true },
       redirect: {name: 's/inicio'},
 
       children: [
@@ -106,7 +135,8 @@ const router = createRouter({
         {
           path: 'talleres',
           name: 's/talleres',
-          component: WorkshopsModuleStudent
+          component: WorkshopsModuleStudent,
+
         },  
 
         {
@@ -128,5 +158,30 @@ const router = createRouter({
 
   ]
 })
+
+
+// Guard de Navegación Global
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore(); // Accede al auth store
+
+  // Verifica si la ruta requiere que el usuario sea administrador
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    return next({ name: 'Inicio' }); // Redirigir al Home (Inicio)
+  }
+
+  // Verifica si la ruta requiere que el usuario sea estudiante
+  if (to.meta.requiresStudent && authStore.isAdmin) {
+
+    return next({ name: 'Inicio' }); // Redirigir al Home (Inicio)
+  }
+
+  if (to.name === 'Inicio' && authStore.isAuthenticated) {
+    // Redirige según el rol del usuario
+    return next({ name: authStore.isAdmin ? 'Administrador' : 'Estudiante' });
+  }
+
+  return next(); 
+  
+});
 
 export default router

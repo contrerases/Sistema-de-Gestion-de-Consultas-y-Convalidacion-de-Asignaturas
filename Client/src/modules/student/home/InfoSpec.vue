@@ -1,57 +1,106 @@
 <template>
-    <div class="container mx-auto p-8 bg-card shadow-lg rounded-lg">
-        <h1 class="text-5xl font-bold text-primary mb-12 border-b-4 border-primary pb-5">
-          Bienvenido al Sistema de Gestión de Convalidaciones y Talleres
-        </h1>
-        <p class="text-lg text-foregorund leading-relaxed mb-12">
-          En esta plataforma, los estudiantes podrán gestionar sus solicitudes de convalidación de asignaturas y talleres de manera eficiente y sencilla. Nuestro objetivo es facilitar la comunicación y gestión de procesos académicos entre los estudiantes y el departamento correspondiente.
+  <div class="w-full  bg-card text-card-foreground rounded-[var(--radius)] shadow p-6 px-12 ml-6 overflow-auto">
+    <h1 class="text-4xl font-bold mb-4 flex items-center w-full justify-center text-primary py-10 text-center uppercase">Bienvenido al Sistema de Gestión de Convalidaciones y Talleres</h1>
+    <p class="mb-6">
+      Este sistema está diseñado para facilitar la gestión de convalidaciones y talleres, optimizando los procesos académicos
+      y mejorando la experiencia de estudiantes, profesores y administradores.
+    </p>
+
+    <!-- Sub-sección de Convalidaciones -->
+    <section class="mb-6">
+        <h2 class="text-3xl font-bold mb-6 text-primary uppercase">Sobre las Convalidaciones</h2>
+        <p class="mb-6 text-lg text-foreground">
+          El sistema permite realizar solicitudes de convalidaciones académicas de manera ágil y eficiente. A continuación, se describe cómo funcionan:
         </p>
       
-        <h2 class="text-3xl font-semibold text-primary mb-4">
-          ¿Qué es una convalidación?
-        </h2>
-        <p class="text-lg text-foregorund leading-relaxed mb-12">
-          La convalidación es un proceso mediante el cual puedes solicitar que se reconozcan asignaturas o actividades realizadas en otro contexto, para que estas cuenten como parte de tu plan de estudios actual. Esto te permite avanzar en tu carrera sin necesidad de repetir conocimientos que ya has adquirido.
-        </p>
+        <!-- Tipos de Cursos Curriculares -->
+        <section class="mb-6">
+          <h3 class="text-2xl font-semibold mb-4 text-primary ">Tipos de Cursos Curriculares</h3>
+          <ul class="list-disc ml-6 text-foreground">
+            <li>
+              <strong>Libres:</strong> Son cursos generales que no están restringidos a un área específica.  
+              <em>Ejemplos:</em> Libre 1, Libre 2, ..., Libre N.
+            </li>
+            <li>
+              <strong>Electivos:</strong> Son cursos opcionales que forman parte de la malla curricular.  
+              <em>Ejemplos:</em> Electivo 1, Electivo 2, ..., Electivo N.
+            </li>
+            <li>
+              <strong>Electivos de Informática:</strong> Son electivos específicos impartidos por el departamento de informática.  
+              <em>Ejemplos:</em> Electivo de Informática 1, Electivo de Informática 2, ..., Electivo de Informática N.
+            </li>
+          </ul>
+        </section>
       
-        <h2 class="text-3xl font-semibold text-primary mb-4">
-          ¿Qué son los talleres?
-        </h2>
-        <p class="text-lg text-foregorund leading-relaxed mb-12">
-          Los talleres son actividades académicas que complementan tu formación profesional. A través de esta plataforma, podrás inscribirte en talleres ofrecidos por el departamento, realizar su seguimiento y, si corresponde, solicitar la convalidación de estos talleres para que formen parte de tu plan de estudios.
-        </p>
+        <!-- Tipos de Convalidaciones -->
+        <section class="mb-6">
+          <h3 class="text-2xl font-semibold mb-4 text-primary ">Tipos de Convalidaciones</h3>
+          <ul class="list-disc ml-6 text-foreground">
+            <li>
+              <strong>Asignaturas de Informática:</strong> Incluyen asignaturas y electivos ofrecidos por el departamento de informática.
+            </li>
+            <li>
+              <strong>Asignaturas Externas:</strong> Se refieren a cursos realizados en otros departamentos.
+            </li>
+            <li>
+              <strong>Cursos Certificados:</strong> Cursos realizados en plataformas online como Udemy o Coursera.  
+              <em>Nota:</em> Requieren un archivo PDF adicional que certifique la aprobación del curso.
+            </li>
+            <li>
+              <strong>Talleres de INF:</strong> Talleres especiales organizados por el departamento de informática.
+            </li>
+            <li>
+              <strong>Proyectos Personales:</strong> Actividades realizadas de manera independiente por el estudiante, supervisadas y avaladas por un tutor.  
+              <em>Nota:</em> Requieren un archivo PDF basado en una plantilla del sistema, que describe el proyecto y contiene la evaluación del tutor.
+            </li>
+          </ul>
+        </section>
       
-        <h2 class="text-3xl font-semibold text-primary mb-4">
-          ¿Qué se puede convalidar y por qué?
-        </h2>
-        <p class="text-lg text-foregorund leading-relaxed mb-4">
-          A continuación, te mostramos qué tipos de actividades y asignaturas son convalidables y las razones por las cuales se pueden considerar para la convalidación:
-        </p>
-        <ul class="list-disc list-inside mb-12 space-y-3">
-          <li class="text-lg text-foregorund leading-relaxed">
-            <strong class="text-primary">Asignaturas Internas del Departamento:</strong> Puedes convalidar asignaturas cursadas en otros programas o carreras dentro del mismo departamento, siempre que el contenido coincida con el plan de estudios actual.
-          </li>
-          <li class="text-lg text-foregorund leading-relaxed">
-            <strong class="text-primary">Asignaturas Externas:</strong> Las asignaturas cursadas en otras universidades o departamentos pueden ser convalidadas si cumplen con los criterios establecidos por el departamento.
-          </li>
-          <li class="text-lg text-foregorund leading-relaxed">
-            <strong class="text-primary">Cursos Certificados:</strong> Si has completado cursos certificados relevantes para tu área de estudio, estos pueden ser considerados para la convalidación.
-          </li>
-          <li class="text-lg text-foregorund leading-relaxed">
-            <strong class="text-primary">Talleres Realizados en el Departamento:</strong> Los talleres impartidos por el departamento, si son equivalentes a asignaturas, pueden ser convalidados como parte de tu plan de estudios.
-          </li>
-          <li class="text-lg text-foregorund leading-relaxed">
-            <strong class="text-primary">Proyectos Personales:</strong> Si has realizado proyectos de carácter académico o profesional, estos pueden ser convalidados siempre que se alineen con los objetivos del plan de estudios.
-          </li>
-        </ul>
+        <!-- Reglas de Convalidación -->
+        <section>
+          <h3 class="text-2xl font-semibold mb-4 text-primary ">Reglas de Convalidación</h3>
+          <ul class="list-disc ml-6 text-foreground">
+            <li>
+              <strong>Libres:</strong> Los cursos de tipo Libre pueden ser convalidados por cualquiera de los cinco tipos de convalidaciones:
+              <ul class="list-disc ml-6">
+                <li>Asignaturas de Informática.</li>
+                <li>Asignaturas Externas.</li>
+                <li>Cursos Certificados.</li>
+                <li>Talleres de INF.</li>
+                <li>Proyectos Personales.</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Electivos:</strong> Los cursos de tipo Electivo pueden ser convalidados por:
+              <ul class="list-disc ml-6">
+                <li>Asignaturas de Informática.</li>
+                <li>Asignaturas Externas.</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Electivos de Informática:</strong> Los cursos de tipo Electivo de Informática solo pueden ser convalidados por:
+              <ul class="list-disc ml-6">
+                <li>Asignaturas de Informática.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+      </section>
       
-        <h2 class="text-3xl font-semibold text-primary mb-4">
-          ¿Cómo funciona la plataforma?
-        </h2>
-        <p class="text-lg text-foregorund leading-relaxed mb-12">
-          La plataforma te permite elevar solicitudes de convalidación, inscribirte en talleres y hacer seguimiento a cada uno de estos procesos. Podrás ver el estado de tus solicitudes, recibir retroalimentación del departamento y gestionar tu avance académico de forma centralizada y transparente.
-        </p>
-      </div>
-      
+
+    <!-- Sub-sección de Talleres -->
+    <section>
+      <h2 class="text-3xl font-bold mb-6 text-primary uppercase">  Sobre los talleres</h2>
+      <p class="mb-4">
+        Los talleres de informática permiten a los estudiantes complementar su aprendizaje de manera práctica. El sistema facilita:
+      </p>
+      <ul class="list-disc ml-6">
+        <li>Creación de talleres por los administradores, detallando el tema, el profesor a cargo, y las fechas de inicio y término.</li>
+        <li>Publicación de los talleres por los profesores para que estén disponibles a los alumnos.</li>
+        <li>Inscripciones de los alumnos, quienes deben aceptar un compromiso al registrarse.</li>
+        <li>Gestión de inscripciones y asignación de notas a los alumnos por parte de los administradores.</li>
+      </ul>
+    </section>
+  </div>
       
 </template>

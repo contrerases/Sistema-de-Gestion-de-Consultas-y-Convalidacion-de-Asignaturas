@@ -35,7 +35,7 @@ import { Icon } from '@iconify/vue';
 
 const selectedItem = ref<number | null>(0);
 const router = useRouter();
-const route = useRoute();
+
 
 const selectItem = (index: number, route: string) => {
   selectedItem.value = index;

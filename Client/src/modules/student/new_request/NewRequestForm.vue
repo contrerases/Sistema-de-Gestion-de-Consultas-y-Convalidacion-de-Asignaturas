@@ -1,28 +1,17 @@
 <template>
-  <SuccessDialog
-    :isOpen="showSuccessDialog"
-    title="Solicitud Enviada"
-    message="La solicitud ha sido enviada correctamente"
-    @close="toggleSuccessDialog"
-  />
+  <SuccessDialog :isOpen="showSuccessDialog" title="Solicitud Enviada"
+    message="La solicitud ha sido enviada correctamente" @close="toggleSuccessDialog" />
 
-  <AlertDialog
-    :isOpen="showErrorDialog"
-    title="Error"
-    message="No se pudo enviar la solicitud, por favor intenta de nuevo"
-    @close="toggleErrorDialog"
-  />
+  <AlertDialog :isOpen="showErrorDialog" title="Error"
+    message="No se pudo enviar la solicitud, por favor intenta de nuevo" @close="toggleErrorDialog" />
 
   <main class="pr-2 bg-background">
     <div class="text-4xl font-bold py-2 font-mono">Convalidaciones</div>
     <div class="line mt-2"></div>
 
     <div class="flex flex-col">
-      <div
-        v-for="(convalidation, index) in convalidations_precooked"
-        :key="index"
-        class="bg-card shadow-lg rounded-lg flex p-10 border border-border font-mono"
-      >
+      <div v-for="(convalidation, index) in convalidations_precooked" :key="index"
+        class="bg-card shadow-lg rounded-lg flex p-10 border border-border font-mono">
         <div class="flex flex-col w-full">
           <h3 class="font-bold text-xl mb-8 font-mono">Convalidación {{ index + 1 }}</h3>
 
@@ -33,11 +22,7 @@
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem
-                  v-for="type in types_curriculum_courses"
-                  :key="type.id"
-                  :value="String(type.id)"
-                >
+                <SelectItem v-for="type in types_curriculum_courses" :key="type.id" :value="String(type.id)">
                   {{ type.name }}
                 </SelectItem>
               </SelectGroup>
@@ -51,7 +36,7 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="1">{{ CourseConvalidationTypes.INF }}</SelectItem>
-              <SelectItem value="2" v-if="tcc[index] != '2'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
+              <SelectItem value="2" v-if="tcc[index] != '3'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
               <SelectItem value="3" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
               <SelectItem value="4" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
               <SelectItem value="5" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
@@ -67,21 +52,24 @@
               <SelectGroup>
                 <div v-if="tcc[index] === '1'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                    <SelectItem :value="String(course.id)"
+                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
                 <div v-if="tcc[index] === '2'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                    <SelectItem :value="String(course.id)"
+                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
                 <div v-if="tcc[index] === '3'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)" v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                    <SelectItem :value="String(course.id)"
+                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
@@ -97,11 +85,7 @@
                 <SelectValue placeholder="..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem
-                  v-for="subject in subjects"
-                  :key="subject.id"
-                  :value="String(subject.id)"
-                >
+                <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
                   {{ subject.name }}
                 </SelectItem>
               </SelectContent>
@@ -115,11 +99,7 @@
                 <SelectValue placeholder="..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem
-                  v-for="subject in subjects"
-                  :key="subject.id"
-                  :value="String(subject.id)"
-                >
+                <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
                   {{ subject.name }}
                 </SelectItem>
               </SelectContent>
@@ -128,11 +108,8 @@
 
           <div class="pb-8" v-if="convalidation.id_convalidation_type === '5'">
             <label class="font-semibold my-2">Nombre del Curso Certificado:</label>
-            <input
-              type="text"
-              class="bg-input border w-full rounded-lg p-2 mb-4"
-              v-model="convalidation.certified_course_name"
-            />
+            <input type="text" class="bg-input border w-full rounded-lg p-2 mb-4"
+              v-model="convalidation.certified_course_name" />
           </div>
 
           <div v-if="convalidation.id_convalidation_type === '3'">
@@ -142,11 +119,7 @@
                 <SelectValue placeholder="..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem
-                  v-for="workshop in workshops"
-                  :key="workshop.id"
-                  :value="String(workshop.id)"
-                >
+                <SelectItem v-for="workshop in workshops" :key="workshop.id" :value="String(workshop.id)">
                   {{ workshop.name }}
                 </SelectItem>
               </SelectContent>
@@ -155,11 +128,8 @@
 
           <div class="pb-8" v-if="convalidation.id_convalidation_type === '4'">
             <label class="font-semibold my-2">Nombre del Proyecto Personal:</label>
-            <input
-              type="text"
-              class="bg-input border w-full rounded-lg p-2 mb-4"
-              v-model="convalidation.personal_project_name"
-            />
+            <input type="text" class="bg-input border w-full rounded-lg p-2 mb-4"
+              v-model="convalidation.personal_project_name" />
           </div>
 
           <div class="pb-8">
@@ -170,11 +140,9 @@
 
         <!-- Botón para eliminar la convalidación (opcional) -->
         <div class="flex items-center">
-          <button
-            @click="eliminateConvalidation(index)"
-            class="m-10 text-destructive hover:underline text-center w-auto"
-          >
-            <Icon icon="material-symbols:delete" class="text-[50px] hover:opacity-80"/>
+          <button @click="eliminateConvalidation(index)"
+            class="m-10 text-destructive hover:underline text-center w-auto">
+            <Icon icon="material-symbols:delete" class="text-[50px] hover:opacity-80" />
           </button>
         </div>
       </div>
@@ -182,17 +150,13 @@
 
     <button
       class="rounded-full bg-primary py-2 px-4 mt-4 font-semibold text-sm uppercase items-center flex justify-center hover:opacity-80"
-      @click="addConvalidation"
-    >
+      @click="addConvalidation">
       Agregar convalidación
     </button>
 
     <!-- sendrequestbutton -->
     <div class="flex justify-end">
-      <button
-        @click="sendRequest"
-        class="bg-primary text-white font-bold rounded-lg p-4 mt-6 hover:opacity-80"
-      >
+      <button @click="sendRequest" class="bg-primary text-white font-bold rounded-lg p-4 mt-6 hover:opacity-80">
         Enviar Solicitud
       </button>
     </div>

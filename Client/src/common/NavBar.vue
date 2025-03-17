@@ -4,9 +4,13 @@ import { Icon } from "@iconify/vue";
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useAuthStore } from '@/stores/auth_store';
 import { useRequestStore } from '@/stores/request_store';
+import { useRouter } from 'vue-router';
 
 const auth_store = useAuthStore();
 const request_store = useRequestStore();
+const router = useRouter();
+
+
 
 const isOpen = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);
@@ -66,7 +70,9 @@ onBeforeUnmount(() => {
 });
 
 const logout = () => {
-  // Implementa la lógica de cierre de sesión aquí
+  auth_store.clearUser();
+  closeMenu();
+  router.push({ name: 'Inicio' });
 };
 
 
@@ -106,15 +112,23 @@ const logout = () => {
 
       <ColorMode />
 
-      <div class="relative" ref="dropdownRef">
+      <div class="relative" ref="dropdownRef" v-if="auth_store.isAuthenticated"> 
         <button @click="toggleMenu" class="user-spec">
           {{ auth_store.username }}
           <Icon icon="teenyicons:down-small-outline" class="icon"/>
         </button>
-        <ul v-if="isOpen" class="dropdown-menu">
+        <ul v-if="isOpen" class="dropdown-menu" >
           <li @click="logout">Cerrar sesión</li>
         </ul>
       </div>
+
+      <div class="relative" ref="dropdownRef" v-if="!auth_store.isAuthenticated"> 
+        <div @click="toggleMenu" class="user-flex items-center bg-input w-auto h-1/2 border border-border rounded-full px-4 py-3 uppercase font-bold ">
+          {{ "Inicia sesión" }}
+        </div>
+      </div>
+
+
     </div>
   </nav>
 </template>
@@ -140,3 +154,4 @@ const logout = () => {
   @apply p-3 hover:bg-primary cursor-pointer rounded-lg font-medium;
 }
 </style>
+

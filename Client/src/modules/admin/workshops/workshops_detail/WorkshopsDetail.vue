@@ -1,37 +1,35 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-    <div class="bg-background p-20 rounded-lg shadow-lg w-2/3  flex flex-col justify-between">
-
-      <div class="flex flex-row justify-between pb-10">
-
-        <div class="workshop-description flex flex-col gap-2">
-          <h1 class="text-3xl font-bold">
-            {{ workshop.name }}
-          </h1>
-          <h2>
-            Profesor: {{ workshop.professor }}
-          </h2>
-          <p>
-            Semestre: {{ workshop.year }}-{{ workshop.semester }}
-          </p>
-          <p>
-            Fecha de Inicio: {{ formatReadableDate(workshop.initial_date) }}
-          </p>
+  <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
+    <div class="bg-background p-16 rounded-2xl shadow-lg w-2/3 flex flex-col space-y-8">
+      <!-- Encabezado -->
+      <div class="flex justify-between items-center">
+        <div class="flex flex-col space-y-2">
+          <h1 class="text-3xl font-bold">{{ workshop.name }}</h1>
+          <p>Profesor: {{ workshop.professor }}</p>
+          <p>Semestre: {{ workshop.year }}-{{ workshop.semester }}</p>
+          <p>Fecha de Inicio: {{ formatReadableDate(workshop.initial_date) }}</p>
         </div>
-
-        <div
-          class="bg-background border border-border rounded-lg bg-opacity-55 w-36 flex items-center align-middle justify-center hover:border-primary cursor-pointer">
-          <Icon class="text-foreground text-7xl" icon="dashicons:pdf" />
+        <div 
+          class="tooltip group relative flex items-center justify-center cursor-pointer"
+          @click="downloadWorkshopDetails"
+        >
+          <Icon icon="dashicons:pdf" class="text-7xl text-muted-foreground group-hover:text-foreground" />
+          <span class="tooltip-text bg-card text-card-foreground text-sm rounded px-2 py-1 absolute bottom-full mb-2 hidden group-hover:flex">Descargar PDF</span>
         </div>
       </div>
 
-      <WorkshopsInscriptions :id_workshop="props.workshop.id"/>
+      <!-- Tabla de Inscripciones -->
+      <WorkshopsInscriptions :id_workshop="workshop.id" />
 
-      <div class="mt-4 flex justify-end">
-        <button @click="close"
-          class="bg-destructive text-white px-4 py-2 rounded hover:bg-destructive-hover">Close</button>
+      <!-- Botón de Cerrar -->
+      <div class="flex justify-end">
+        <button 
+          @click="close" 
+          class="px-6 py-3 bg-destructive text-foreground rounded-lg hover:bg-destructive-hover"
+        >
+          Cerrar
+        </button>
       </div>
-
     </div>
   </div>
 </template>
@@ -40,8 +38,8 @@
 import { defineProps, defineEmits } from 'vue';
 import type { WorkshopResponse } from '@/interfaces/workshop_model';
 import formatReadableDate from '@/helpers/format_date';
-import { Icon } from '@iconify/vue/dist/iconify.js';
-import WorkshopsInscriptions from '@/modules/admin/workshops/workshops_detail/WorkshopsInscriptions.vue';
+import { Icon } from '@iconify/vue';
+import WorkshopsInscriptions from './WorkshopsInscriptions.vue'; // Ruta relativa al componente de inscripciones
 
 const props = defineProps<{
   workshop: WorkshopResponse;
@@ -55,8 +53,20 @@ const close = () => {
   emit('close');
 };
 
+// Método para descargar el archivo PDF
+const downloadWorkshopDetails = () => {
+  // Aquí se implementa la lógica para descargar el archivo PDF del taller
+};
 </script>
 
 <style scoped>
-/* Estilos adicionales para el modal */
+.tooltip {
+  position: relative;
+}
+.tooltip-text {
+  display: none;
+}
+.group:hover .tooltip-text {
+  display: flex;
+}
 </style>

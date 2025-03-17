@@ -26,7 +26,7 @@
                   <th class="py-3 px-4 text-left">Rol</th>
                   <th class="py-3 px-4 text-left">RUT</th>
                   <th class="py-3 px-4 text-left">Nombre Estudiante</th>
-                  <th class="py-3 px-4 text-left">Fecha de creacion</th>
+                  <th class="py-3 px-4 text-left">Fecha de solicitud</th>
   
   
                 </tr>
@@ -63,7 +63,7 @@
   
   let isLoading = ref<boolean>(true);
   const request_store = useRequestStore();
-    const auth_store = useAuthStore();
+  const auth_store = useAuthStore();
   const requests = ref<RequestResponse[]>([]);
   
   const isDialogOpen = ref(false); // Controla el estado del modal
@@ -82,7 +82,7 @@
   async function getRequestsHandler() {
     try {
       isLoading.value = true; // Mostrar el spinner mientras carga
-      await request_store.getRequestByStudentRutStore(auth_store.rut);
+      await request_store.getRequestByStudentRutStore(auth_store.rut as string);
       requests.value = request_store.requests;
       console.log('requests:', requests.value);
     } catch (error) {

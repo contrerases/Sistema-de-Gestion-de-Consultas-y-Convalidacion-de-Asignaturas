@@ -13,7 +13,7 @@ import InfoSpec from '@/modules/student/home/InfoSpec.vue';
 <style scoped lang="postcss">
 
 .home-main {
-  @apply flex flex-col mx-5 px-10 h-screen relative ;  
+  @apply px-10 h-screen relative ;  
 }
 
 .home-title {

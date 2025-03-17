@@ -34,7 +34,6 @@ import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
 // Estado del nuevo departamento
 const newDepartment = ref<DepartmentPost>({
   name: '',
-  description: ''
 });
 
 // Estados para mostrar/ocultar diálogos
