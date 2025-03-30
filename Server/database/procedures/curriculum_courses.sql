@@ -7,10 +7,11 @@ END
 
 
 CREATE PROCEDURE InsertCurriculumCourse(
-    IN course_name VARCHAR(255)
+    IN course_name VARCHAR(255),
+    IN p_id_type_curriculum_course INT
 )
 BEGIN
-    INSERT INTO CURRICULUM_COURSES (name) VALUES (course_name);
+    INSERT INTO CURRICULUM_COURSES (name, id_type_curriculum_course) VALUES (course_name, p_id_type_curriculum_course);
 END
 
 

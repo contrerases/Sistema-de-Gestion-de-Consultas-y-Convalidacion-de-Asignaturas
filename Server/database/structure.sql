@@ -70,7 +70,7 @@ CREATE TABLE CURRICULUM_COURSES (
     name VARCHAR(255) NOT NULL UNIQUE, -- libre 1 .. n , Electivo 1 ... n m Electivo Informatica 1 ... n
     id_type_curriculum_course INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id_type_curriculum_course) REFERENCES TYPES_CURRICULM_COURSES (id)
+    FOREIGN KEY (id_type_curriculum_course) REFERENCES TYPES_CURRICULUM_COURSES (id)
 );
 
 CREATE TABLE DEPARTMENTS (
@@ -137,8 +137,10 @@ CREATE TABLE WORKSHOPS (
     year INT NOT NULL,
     professor VARCHAR(255) NOT NULL,
     initial_date TIMESTAMP NOT NULL,
+    inscription_deadline TIMESTAMP NOT NULL,
     file_data LONGBLOB DEFAULT NULL,
     available BOOLEAN NOT NULL DEFAULT TRUE,
+    state VARCHAR(255) NOT NULL DEFAULT 'Inscripcion',
     PRIMARY KEY (id)
 );
 

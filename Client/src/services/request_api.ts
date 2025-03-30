@@ -1,9 +1,12 @@
 import axios from "axios";
 import type { AxiosError} from 'axios';
+import {env} from "@/utils/env_const";
 
 import type { RequestResponse, RequestInsert, RequestUpdate, RequestFiltered } from "@/interfaces/request_model";
 
 const apiUrl = import.meta.env.VITE_API_URL;
+
+
 
 const BASE_URL = "http://localhost:8000/requests/";
 

@@ -17,7 +17,7 @@
 
         <!-- Campo para RUT del estudiante -->
         <div class="mb-4">
-          <label for="rut_student" class="block text-foreground font-semibold mb-2">RUT del Estudiante</label>
+          <label for="rut_student" class="block text-foreground font-semibold mb-2 uppercase">RUT </label>
           <input
             v-model="filters.rut_student"
             id="rut_student"
@@ -28,7 +28,7 @@
 
         <!-- Campo para rol del estudiante -->
         <div class="mb-4">
-          <label for="rol_student" class="block text-foreground font-semibold mb-2">Rol del Estudiante</label>
+          <label for="rol_student" class="block text-foreground font-semibold mb-2 uppercase">Rol</label>
           <input
             v-model="filters.rol_student"
             id="rol_student"
@@ -39,7 +39,7 @@
 
         <!-- Campo para cota inferior de fecha -->
         <div class="mb-4">
-          <label for="date_lower_bound" class="block text-foreground font-semibold mb-2">Desde (Fecha Inferior)</label>
+          <label for="date_lower_bound" class="block text-foreground font-semibold mb-2 uppercase">Desde (Fecha Inferior)</label>
           <input
             v-model="filters.date_lower_bound"
             id="date_lower_bound"
@@ -50,7 +50,7 @@
 
         <!-- Campo para cota superior de fecha -->
         <div class="mb-4">
-          <label for="date_upper_bound" class="block text-foreground font-semibold mb-2">Hasta (Fecha Superior)</label>
+          <label for="date_upper_bound" class="block text-foreground font-semibold mb-2 uppercase">Hasta (Fecha Superior)</label>
           <input
             v-model="filters.date_upper_bound"
             id="date_upper_bound"

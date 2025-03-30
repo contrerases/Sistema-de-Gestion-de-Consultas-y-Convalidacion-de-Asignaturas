@@ -1,4 +1,21 @@
 <template>
+
+  <SuccessDialog :isOpen="showSuccessDialog" title="Taller agregado"
+  message="El taller ha sido agregado" @close="toggleSuccessDialog" />
+
+<AlertDialog :isOpen="showErrorDialog" title="Error"
+  message="No se pudo agregar el taller, por favor intenta de nuevo" @close="toggleErrorDialog" />
+
+  <ConfirmationDialog
+  :isOpen="showConfirmationDialog"
+  title="Agregar Taller"
+  message="¿Está seguro de agregar el taller?"
+  @confirm="insertWorkshopHandler" 
+  @cancel="toggleConfirmationDialog"
+  class="z-20"
+/>
+
+
   <div v-if="visible" class="modal-overlay">
     <div class="modal-container">
       <!-- Formulario para añadir un nuevo taller -->
@@ -42,6 +59,15 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label for="initial_date" class="form-label">Termino de inscripciones:</label>
+          <div class="date-inputs">
+            <input type="number" v-model="day_inscriptions" min="1" max="31" placeholder="Día" class="form-input" />
+            <input type="number" v-model="month_inscriptions" min="1" max="12" placeholder="Mes" class="form-input" />
+            <input type="number" v-model="yearInput_inscriptions" min="1900" placeholder="Año" class="form-input" />
+          </div>
+        </div>
+
         <!-- Campo de entrada para el archivo -->
         <div class="form-group">
           <label for="file_data" class="form-label">Archivo (Syllabus)</label>
@@ -60,7 +86,7 @@
 
       <!-- Botones de acción -->
       <div class="modal-actions">
-        <button @click="saveWorkshop" class="btn-primary">Guardar</button>
+        <button @click="toggleConfirmationDialog" class="btn-primary">Guardar</button>
         <button @click="close" class="btn-secondary">Cerrar</button>
       </div>
     </div>
@@ -72,28 +98,44 @@ import { ref, defineProps, defineEmits, watch } from 'vue';
 import type { WorkshopPost } from '@/interfaces/workshop_model';
 import { insertWorkshop } from '@/services/workshop_api';
 
+import AlertDialog from "@/common/dialogs/AlertDialog.vue";
+import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
+import ConfirmationDialog from "@/common/dialogs/ConfirmationDialog.vue";
+
 const props = defineProps<{
   visible: boolean;
 }>();
 
-const emit = defineEmits(['close', 'insert']);
+const emit = defineEmits(['close']);
 
 const close = () => {
   emit('close');
 };
 
 const workshop = ref<WorkshopPost>({
-  name: '',
-  semester: '',
-  year: 0,
-  professor: '',
-  initial_date: '',
-  file_data: null,
-});
+    name: 'Teoria de Sistemas',
+    semester: 1,
+    year: 2025,
+    professor: 'Juan Perez',
+    initial_date: '2025-05-21',
+    inscription_deadline: '2025-05-20',
+    file_data: null
+  }
+);
 
 const day = ref<number | null>(null);
 const month = ref<number | null>(null);
 const yearInput = ref<number | null>(null);
+
+const day_inscriptions = ref<number | null>(null);
+const month_inscriptions = ref<number | null>(null);
+const yearInput_inscriptions = ref<number | null>(null);
+
+
+const showSuccessDialog = ref<boolean>(false);
+const showErrorDialog = ref<boolean>(false);
+const showConfirmationDialog = ref<boolean>(false);
+
 
 const selectedFileName = ref<string | null>(null);
 
@@ -109,19 +151,52 @@ watch([day, month, yearInput], ([newDay, newMonth, newYear]) => {
   }
 });
 
-const saveWorkshop = () => {
-  insertWorkshopHandler();
-  emit('insert');
-};
+watch([day_inscriptions, month_inscriptions, yearInput_inscriptions], ([newDay, newMonth, newYear]) => {
+  if (newDay && newMonth && newYear) {
+    workshop.value.inscription_deadline = `${newYear}-${newMonth.toString().padStart(2, '0')}-${newDay.toString().padStart(2, '0')}`;
+  }
+});
+
+
+
+
 
 async function insertWorkshopHandler() {
   try {
     await insertWorkshop(workshop.value);
+    toggleConfirmationDialog();
+    toggleSuccessDialog();
     close();
   } catch (error) {
-    console.error(error);
+    toggleConfirmationDialog();
+    toggleErrorDialog();
+    
+
   }
 }
+
+function toggleErrorDialog() {
+  showErrorDialog.value = !showErrorDialog.value;
+}
+
+function toggleSuccessDialog() {
+  if (showSuccessDialog.value) {
+    showSuccessDialog.value = false;
+  } else {
+    showSuccessDialog.value = true;
+  }
+}
+
+function toggleConfirmationDialog() {
+  if (showConfirmationDialog.value) {
+    showConfirmationDialog.value = false;
+  } else {
+    showConfirmationDialog.value = true;
+    
+  }
+}
+
+
 </script>
 
 <style scoped lang="postcss">

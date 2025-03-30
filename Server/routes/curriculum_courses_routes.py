@@ -31,7 +31,7 @@ async def add_curriculum_course(curriculum_course: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.callproc("InsertCurriculumCourse", (curriculum_course.name,))
+        cursor.callproc("InsertCurriculumCourse", (curriculum_course.name, curriculum_course.id_type_curriculum_course))
         conn.commit()
         cursor.close()
         conn.close()

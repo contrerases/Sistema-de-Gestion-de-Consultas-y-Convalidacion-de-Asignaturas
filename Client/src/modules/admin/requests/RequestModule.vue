@@ -1,14 +1,15 @@
 <template>
     <main class="request-main">
-        <h1 class="request-title">Solicitudes</h1>
+        <h1 class="request-title">Solicitudes pendientes</h1>
+        <div class="flex justify-between border-b pb-5 mb-5"></div>
         <div class="request-content">
-            <RequestReviewCardList />
+            <RequestsReviewList />
         </div>
     </main>
 </template>
 
 <script setup lang="ts">
-import RequestReviewCardList from '@/modules/admin/requests/RequestReviewCardList.vue';
+import RequestsReviewList from '@/modules/admin/requests/RequestsReviewList.vue';
 </script>
 
 <style scoped lang="postcss">
@@ -18,7 +19,7 @@ import RequestReviewCardList from '@/modules/admin/requests/RequestReviewCardLis
 }
 
 .request-title {
-  @apply text-5xl text-foreground font-bold mb-10 font-mono;
+  @apply text-5xl font-bold tracking-tight;
 }
 
 .request-content {

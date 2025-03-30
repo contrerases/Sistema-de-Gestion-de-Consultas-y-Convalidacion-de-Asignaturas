@@ -9,8 +9,8 @@
 
     <main class="history-main">
       <div class="flex justify-between border-b pb-5 mb-5">
-        <h1 class="history-title">Historial</h1>
-        <button @click="toggleFiltersModal" class="bg-primary rounded-lg border border-border p-5">
+        <h1 class="history-title">Historial de solicitudes</h1>
+        <button @click="toggleFiltersModal" class="bg-primary rounded-lg border border-border px-5">
           Filtros de búsqueda
         </button>
       </div>

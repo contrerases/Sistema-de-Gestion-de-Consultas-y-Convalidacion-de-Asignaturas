@@ -6,7 +6,7 @@
     </div>
 
     <!-- Contenedor de la Tabla -->
-    <div class="container">
+    
       <div class="overflow-x-auto">
         <table class="table-auto w-full bg-card text-card-foreground rounded-xl shadow-md border border-border">
           <thead class="bg-muted text-muted-foreground">
@@ -35,8 +35,7 @@
           </tbody>
         </table>
       </div>
-    </div>
-
+   
     <!-- Subir Excel -->
     <div class="pt-10 flex flex-col items-center space-y-4">
       <!-- Contenedor para Subir Archivos -->

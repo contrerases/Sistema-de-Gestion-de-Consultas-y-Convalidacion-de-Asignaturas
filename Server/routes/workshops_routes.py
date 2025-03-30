@@ -44,13 +44,15 @@ async def insert_workshop(workshop: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year, workshop.professor, workshop.initial_date, workshop.file_data))
+        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year,  workshop.initial_date, workshop.inscription_deadline, workshop.professor, workshop.file_data))
         conn.commit()
         cursor.close()
         conn.close()
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     return {"message": "Workshop has been inserted successfully."}
+
+
 
 #GetWorkshopsByAvailable(BOOL available)
 @router.get("/available/{available}", response_model=List[RESPONSE_MODEL])
@@ -80,19 +82,6 @@ async def get_workshops_by_semester(year: int, semester: str):
     except mdb.Error as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
-#InsertWorkshop
-@router.post("/")
-async def insert_workshop(workshop: POST_MODEL):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year, workshop.initial_date, workshop.file_data, workshop.available))
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except mdb.Error as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    return {"message": "Workshop has been inserted successfully."}
 
 #UpdateWorkshopAvailable
 @router.put("/available/{id}")

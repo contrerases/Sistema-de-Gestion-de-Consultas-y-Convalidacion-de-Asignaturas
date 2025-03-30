@@ -162,7 +162,7 @@ onMounted(getSubjectsStoreHandler);
 }
 
 .td {
-  @apply py-3 px-6 text-left whitespace-nowrap;
+  @apply py-3 px-6 text-left whitespace-nowrap uppercase;
 }
 
 .tr {

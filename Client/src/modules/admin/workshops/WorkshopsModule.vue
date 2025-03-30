@@ -3,13 +3,12 @@
     <WorkshopsCreation 
       :visible="isModalVisible"
       @close="isModalVisible = false"
-      @insert="refresh"
     />
 
    
       <div class="flex justify-between border-b pb-5 mb-5">
         <h1 class="workshops-title">Talleres</h1> 
-        <button @click="createModal" class="bg-primary rounded-lg border border-border p-5">Añadir taller</button>
+        <button @click="createModal" class="bg-primary rounded-lg border border-border px-5">Añadir taller</button>
       </div>
    
     <div class="workshops-content">
@@ -30,9 +29,6 @@ const createModal = () => {
   isModalVisible.value = true;
 };
 
-const refresh = () => {
-  window.location.reload();
-};
 
 
 

@@ -9,4 +9,6 @@ export interface CurriculumCourseResponse extends CurriculumCourseBase{
 
 export interface CurriculumCoursePost {
     name: string;
+    id_type_curriculum_course: number;
+    
 }

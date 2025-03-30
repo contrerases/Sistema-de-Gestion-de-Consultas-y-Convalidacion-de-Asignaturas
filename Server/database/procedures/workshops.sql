@@ -24,11 +24,14 @@ CREATE PROCEDURE InsertWorkshop(
     IN p_semester ENUM('1', '2'),
     IN p_year INT,
     IN p_initial_date TIMESTAMP,
-    IN p_file_data LONGBLOB
+    IN p_inscription_deadline TIMESTAMP,
+    IN p_professor VARCHAR(255),
+    IN p_file_data LONGBLOB,
+    
 )
 BEGIN
-    INSERT INTO WORKSHOPS (name, semester, year, initial_date, file_data)
-    VALUES (p_name, p_semester, p_year, p_initial_date, p_file_data);
+    INSERT INTO WORKSHOPS (name, semester, year, initial_date, inscription_deadline, professor, file_data)
+    VALUES (p_name, p_semester, p_year, p_initial_date, p_inscription_deadline, p_professor, p_file_data);
 END
 
 
@@ -55,8 +58,10 @@ BEGIN
         WORKSHOPS.year,
         WORKSHOPS.professor,
         WORKSHOPS.initial_date,
+        WORKSHOPS.inscription_deadline,
         WORKSHOPS.file_data,
-        WORKSHOPS.available
+        WORKSHOPS.available,
+        WORKSHOPS.state
     FROM 
         WORKSHOPS
     JOIN 
@@ -78,8 +83,10 @@ BEGIN
         WORKSHOPS.year,
         WORKSHOPS.professor,
         WORKSHOPS.initial_date,
+        WORKSHOPS.inscription_deadline,
         WORKSHOPS.file_data,
-        WORKSHOPS.available
+        WORKSHOPS.available,
+        WORKSHOPS.state
     FROM 
         WORKSHOPS
     WHERE 
@@ -105,8 +112,10 @@ BEGIN
         WORKSHOPS.year,
         WORKSHOPS.professor,
         WORKSHOPS.initial_date,
+        WORKSHOPS.inscription_deadline,
         WORKSHOPS.file_data,
-        WORKSHOPS.available
+        WORKSHOPS.available,
+        WORKSHOPS.state
     FROM 
         WORKSHOPS
     JOIN 

@@ -42,11 +42,13 @@
 
   const curriculum_coursesStore = useCurriculumCourseStore();
 
+  import { getAllCurriculumCourses } from '@/services/curriculm_course_api';
+
   
   async function getCurriculumCoursesHandler() {
     try {
-        await curriculum_coursesStore.getCurriculumCoursesStore();
-        curriculum_courses.value = curriculum_coursesStore.allCurriculumCourses;
+        curriculum_courses.value = await getAllCurriculumCourses();
+        console.log(curriculum_courses.value);
     } 
     catch (error) {
         console.error('Error al obtener convalidaciones:', error);

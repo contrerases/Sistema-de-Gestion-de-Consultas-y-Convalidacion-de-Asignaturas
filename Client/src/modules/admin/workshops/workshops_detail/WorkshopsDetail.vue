@@ -1,20 +1,30 @@
 <template>
   <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
     <div class="bg-background p-16 rounded-2xl shadow-lg w-2/3 flex flex-col space-y-8">
-      <!-- Encabezado -->
-      <div class="flex justify-between items-center">
-        <div class="flex flex-col space-y-2">
-          <h1 class="text-3xl font-bold">{{ workshop.name }}</h1>
-          <p>Profesor: {{ workshop.professor }}</p>
-          <p>Semestre: {{ workshop.year }}-{{ workshop.semester }}</p>
-          <p>Fecha de Inicio: {{ formatReadableDate(workshop.initial_date) }}</p>
+      <div class="flex justify-between items-center  p-6 shadow-sm">
+        <!-- Información del Taller -->
+        <div class="flex flex-col space-y-3">
+          <h1 class="text-3xl font-bold text-primary">{{ workshop.name }}</h1>
+          <p class="text-muted-foreground">
+            <span class="font-semibold text-card-foreground">Profesor:</span> {{ workshop.professor }}
+          </p>
+          <p class="text-muted-foreground">
+            <span class="font-semibold text-card-foreground">Semestre:</span> {{ workshop.year }}-{{ workshop.semester }}
+          </p>
+          <p class="text-muted-foreground">
+            <span class="font-semibold text-card-foreground">Fecha de Inicio:</span> {{ formatReadableDate(workshop.initial_date) }}
+          </p>
         </div>
-        <div 
-          class="tooltip group relative flex items-center justify-center cursor-pointer"
+      
+        <!-- Botón de Descargar Syllabus -->
+        <div
+          class="tooltip group relative flex flex-col items-center justify-center cursor-pointer border border-border rounded-lg p-6 bg-muted hover:bg-muted/80 transition"
           @click="downloadWorkshopDetails"
         >
-          <Icon icon="dashicons:pdf" class="text-7xl text-muted-foreground group-hover:text-foreground" />
-          <span class="tooltip-text bg-card text-card-foreground text-sm rounded px-2 py-1 absolute bottom-full mb-2 hidden group-hover:flex">Descargar PDF</span>
+          <Icon icon="dashicons:pdf" class="text-5xl text-muted-foreground group-hover:text-primary transition" />
+          <span class="tooltip-text bg-card text-card-foreground text-xs rounded px-3 py-1 absolute bottom-full mb-2 hidden group-hover:flex">
+            Descargar Syllabus
+          </span>
         </div>
       </div>
 

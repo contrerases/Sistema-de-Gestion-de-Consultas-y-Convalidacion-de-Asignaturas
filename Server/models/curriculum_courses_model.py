@@ -8,3 +8,4 @@ class CurriculumCourseBase(BaseModel):
 
 class CurriculumCoursePost(BaseModel):
     name: str
+    id_type_curriculum_course: int

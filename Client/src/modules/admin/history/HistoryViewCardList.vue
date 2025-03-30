@@ -2,7 +2,7 @@
 
   <HistoryDetailDialog 
   :isOpen="isDialogOpen" 
-  :request="selectedRequest" 
+  :request="selected_request" 
   @close="isDialogOpen = false" 
 />
 
@@ -13,13 +13,13 @@
     <template v-else>
       <!-- Mensaje cuando no hay solicitudes -->
       <div v-if="!isLoading && requests.length === 0" class="flex justify-center items-center h-[50vh] italic text-muted">
-        <p class="text-2xl">No hay solicitudes</p>
+        <p class="text-2xl">Filtra las solicitudes</p>
       </div>
 
       <!-- Tabla cuando hay solicitudes -->
       <div v-else>
-        <div class="overflow-x-auto bg-card text-foreground rounded-lg shadow-md">
-          <table class="min-w-full table-auto border border-border">
+        <div class="overflow-hidden rounded-lg bg-card text-foreground shadow-md border border-border ">
+          <table class="min-w-full table-auto">
             <thead>
               <tr>
                 <th class="py-3 px-4 text-left">ID</th>
@@ -33,11 +33,11 @@
             </thead>
             <tbody>
               <tr v-for="request in requests" :key="request.id" class="hover:opacity-60 cursor-pointer"  @click="openDetailsDialog(request)">
-                <td class="py-3 px-4 border border-border">{{ request.id }}</td>
-                <td class="py-3 px-4 border border-border">{{ request.rol_student }}</td>
-                <td class="py-3 px-4 border border-border">{{ request.rut_student }}</td>
-                <td class="py-3 px-4 border border-border">{{ request.name_student }}</td>
-                <td class="py-3 px-4 border border-border">{{ formatReadableDate(request.creation_date) }}</td>
+                <td class="py-3 px-4 ">{{ request.id }}</td>
+                <td class="py-3 px-4 ">{{ request.rol_student }}</td>
+                <td class="py-3 px-4 ">{{ request.rut_student }}</td>
+                <td class="py-3 px-4 ">{{ request.name_student }}</td>
+                <td class="py-3 px-4 ">{{ formatReadableDate(request.creation_date) }}</td>
               </tr>
             </tbody>
           </table>
@@ -71,14 +71,16 @@ const request_store = useRequestStore();
 const requests = ref<RequestResponse[]>([]);
 
 const isDialogOpen = ref(false); // Controla el estado del modal
-const selectedRequest = ref(
+const selected_request = ref(
   {} as RequestResponse
 ); 
 
 
 function openDetailsDialog(request: RequestResponse) {
-  selectedRequest.value = request;
+  selected_request.value = request;
+  console.log('selected_request:', selected_request.value);
   isDialogOpen.value = true;
+  
 }
 
 
