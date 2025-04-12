@@ -1,4 +1,4 @@
-
+DROP PROCEDURE IF EXISTS GetAllTypesCurriculumCourses;
 
 CREATE PROCEDURE GetAllTypesCurriculumCourses()
 BEGIN

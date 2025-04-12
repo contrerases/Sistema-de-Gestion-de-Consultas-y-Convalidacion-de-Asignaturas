@@ -1,3 +1,4 @@
+DROP PROCEDURE IF EXISTS GetAllTypesConvalidations;
 
 CREATE PROCEDURE GetAllTypesConvalidations()
 BEGIN

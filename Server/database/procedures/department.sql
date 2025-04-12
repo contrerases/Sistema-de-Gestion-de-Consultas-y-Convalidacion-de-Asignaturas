@@ -1,35 +1,25 @@
-DELIMITER //
+DROP PROCEDURE IF EXISTS GetAllDepartments;
+
+DROP PROCEDURE IF EXISTS DeleteDepartmentByID;
+
+DROP PROCEDURE IF EXISTS InsertDepartment;
+
+DROP PROCEDURE IF EXISTS UpdateDepartmentByID;
 
 CREATE PROCEDURE GetAllDepartments()
 BEGIN
     SELECT * FROM DEPARTMENTS;
-END //
-
-DELIMITER ;
-
-
-DELIMITER //
+END
 
 CREATE PROCEDURE DeleteDepartmentByID(IN dept_id INT)
 BEGIN
     DELETE FROM DEPARTMENTS WHERE id = dept_id;
-END //
-
-DELIMITER ;
-
-
-DELIMITER //
+END
 
 CREATE PROCEDURE InsertDepartment(IN dept_name VARCHAR(255))
 BEGIN
     INSERT INTO DEPARTMENTS (name) VALUES (dept_name);
-END //
-
-DELIMITER ;
-
-
-
-DELIMITER $$
+END
 
 CREATE PROCEDURE UpdateDepartmentByID(
     IN p_department_id INT,
@@ -47,6 +37,4 @@ BEGIN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'El departamento con el ID proporcionado no existe.';
     END IF;
-END $$
-
-DELIMITER ;
+END

@@ -1,3 +1,9 @@
+DROP PROCEDURE IF EXISTS GetConvalidationsByRequestId;
+
+DROP PROCEDURE IF EXISTS InsertConvalidation;
+
+DROP PROCEDURE IF EXISTS UpdateConvalidation;
+
 CREATE PROCEDURE GetConvalidationsByRequestId (IN request_id INT)
 BEGIN
     SELECT
@@ -28,13 +34,11 @@ BEGIN
         WORKSHOPS ON CONVALIDATIONS.id_workshop_to_convalidate = WORKSHOPS.id
     WHERE
         CONVALIDATIONS.id_request = request_id;
-END;
-
+END
 
 CREATE PROCEDURE InsertConvalidation (
     IN id_request INT,
     IN id_convalidation_type INT,
-    IN state VARCHAR(255),
     IN id_curriculum_course INT,
     IN id_subject_to_convalidate INT,
     IN id_workshop_to_convalidate INT,
@@ -47,7 +51,6 @@ INSERT INTO
     CONVALIDATIONS (
         id_request,
         id_convalidation_type,
-        state,
         id_curriculum_course,
         id_subject_to_convalidate,
         id_workshop_to_convalidate,
@@ -60,7 +63,6 @@ VALUES
     (
         id_request,
         id_convalidation_type,
-        state,
         id_curriculum_course,
         id_subject_to_convalidate,
         id_workshop_to_convalidate,
@@ -71,9 +73,6 @@ VALUES
     );
 
 END
-
-
-
 
 CREATE PROCEDURE UpdateConvalidation(
     IN p_id_convalidation INT,

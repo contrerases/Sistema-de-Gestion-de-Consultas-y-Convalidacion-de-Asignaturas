@@ -1,3 +1,9 @@
+DROP PROCEDURE IF EXISTS GetWorkshopGradeByStudentID;
+
+DROP PROCEDURE IF EXISTS GetWorkshopGradeByWorkshopID;
+
+DROP PROCEDURE IF EXISTS InsertWorkshopGrade;
+
 CREATE PROCEDURE GetWorkshopGradeByStudentID(IN p_id_student INT)
 BEGIN
     SELECT *
@@ -20,4 +26,4 @@ CREATE PROCEDURE InsertWorkshopGrade(
 BEGIN
     INSERT INTO WORKSHOPS_GRADES (id_student, id_workshop, grade)
     VALUES (p_id_student, p_id_workshop, p_grade);
-END 
+END

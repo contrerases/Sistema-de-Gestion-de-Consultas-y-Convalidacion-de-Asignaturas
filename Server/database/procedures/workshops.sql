@@ -1,8 +1,23 @@
+DROP PROCEDURE IF EXISTS GetAllWorkshops;
+
+DROP PROCEDURE IF EXISTS GetWorkshopsByAvailable;
+
+DROP PROCEDURE IF EXISTS GetWorkshopsByCurrentlySemester;
+
+DROP PROCEDURE IF EXISTS InsertWorkshop;
+
+DROP PROCEDURE IF EXISTS UpdateWorkshopAvailable;
+
+DROP PROCEDURE IF EXISTS GetCompletedWorkshopsByStudent;
+
+DROP PROCEDURE IF EXISTS GetAvailableWorkshopsNotEnrolledByStudent;
+
+DROP PROCEDURE IF EXISTS GetEnrolledAvailableWorkshopsByStudent;
+
 CREATE PROCEDURE GetAllWorkshops()
 BEGIN
     SELECT * FROM WORKSHOPS;
-END 
-
+END
 
 CREATE PROCEDURE GetWorkshopsByCurrentlySemester(IN p_year INT, IN p_semester ENUM('1', '2'))
 BEGIN
@@ -16,10 +31,9 @@ BEGIN
     SELECT * 
     FROM WORKSHOPS
     WHERE available = p_available;
-END 
+END
 
-
-CREATE PROCEDURE `InsertWorkshop`(
+CREATE PROCEDURE InsertWorkshop(
     IN p_name VARCHAR(255),
     IN p_semester ENUM('1', '2'),
     IN p_year INT,
@@ -33,7 +47,6 @@ BEGIN
     VALUES (p_name, p_semester, p_year, p_professor, p_initial_date,p_inscription_deadline, p_file_data);
 END
 
-
 CREATE PROCEDURE UpdateWorkshopAvailable(
     IN p_id INT,
     IN p_available BOOLEAN
@@ -43,8 +56,6 @@ BEGIN
     SET available = p_available
     WHERE id = p_id;
 END
-
-
 
 CREATE PROCEDURE GetCompletedWorkshopsByStudent(
     IN student_id INT
@@ -68,8 +79,7 @@ BEGIN
     WHERE 
         WORKSHOPS_INSCRIPTIONS.id_student = student_id
         AND WORKSHOPS.available = FALSE;
-END 
-
+END
 
 CREATE PROCEDURE GetAvailableWorkshopsNotEnrolledByStudent(
     IN student_id INT
@@ -122,4 +132,4 @@ BEGIN
     WHERE 
         WORKSHOPS_INSCRIPTIONS.id_student = student_id
         AND WORKSHOPS.available = TRUE;
-END 
+END

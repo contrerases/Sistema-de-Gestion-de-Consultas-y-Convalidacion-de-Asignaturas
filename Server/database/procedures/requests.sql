@@ -1,4 +1,24 @@
-CREATE PROCEDURE `GetAllRequestsProcessed`()
+DROP PROCEDURE IF EXISTS GetAllRequestsProcessed;
+
+DROP PROCEDURE IF EXISTS GetRequestByID;
+
+DROP PROCEDURE IF EXISTS InsertRequest;
+
+DROP PROCEDURE IF EXISTS GetRequestsByStudentRUT;
+
+DROP PROCEDURE IF EXISTS GetRequestsByStudentRol;
+
+DROP PROCEDURE IF EXISTS GetRequestsByDateRangeCreation;
+
+DROP PROCEDURE IF EXISTS GetRequestsByCampus;
+
+DROP PROCEDURE IF EXISTS GetRequestsByState;
+
+DROP PROCEDURE IF EXISTS UpdateRequest;
+
+DROP PROCEDURE IF EXISTS GetFilteredRequests;
+
+CREATE PROCEDURE GetAllRequestsProcessed()
 BEGIN
     SELECT 
         REQUESTS.id,
@@ -40,9 +60,7 @@ SELECT
 
 END
 
-
-
-CREATE PROCEDURE `InsertRequest`(
+CREATE PROCEDURE InsertRequest(
     IN p_id_student INT,
     IN p_comments VARCHAR(255),
     IN p_id_user_approves INT
@@ -61,8 +79,6 @@ BEGIN
     
     SELECT LAST_INSERT_ID() AS id;
 END
-
-
 
 CREATE PROCEDURE GetRequestsByStudentRUT (IN student_rut VARCHAR(255)) BEGIN
 SELECT 
@@ -85,7 +101,6 @@ WHERE
     STUDENTS.rut_student = student_rut;
 
 END
-
 
 CREATE PROCEDURE GetRequestsByStudentRol (IN student_rol VARCHAR(255)) BEGIN
 SELECT 
@@ -131,9 +146,6 @@ WHERE
 
 END
 
-
--- fitler by campus 
-
 CREATE PROCEDURE GetRequestsByCampus (IN campus VARCHAR(255)) BEGIN
 SELECT 
         REQUESTS.id,
@@ -155,9 +167,6 @@ WHERE
     STUDENTS.campus_student = campus;
 
 END
-
-
--- get by state
 
 CREATE PROCEDURE GetRequestsByState (IN p_state VARCHAR(50))
 BEGIN
@@ -186,13 +195,7 @@ SELECT
             WHERE 
                 state = 'Enviada'
         );
-END;
-
-
--- get by reques id 
-
-
-
+END
 
 CREATE PROCEDURE UpdateRequest (
     IN p_request_id INT,
@@ -207,9 +210,7 @@ BEGIN
         revision_date = CURRENT_TIMESTAMP
     WHERE 
         id = p_request_id;
-END 
-
-
+END
 
 CREATE PROCEDURE GetFilteredRequests (
     IN p_first_name VARCHAR(255),    -- Nombre del estudiante
@@ -248,5 +249,4 @@ BEGIN
               AND CONVALIDATIONS.STATE = 'Enviada'
         )
     ORDER BY REQUESTS.CREATION_DATE DESC;
-END //
-
+END

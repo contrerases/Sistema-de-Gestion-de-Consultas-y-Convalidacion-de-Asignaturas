@@ -1,4 +1,10 @@
-DELIMITER / / 
+DROP PROCEDURE IF EXISTS GetAllSubjectsProcessedData;
+
+DROP PROCEDURE IF EXISTS InsertSubject;
+
+DROP PROCEDURE IF EXISTS DeleteSubjectById;
+
+DROP PROCEDURE IF EXISTS UpdateSubjectByID;
 
 CREATE PROCEDURE GetAllSubjectsProcessedData () BEGIN
 SELECT
@@ -11,59 +17,47 @@ FROM
     SUBJECTS
     INNER JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id;
 
+END
 
-
-
-END / / 
-
-
-DELIMITER //
-CREATE PROCEDURE InsertSubject(
+CREATE PROCEDURE InsertSubject (
     IN subject_acronym VARCHAR(255),
     IN subject_name VARCHAR(255),
     IN department_id INT,
     IN subject_credits INT
-)
-BEGIN
-    INSERT INTO SUBJECTS (acronym, name, id_department, credits)
-    VALUES (subject_acronym, subject_name, department_id, subject_credits);
-END//
+) BEGIN
+INSERT INTO
+    SUBJECTS (acronym, name, id_department, credits)
+VALUES
+    (
+        subject_acronym,
+        subject_name,
+        department_id,
+        subject_credits
+    );
 
-DELIMITER;
+END
 
+CREATE PROCEDURE DeleteSubjectById (IN subject_id INT) BEGIN
+DELETE FROM SUBJECTS
+WHERE
+    id = subject_id;
 
-DELIMITER //
+END
 
-CREATE PROCEDURE DeleteSubjectById(
-    IN subject_id INT
-)
-BEGIN
-    DELETE FROM SUBJECTS WHERE id = subject_id;
-END//
-
-DELIMITER ;
-
-
-DELIMITER $$
-
-CREATE PROCEDURE UpdateSubjectByID(
+CREATE PROCEDURE UpdateSubjectByID (
     IN p_id INT,
     IN p_acronym VARCHAR(255),
     IN p_name VARCHAR(255),
     IN p_id_department INT,
     IN p_credits INT
-)
-BEGIN
-    UPDATE SUBJECTS
-    SET 
-        acronym = p_acronym,
-        name = p_name,
-        id_department = p_id_department,
-        credits = p_credits
-    WHERE 
-        id = p_id;
-END $$
+) BEGIN
+UPDATE SUBJECTS
+SET
+    acronym = p_acronym,
+    name = p_name,
+    id_department = p_id_department,
+    credits = p_credits
+WHERE
+    id = p_id;
 
-DELIMITER ;
-
-
+END
