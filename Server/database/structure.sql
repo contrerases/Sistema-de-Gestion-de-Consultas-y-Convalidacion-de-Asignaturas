@@ -37,15 +37,16 @@ CREATE TABLE ADMINISTRATORS (
     PRIMARY KEY (id)
 );
 
+
 -- Tabla Alumnos
 CREATE TABLE STUDENTS (
     id INT AUTO_INCREMENT NOT NULL,
-    rol_student VARCHAR(10) UNIQUE NOT NULL,
+    rol_student VARCHAR(11) UNIQUE NOT NULL,
     rut_student VARCHAR(12) UNIQUE NOT NULL,
     campus_student VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     second_name VARCHAR(255) NOT NULL,
-    first_last_name VARCHAR(255) NOT NULL,
+    first_last_name VARCHAR(255) NOT NULL, 
     second_last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE STUDENTS (
 
 CREATE TABLE TYPES_CONVALIDATIONS ( 
     id INT AUTO_INCREMENT NOT NULL, 
-    name VARCHAR(255) NOT NULL UNIQUE, -- Asignatura INF, Asignatutra Externa, Curso Certificado, Taller de INF, Proyecto Personal
+    name VARCHAR(255) NOT NULL UNIQUE, -- Electivo DI, Electivo Externo , Curso Certificado, Taller de INF, Proyecto Personal
     PRIMARY KEY (id)
 );
 
@@ -78,9 +79,6 @@ CREATE TABLE DEPARTMENTS (
     name VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (id)
 );
-
-
-
 
 
 
@@ -108,15 +106,14 @@ CREATE TABLE REQUESTS (
 );
 
 
-
 CREATE TABLE CONVALIDATIONS (
     id INT NOT NULL AUTO_INCREMENT,
     id_request INT NOT NULL,
-    id_convalidation_type INT NOT NULL, -- Asignatura INF, Asignatutra Externa,  Curso Certificado,Taller de INF, Proyecto Personal
-      state ENUM('Enviada', 'Rechazada', 'Aprobada por DI', 'En espera de DE', 'Aprobada por DE') NOT NULL DEFAULT 'Enviada',  -- Enviada, Rechazada, Aprobada por DI, En espera de DE, Aprobada por DE
+    id_convalidation_type INT NOT NULL, 
+    state ENUM('Enviada', 'Rechazada', 'Aprobada por DI', 'En espera de DE', 'Aprobada por DE') NOT NULL DEFAULT 'Enviada',
     id_curriculum_course INT NOT NULL,
     id_subject_to_convalidate INT NULL,
-    id_workshop_to_convalidate INT NULL,
+    id_workshop_to_convalidate INT NULL, 
     certified_course_name VARCHAR(255) NULL,
     personal_project_name VARCHAR(255) NULL,
     file_data LONGBLOB DEFAULT NULL,
@@ -127,8 +124,19 @@ CREATE TABLE CONVALIDATIONS (
     FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id),   
     CONSTRAINT fk_subject FOREIGN KEY (id_subject_to_convalidate) REFERENCES SUBJECTS (id),
     CONSTRAINT fk_workshop FOREIGN KEY (id_workshop_to_convalidate) REFERENCES WORKSHOPS (id),
-    INDEX (id_request)
-);
+    CONSTRAINT chk_convalidation_type 
+    CHECK (
+        (id_subject_to_convalidate IS NOT NULL AND id_workshop_to_convalidate IS NULL AND certified_course_name IS NULL AND personal_project_name IS NULL) 
+        OR 
+        (id_subject_to_convalidate IS NULL AND id_workshop_to_convalidate IS NOT NULL AND certified_course_name IS NULL AND personal_project_name IS NULL) 
+        OR 
+        (id_subject_to_convalidate IS NULL AND id_workshop_to_convalidate IS NULL AND certified_course_name IS NOT NULL AND personal_project_name IS NULL) 
+        OR 
+        (id_subject_to_convalidate IS NULL AND id_workshop_to_convalidate IS NULL AND certified_course_name IS NULL AND personal_project_name IS NOT NULL)
+        ),
+        INDEX (id_request)
+    );
+
 
 CREATE TABLE WORKSHOPS (
     id INT AUTO_INCREMENT NOT NULL,
@@ -149,22 +157,26 @@ CREATE TABLE WORKSHOPS_INSCRIPTIONS (
     id INT AUTO_INCREMENT NOT NULL,
     id_student INT NOT NULL,
     id_workshop INT NOT NULL,
-    id_curriculum_course INT NOT NULL, -- libre 
+    id_curriculum_course INT NOT NULL, 
     is_convalidated BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
     FOREIGN KEY (id_student) REFERENCES STUDENTS (id),
     FOREIGN KEY (id_workshop) REFERENCES WORKSHOPS (id),
-    FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id)
+    FOREIGN KEY (id_curriculum_course) REFERENCES CURRICULUM_COURSES (id),
+    CONSTRAINT unique_workshop_inscription UNIQUE (id_student, id_workshop)
 );
+
+
 
 CREATE TABLE WORKSHOPS_GRADES (
     id INT AUTO_INCREMENT NOT NULL,
     id_student INT NOT NULL,
     id_workshop INT NOT NULL,
-    grade INT NOT NULL,
+    grade INT NOT NULL, 
     PRIMARY KEY (id),
     FOREIGN KEY (id_student) REFERENCES STUDENTS (id),
-    FOREIGN KEY (id_workshop) REFERENCES WORKSHOPS (id)
+    FOREIGN KEY (id_workshop) REFERENCES WORKSHOPS (id),
+    CONSTRAINT chk_grade CHECK (grade BETWEEN 0 AND 100)
 );
 
 

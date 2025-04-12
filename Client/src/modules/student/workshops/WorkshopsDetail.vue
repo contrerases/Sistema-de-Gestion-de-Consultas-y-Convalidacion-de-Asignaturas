@@ -1,4 +1,12 @@
 <template>
+
+  <WorkshopsInscriptionsForm
+  :visible="showInscriptionForm"
+  :workshop="workshop"
+  @close="closeInscriptionModal"
+  class="z-20"
+/>
+
   <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
     <div class="bg-background p-16 py-8 rounded-2xl shadow-lg w-2/3 flex flex-col ">
       <h1 class="text-5xl font-bold text-primary border-border border-b w-full pb-8 mb-8">{{ workshop.name }}</h1>
@@ -44,11 +52,16 @@
         </div>
       </div>
 
-      <!-- Tabla de Inscripciones -->
-      <WorkshopsInscriptions :id_workshop="workshop.id" />
+      
 
       <!-- Botón de Cerrar -->
       <div class="flex justify-end">
+        <button 
+          @click="inscriptionWorkshop(workshop)" 
+          class="px-6 py-3 bg-primary text-foreground rounded-lg hover:bg-primary-hover mr-4"
+        >
+          Inscribir Taller
+        </button>
         <button 
           @click="close" 
           class="px-6 py-3 bg-destructive text-foreground rounded-lg hover:bg-destructive-hover"
@@ -61,11 +74,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref } from 'vue';
 import type { WorkshopResponse } from '@/interfaces/workshop_model';
 import formatReadableDate from '@/helpers/format_date';
 import { Icon } from '@iconify/vue';
 import WorkshopsInscriptions from './WorkshopsInscriptions.vue'; // Ruta relativa al componente de inscripciones
+import WorkshopsInscriptionsForm from '@/modules/student/workshops/WorkshopsInscriptionForm.vue';
 
 const props = defineProps<{
   workshop: WorkshopResponse;
@@ -73,6 +87,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['close']);
+
+const showInscriptionForm = ref(false);
+
 
 // Método para cerrar el modal
 const close = () => {
@@ -83,6 +100,15 @@ const close = () => {
 const downloadWorkshopDetails = () => {
   // Aquí se implementa la lógica para descargar el archivo PDF del taller
 };
+
+function inscriptionWorkshop(workshop: WorkshopResponse) {
+  showInscriptionForm.value = true;
+  
+}
+
+function closeInscriptionModal(){
+  showInscriptionForm.value = false;
+}
 </script>
 
 <style scoped>

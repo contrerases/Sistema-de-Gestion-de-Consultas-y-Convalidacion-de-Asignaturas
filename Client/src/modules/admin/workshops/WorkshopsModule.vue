@@ -2,7 +2,8 @@
   <main class="workshops-main">
     <WorkshopsCreation 
       :visible="isModalVisible"
-      @close="isModalVisible = false"
+      @close="closeModal"
+    
     />
 
    
@@ -12,7 +13,7 @@
       </div>
    
     <div class="workshops-content">
-      <WorkshopsList /> 
+      <WorkshopsList   /> 
     </div>
   </main>
 </template>
@@ -22,12 +23,22 @@ import { ref } from 'vue';
 import WorkshopsList from '@/modules/admin/workshops/WorkshopsList.vue';
 import WorkshopsCreation from '@/modules/admin/workshops/WorkshopsCreation.vue';
 
+import type { WorkshopResponse } from '@/interfaces/workshop_model';
+import { Icon } from '@iconify/vue';
+
 
 const isModalVisible = ref(false);
+const update = ref(false);
 
 const createModal = () => {
   isModalVisible.value = true;
 };
+
+const closeModal = () => {
+  isModalVisible.value = false;
+};
+
+
 
 
 

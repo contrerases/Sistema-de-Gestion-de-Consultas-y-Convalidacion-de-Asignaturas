@@ -86,3 +86,13 @@ export async function getEnrolledAvailableWorkshopsByStudent(id_student: number)
         throw axiosError.response?.data;
     }
 }
+
+export async function updateWorkshopAvailable(id_workshop: number): Promise<void> {
+    try {
+        await axios.put(`${URL}available/${id_workshop}`); 
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error('Error al actualizar Taller:', axiosError?.response?.data);
+        throw error;
+    }
+}

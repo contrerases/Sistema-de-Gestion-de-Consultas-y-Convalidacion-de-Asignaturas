@@ -21,8 +21,8 @@
           <input
             v-model="filters.rut_student"
             id="rut_student"
-            class="bg-input p-4 w-full"
-            placeholder="12345678-9"
+            class="p-2 bg-input rounded-md border border-border text-card-foreground w-full"
+            placeholder="XXXXXXXX-X"
           />
         </div>
 
@@ -33,7 +33,7 @@
             v-model="filters.rol_student"
             id="rol_student"
             class="bg-input p-4 w-full"
-            placeholder="202210101"
+            placeholder="XXXXXXXXX-X"
           />
         </div>
 

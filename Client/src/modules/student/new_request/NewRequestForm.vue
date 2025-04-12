@@ -13,21 +13,11 @@
       <div v-for="(convalidation, index) in convalidations_precooked" :key="index"
         class="bg-card shadow-lg rounded-lg flex p-10 border border-border font-mono">
         <div class="flex flex-col w-full">
-          <h3 class="font-bold text-xl mb-8 font-mono">Convalidación {{ index + 1 }}</h3>
+          <h3 class="font-bold text-2xl mb-4 font-mono">Convalidación {{ index + 1 }}</h3>
 
           <label class="font-semibold my-2">Tipo de curso a convalidar:</label>
-          <Select v-model="tcc[index]" class="mb-4">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem v-for="type in types_curriculum_courses" :key="type.id" :value="String(type.id)">
-                  {{ type.name }}
-                </SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            <Dropdown v-model="tcc[index]" :options="types_curriculum_courses"/>
+          
 
           <label class="font-semibold my-2">Tipo de convalidación:</label>
           <Select v-model="convalidation.id_convalidation_type" class="mb-4">
@@ -36,10 +26,10 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="1">{{ CourseConvalidationTypes.INF }}</SelectItem>
-              <SelectItem value="2" v-if="tcc[index] != '3'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
-              <SelectItem value="3" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
-              <SelectItem value="4" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
-              <SelectItem value="5" v-if="tcc[index] === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
+              <SelectItem value="2" v-if="tcc[index] != 2">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
+              <SelectItem value="3" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
+              <SelectItem value="4" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
+              <SelectItem value="5" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -50,26 +40,26 @@
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <div v-if="tcc[index] === '1'">
+                <div v-if="tcc[index] === 1">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
-                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
-                <div v-if="tcc[index] === '2'">
+                <div v-if="tcc[index] === 2">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
-                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
-                <div v-if="tcc[index] === '3'">
+                <div v-if="tcc[index] === 3">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
-                      v-if="String(course.id_type_curriculum_course) === tcc[index]">
+                      v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
@@ -100,7 +90,7 @@
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                  {{ subject.name }}
+                  {{subject.acronym   }} - {{ subject.name }}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -206,6 +196,9 @@ import { insertRequest } from "@/services/request_api";
 import AlertDialog from "@/common/dialogs/AlertDialog.vue";
 import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
 
+import Dropdown from "@/components/Dropdown.vue";
+
+
 
 
 const router = useRouter();
@@ -258,6 +251,7 @@ const getTypesConvalidationsHandler = async () => {
 const getTypesCurriculumCoursesHandler = async () => {
   try {
     types_curriculum_courses.value = await getAllTypesCurriculumCourses();
+    console.log(types_curriculum_courses.value);
   } catch (error) {
     console.error("Error al obtener los tipos de cursos:", error);
   }
@@ -401,7 +395,6 @@ async function sendRequest() {
     toggleErrorDialog();
   }
 }
-
 
 
 

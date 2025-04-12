@@ -9,6 +9,7 @@ router = APIRouter()
 BASE_MODEL = workshops_model.WorkshopBase
 POST_MODEL = workshops_model.WorkshopPost
 RESPONSE_MODEL = workshops_model.WorkshopResponse
+UPDATE_MODEL = workshops_model.WorkshopUpdateAvailable
 
 @router.get("/", response_model=List[RESPONSE_MODEL])
 async def get_all_workshops():
@@ -44,7 +45,7 @@ async def insert_workshop(workshop: POST_MODEL):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year,  workshop.initial_date, workshop.inscription_deadline, workshop.professor, workshop.file_data))
+        cursor.callproc("InsertWorkshop", (workshop.name, workshop.semester, workshop.year, workshop.professor, workshop.initial_date,  workshop.inscription_deadline, workshop.file_data))
         conn.commit()
         cursor.close()
         conn.close()
@@ -84,12 +85,12 @@ async def get_workshops_by_semester(year: int, semester: str):
     
 
 #UpdateWorkshopAvailable
-@router.put("/available/{id}")
-async def update_workshop_available(id: int, available: bool):
+@router.put("/available/{id}", )
+async def update_workshop_available(id:int):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.callproc("UpdateWorkshopAvailable", (id, available))
+        cursor.callproc("UpdateWorkshopAvailable", (id,))
         conn.commit()
         cursor.close()
         conn.close()

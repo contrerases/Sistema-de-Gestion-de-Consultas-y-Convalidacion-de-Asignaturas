@@ -1,56 +1,152 @@
 <template>
 
-   
 
-    <main>
-      <WorkshopsInscriptionsForm
-        :visible="isModalVisible"
-        :workshop="selectedWorkshop"
-        @close="closeModal"
-      />
-      <div class="pb-10">
-        <h1 class="text-2xl font-bold pb-5">Talleres Disponibles</h1>
-        <div v-if="availableWorkshops.length === 0">
-            <p class="text-muted italic">No hay talleres disponible</p>
+  <main>
+    <div class="tabs-container">
+      <!-- Botones de Tabs -->
+      <div class="flex space-x-4 border-b border-border">
+        <button
+          :class="
+            activeTab === 'tab1'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-muted-foreground'
+          "
+          class="px-4 py-2 font-semibold transition y"
+          @click="activeTab = 'tab1'"
+        >
+          Talleres disponibles para inscripción
+        </button>
+        <button
+          :class="
+            activeTab === 'tab2'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-muted-foreground'
+          "
+          class="px-4 py-2 font-semibold transition"
+          @click="activeTab = 'tab2'"
+        >
+          Talleres inscritos en curso
+        </button>
+        <button
+          :class="
+            activeTab === 'tab3'
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-muted-foreground'
+          "
+          class="px-4 py-2 font-semibold transition"
+          @click="activeTab = 'tab3'"
+        >
+          Talleres Cerrados
+        </button>
+      </div>
+
+      <!-- Contenido de Tabs -->
+      <div class="mt-4">
+        <div v-if="activeTab === 'tab1'" class="p-4 rounded-md">
+          <div class="pb-10">
+            <div class="my-2 p-4 grid grid-cols-5 justify-start gap-3">
+              <div class="col-span-2 text-xl font-bold uppercase border-b-4">
+                Nombre del taller
+              </div>
+              <div class="text-xl font-bold uppercase border-b-4 pb-4">
+                Profesor
+              </div>
+              <div class="text-xl font-bold uppercase border-b-4 pb-4">
+                Semestre
+              </div>
+              <div class="text-xl font-bold uppercase border-b-4 pb-4">
+                Fecha de Inicio
+              </div>
+            </div>
+
+            <div
+              v-for="workshop in availableWorkshops"
+              :key="workshop.id"
+              @click="selectWorkshop(workshop)"
+             
+            >
+              <div
+                class="border border-border [&>*]:uppercase rounded-lg my-2 p-4 grid grid-cols-5 gap-3 justify-start hover:border-primary hover:scale-105 transition hover:border-2 cursor-pointer shadow-lg"
+                v-if="workshop.available"
+              >
+                <div class="col-span-2 border-r-2 border-border">
+                  {{ workshop.name }}
+                </div>
+                <div class="border-r-2 border-border">
+                  {{ workshop.professor }}
+                </div>
+                <div class="border-r-2 border-border">
+                  {{ workshop.year }}-{{ workshop.semester }}
+                </div>
+                <div class="">
+                  {{ formatReadableDate(workshop.initial_date) }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div v-for="workshop in availableWorkshops" :key="workshop.id" @click="selectWorkshop(workshop)">
-          <div class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 justify-start hover:border-primary cursor-pointer">
-            <div class="col-span-2">{{ workshop.name }}</div>
-            <div>{{workshop.professor}}</div>
-            <div>{{ workshop.year }}-{{ workshop.semester }}</div>
-            <div>{{ formatReadableDate(workshop.initial_date)}}</div>
+        <div v-if="activeTab === 'tab2'">
+          <div
+            v-for="workshop in inscriptionWorkshops"
+            :key="workshop.id"
+            @click="selectWorkshop(workshop)"
+            class="[&>*]:hover:scale-105"
+          >
+            <div
+              class="border border-border rounded-lg my-2 p-4 [&>*]:uppercase grid   grid-cols-5 gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
+            >
+              <div class="col-span-2 border-r-2 border-border">
+                {{ workshop.name }}
+              </div>
+              <div class="border-r-2 border-border">
+                {{ workshop.professor }}
+              </div>
+              <div class="border-r-2 border-border">
+                {{ workshop.year }}-{{ workshop.semester }}
+              </div>
+              <div class="">
+                {{ formatReadableDate(workshop.initial_date) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="activeTab === 'tab3'" class="p-4 rounded-md">
+          <!-- Lista de Workshops No Disponibles -->
+          <div
+            v-for="workshop in closedWorkshops"
+            :key="workshop.id"
+            @click="selectWorkshop(workshop)"
+             class="[&>*]:hover:scale-105"
+          >
+            <div
+              class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 [&>*]:uppercase gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
+            >
+              <div class="col-span-2 border-r-2 border-border">
+                {{ workshop.name }}
+              </div>
+              <div class="border-r-2 border-border">
+                {{ workshop.professor }}
+              </div>
+              <div class="border-r-2 border-border">
+                {{ workshop.year }}-{{ workshop.semester }}
+              </div>
+              <div class="">
+                {{ formatReadableDate(workshop.initial_date) }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="pb-10">
-        <h1 class="text-2xl font-bold pb-5">Talleres en curso</h1>
-        <div v-for="workshop in enrolledWorkshops" :key="workshop.id">
-          <div class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 justify-start ">
-            <div class="col-span-2">{{ workshop.name }}</div>
-            <div>{{workshop.professor}}</div>
-            <div>{{ workshop.year }}-{{ workshop.semester }}</div>
-            <div>{{ formatReadableDate(workshop.initial_date)}}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pb-10">
-        <h1 class="text-2xl font-bold pb-5">Talleres cursados</h1>
-        <div v-for="workshop in completedWorkshops" :key="workshop.id">
-          <div class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 justify-start">
-            <div class="col-span-2">{{ workshop.name }}</div>
-            <div>{{workshop.professor}}</div>
-            <div>{{ workshop.year }}-{{ workshop.semester }}</div>
-            <div>{{ formatReadableDate(workshop.initial_date)}}</div>
-          </div>
-        </div>
-      </div>
-  
-      
-     
-    </main>
-  </template>
+    <!-- Modal de Detalles del Workshop -->
+    <WorkshopsDetail
+      :workshop="selectedWorkshop"
+      :visible="isModalVisible"
+      @close="closeModal"
+    />
+  </main>
+</template>
   
   <script setup lang="ts">
   import { ref, onMounted } from 'vue';
@@ -58,20 +154,22 @@
 
   import { useAuthStore } from '@/stores/auth_store';
 
+  import WorkshopsDetail from "@/modules/student/workshops/WorkshopsDetail.vue";
 
  
  
 
   import {getAvailableWorkshopsNotEnrolledByStudent, getCompletedWorkshopsByStudent, getEnrolledAvailableWorkshopsByStudent} from '@/services/workshop_api';
-  import WorkshopsInscriptionsForm from '@/modules/student/workshops/WorkshopsInscriptionForm.vue';
+
   import formatReadableDate from '@/helpers/format_date';
 
 
   const auth_store = useAuthStore();
 
 const availableWorkshops = ref<WorkshopResponse[]>([]);
+const inscriptionWorkshops = ref<WorkshopResponse[]>([]);
 const completedWorkshops = ref<WorkshopResponse[]>([]);
-const enrolledWorkshops = ref<WorkshopResponse[]>([]);
+
 
 
 async function getAvailableWorkshopsHandler(): Promise<void> {
@@ -94,8 +192,8 @@ async function getCompletedWorkshopsHandler(): Promise<void> {
 
 async function getEnrolledWorkshopsHandler(): Promise<void> {
     try {
-        enrolledWorkshops.value = await getEnrolledAvailableWorkshopsByStudent(auth_store.id);
-        console.log(enrolledWorkshops.value);
+        inscriptionWorkshops.value = await getEnrolledAvailableWorkshopsByStudent(auth_store.id);
+        console.log('inscriopcion:' , inscriptionWorkshops.value);
     } catch (error) {
       console.error(error);
     }
@@ -105,7 +203,7 @@ onMounted(getAvailableWorkshopsHandler);
 onMounted(getCompletedWorkshopsHandler);
 onMounted(getEnrolledWorkshopsHandler);
 
-
+const activeTab = ref("tab1");
 
 
 const emptyWorkshop: WorkshopResponse = {
@@ -127,7 +225,6 @@ const emptyWorkshop: WorkshopResponse = {
   const selectWorkshop = (workshop: WorkshopResponse) => {
     selectedWorkshop.value = workshop;
     isModalVisible.value = true;
-    
   };
 
   const closeModal = () => {

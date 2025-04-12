@@ -7,11 +7,8 @@
       class="bg-card rounded-lg py-10 px-20 w-3/5 h-5/6 shadow-lg space-y-6 overflow-y-scroll"
     >
       <section>
-        <div class="mb-6 border-b border-border pb-4">
-          <h2 class="text-4xl font-bold text-foreground uppercase">
-            REVISIÓN DE SOLICITUD
-          </h2>
-        </div>
+
+   
 
         <!-- Información Principal -->
         <div class="flex flex-row gap-4 w-full">
@@ -132,7 +129,7 @@
           <div
             v-for="convalidation in request.convalidations"
             :key="convalidation.id"
-            class="bg-card rounded-lg shadow-lg p-6 border border-border"
+            class="bg-card rounded-lg shadow-xl p-6 border border-border mb-4"
           >
             <!-- Contenido de la Card -->
             <div class="grid grid-cols-2 gap-4">
@@ -165,8 +162,8 @@
               <!-- Asignatura Cursada o Detalle -->
               <div>
                 <div v-if="convalidation.id_subject_to_convalidate">
-                  <div class="grid grid-cols-3 gap-x-4">
-                    <div class="flex flex-col">
+                  <div class="grid grid-cols-10 gap-x-2">
+                    <div class="flex flex-col col-span-2">
                       <label
                         class="font-semibold block text-muted-foreground uppercase"
                       >
@@ -182,7 +179,7 @@
                         }}
                       </p>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-8">
                       <label
                         class="font-semibold block text-muted-foreground uppercase"
                       >

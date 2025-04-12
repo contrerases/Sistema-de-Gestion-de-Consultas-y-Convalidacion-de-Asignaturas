@@ -165,8 +165,8 @@
               <!-- Asignatura Cursada o Detalle -->
               <div>
                 <div v-if="convalidation.id_subject_to_convalidate">
-                  <div class="grid grid-cols-3 gap-x-4">
-                    <div class="flex flex-col">
+                  <div class="grid grid-cols-10 gap-x-4">
+                    <div class="flex flex-col col-span-2">
                       <label
                         class="font-semibold block text-muted-foreground uppercase"
                       >
@@ -182,7 +182,7 @@
                         }}
                       </p>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-8">
                       <label
                         class="font-semibold block text-muted-foreground uppercase"
                       >

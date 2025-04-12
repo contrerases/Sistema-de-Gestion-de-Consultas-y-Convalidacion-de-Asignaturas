@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Literal
+from typing import Optional
 
 
 class WorkshopBase(BaseModel):
@@ -34,7 +35,11 @@ class WorkshopResponse(BaseModel):
     professor : str
     year : int
     initial_date : datetime
-    inscription_deadline : datetime
-    file_data : str | None
+    Inscription_deadline: Optional[datetime] = None 
+    file_data : Optional[str] = None
     available : bool
-    state : str
+    state: Optional[str] = None
+
+class WorkshopUpdateAvailable(BaseModel):
+    id: int
+    available: bool

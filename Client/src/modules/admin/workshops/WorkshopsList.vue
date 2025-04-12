@@ -1,4 +1,7 @@
 <template>
+
+ 
+
   <main>
     <div class="tabs-container">
       <!-- Botones de Tabs -->
@@ -61,9 +64,10 @@
               v-for="workshop in availableWorkshops"
               :key="workshop.id"
               @click="selectWorkshop(workshop)"
+             
             >
               <div
-                class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
+                class="border border-border [&>*]:uppercase rounded-lg my-2 p-4 grid grid-cols-5 gap-3 justify-start hover:border-primary hover:scale-105 transition hover:border-2 cursor-pointer shadow-lg"
                 v-if="workshop.available"
               >
                 <div class="col-span-2 border-r-2 border-border">
@@ -87,9 +91,10 @@
             v-for="workshop in currentWorkshops"
             :key="workshop.id"
             @click="selectWorkshop(workshop)"
+            class="[&>*]:hover:scale-105"
           >
             <div
-              class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
+              class="border border-border rounded-lg my-2 p-4 [&>*]:uppercase grid   grid-cols-5 gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
             >
               <div class="col-span-2 border-r-2 border-border">
                 {{ workshop.name }}
@@ -112,9 +117,10 @@
             v-for="workshop in closedWorkshops"
             :key="workshop.id"
             @click="selectWorkshop(workshop)"
+             class="[&>*]:hover:scale-105"
           >
             <div
-              class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
+              class="border border-border rounded-lg my-2 p-4 grid grid-cols-5 [&>*]:uppercase gap-3 justify-start hover:border-primary hover:border-2 cursor-pointer shadow-lg"
             >
               <div class="col-span-2 border-r-2 border-border">
                 {{ workshop.name }}
@@ -151,9 +157,12 @@ import WorkshopsDetail from "./workshops_detail/WorkshopsDetail.vue";
 import { getWorkshopsAvailable } from "@/services/workshop_api";
 import formatReadableDate from "@/helpers/format_date";
 
+
+
+
 const availableWorkshops = ref<WorkshopResponse[]>([]);
 
-const inscripcionWorkshops = ref<WorkshopResponse[]>([]);
+const inscriptionWorkshops = ref<WorkshopResponse[]>([]);
 const currentWorkshops = ref<WorkshopResponse[]>([]);
 const closedWorkshops = ref<WorkshopResponse[]>([]);
 
@@ -186,9 +195,15 @@ function getCurrentWorkshops() {
   );
 
   console.log(currentWorkshops.value);
-
-  
 }
+
+function getInscriptionWorkshops() {
+  const now = new Date();
+
+  return availableWorkshops.filter(workshop => new Date(workshop.inscription_deadline) < now);
+}
+  console.log(inscriptionWorkshops.value);
+
 
 onMounted(getAvailableWorkshopsHandler);
 onMounted(getUnavailableWorkshopsHandler);

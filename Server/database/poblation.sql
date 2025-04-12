@@ -1,104 +1,221 @@
-INSERT INTO ADMINISTRATORS (first_name, second_name, first_last_name, second_last_name, email, password)
-VALUES 
-('Juan', 'Carlos', 'Gonzalez', 'Perez', 'juan.gonzalez@example.com', 'securepassword123'),
-('Maria', 'Elena', 'Martinez', 'Lopez', 'maria.martinez@example.com', 'securepassword456');
+-- Insertar Administradores
+INSERT INTO
+    ADMINISTRATORS (
+        first_name,
+        second_name,
+        first_last_name,
+        second_last_name,
+        email,
+        password
+    )
+VALUES
+    (
+        'Pedro',
+        'Ignacio',
+        'Godoy',
+        'Barrera',
+        'pgodoy@usm.cl',
+        'pedro123'
+    );
 
-INSERT INTO STUDENTS (rol_student, rut_student, campus_student, first_name, second_name, first_last_name, second_last_name, email, password)
-VALUES 
-('2020123456', '12345678-9', 'Campus Santiago', 'Pedro', 'Antonio', 'Rodriguez', 'Sanchez', 'pedro.rodriguez@example.com', 'securepassword789'),
-('2020234567', '98765432-1', 'Campus Valparaiso', 'Ana', 'Beatriz', 'Fernandez', 'Torres', 'ana.fernandez@example.com', 'securepassword012');
+-- Insertar Estudiantes
+INSERT INTO
+    STUDENTS (
+        rol_student,
+        rut_student,
+        campus_student,
+        first_name,
+        second_name,
+        first_last_name,
+        second_last_name,
+        email,
+        password
+    )
+VALUES
+    (
+        '201873063-7',
+        '20369538-1',
+        'Casa Central',
+        'Camilo',
+        'Eugenio',
+        'Contreras',
+        'Espinoza',
+        'camilocontrerases@gmail.com',
+        'camilo123'
+    ),
+    (
+        '201873018-1',
+        '20360672-9',
+        'Casa Central',
+        'Alvaro',
+        'Nicolas',
+        'Carrasco',
+        'Escobar',
+        'alvarocarrasco@gmail.com',
+        'alvaro123'
+    );
 
+-- Insertar Tipos de Convalidación
+INSERT INTO
+    TYPES_CONVALIDATIONS (name)
+VALUES
+    ('ELECTIVO INF'),
+    ('ASIGNATURA EXTERNA'),
+    ('CURSO CERTIFICADO'),
+    ('TALLER INF'),
+    ('PROYECTO PERSONAL');
 
-INSERT INTO DEPARTMENTS (name)
-VALUES 
-('Departamento de Informática'),
-('Departamento de Matemáticas');
+-- Insertar Tipos de Cursos Curriculares
+INSERT INTO
+    TYPES_CURRICULUM_COURSES (name)
+VALUES
+    ('LIBRE'),
+    ('ELECTIVO INF'),
+    ('ELECTIVO');
 
-INSERT INTO TYPES_CONVALIDATIONS (name)
-VALUES 
-('Asignatura INF'),
-('Asignatura Externa'),
-('Curso Certificado'),
-('Taller de INF'),
-('Proyecto Personal');
+-- Insertar Cursos Curriculares
+INSERT INTO
+    CURRICULUM_COURSES (name, id_type_curriculum_course)
+VALUES
+    ('LIBRE 1', 1),
+    ('LIBRE 2', 1),
+    ('LIBRE 3', 1),
+    ('LIBRE 4', 1),
+    ('LIBRE 5', 1),
+    ('LIBRE 6', 1),
+    ('LIBRE 7', 1),
+    ('ELECTIVO DE INFORMATICA 1', 2),
+    ('ELECTIVO DE INFORMATICA 2', 2),
+    ('ELECTIVO DE INFORMATICA 3', 2),
+    ('ELECTIVO DE INFORMATICA 4', 2),
+    ('ELECTIVO 1', 3),
+    ('ELECTIVO 2', 3),
+    ('ELECTIVO 3', 3),
+    ('ELECTIVO 4', 3);
 
-INSERT INTO TYPES_CURRICULUM_COURSES (name)
-VALUES 
-('Libre'),
-('Electivo'),
-('Electivo INF');
+-- Insertar Departamentos
+INSERT INTO
+    DEPARTMENTS (name)
+VALUES
+    ('INFORMATICA'),
+    ('QUIMICA'),
+    ('ELECTRONICA'),
+    ('DEFIDER'),
+    ('ESTUDIOS HUMANISTICOS'),
+    ('MATEMATICA');
 
-
-INSERT INTO WORKSHOPS (name, semester, year, professor, initial_date, available)
-VALUES 
-('Taller de Programación Avanzada', '1', 2024, 'Dr. Luis Sanchez', '2024-03-01 08:00:00', TRUE),
-('Taller de Innovación Tecnológica', '2', 2024, 'Dra. Paula Medina', '2024-08-01 09:00:00', TRUE);
-
-
-
-SELECT id INTO @id_libre FROM TYPES_CURRICULUM_COURSES WHERE name = 'Libre';
-SELECT id INTO @id_electivo FROM TYPES_CURRICULUM_COURSES WHERE name = 'Electivo';
-SELECT id INTO @id_electivo_inf FROM TYPES_CURRICULUM_COURSES WHERE name = 'Electivo INF';
-
-INSERT INTO CURRICULUM_COURSES (name, id_type_curriculum_course)
-VALUES 
-('Libre 1', @id_libre),
-('Electivo 1', @id_electivo),
-('Electivo Informatica 1', @id_electivo_inf);
-
-
-SELECT id INTO @id_informatica FROM DEPARTMENTS WHERE name = 'Departamento de Informática';
-SELECT id INTO @id_matematicas FROM DEPARTMENTS WHERE name = 'Departamento de Matemáticas';
-
-
-INSERT INTO SUBJECTS (acronym, name, id_department, credits)
-VALUES 
-('INF-101', 'Introducción a la Programación', @id_informatica, 10),
-('MAT-101', 'Cálculo I', @id_matematicas, 10);
-
-
-SELECT id INTO @id_student1 FROM STUDENTS WHERE email = 'pedro.rodriguez@example.com';
-SELECT id INTO @id_student2 FROM STUDENTS WHERE email = 'ana.fernandez@example.com';
-SELECT id INTO @id_admin1 FROM ADMINISTRATORS WHERE email = 'juan.gonzalez@example.com';
-
-
-INSERT INTO REQUESTS (id_student, creation_date, revision_date, comments, id_user_approves)
-VALUES 
-(@id_student1, '2024-08-01 10:00:00', '2024-08-05 15:30:00', 'Solicitud de convalidación para asignatura externa.', @id_admin1),
-(@id_student2, '2024-08-02 11:00:00', NULL, 'En espera de revisión de taller de INF.', NULL);
-
-
-SELECT id INTO @id_request1 FROM REQUESTS WHERE id_student = @id_student1;
-SELECT id INTO @id_request2 FROM REQUESTS WHERE id_student = @id_student2;
-SELECT id INTO @id_convalidation_type1 FROM TYPES_CONVALIDATIONS WHERE name = 'Asignatura INF';
-SELECT id INTO @id_curriculum_course1 FROM CURRICULUM_COURSES WHERE name = 'Libre 1';
-SELECT id INTO @id_subject1 FROM SUBJECTS WHERE acronym = 'INF-101';
-
-INSERT INTO CONVALIDATIONS (id_request, id_convalidation_type, state, id_curriculum_course, id_subject_to_convalidate)
-VALUES 
-(@id_request1, @id_convalidation_type1, 'Enviada', @id_curriculum_course1, @id_subject1),
-(@id_request2, @id_convalidation_type1, 'Aprobada por DI', @id_curriculum_course1, @id_subject1);
-
-
-SELECT id INTO @id_workshop1 FROM WORKSHOPS WHERE name = 'Taller de Programación Avanzada';
-SELECT id INTO @id_workshop2 FROM WORKSHOPS WHERE name = 'Taller de Innovación Tecnológica';
-
-
-INSERT INTO WORKSHOPS_INSCRIPTIONS (id_student, id_workshop, id_curriculum_course, is_convalidated)
-VALUES 
-(@id_student1, @id_workshop1, @id_curriculum_course1, FALSE),
-(@id_student2, @id_workshop2, @id_curriculum_course1, TRUE);
-
-
-
-INSERT INTO WORKSHOPS_GRADES (id_student, id_workshop, grade)
-VALUES 
-(@id_student1, @id_workshop1, 85),
-(@id_student2, @id_workshop2, 90);
-
-
-
-
-
-
-
+-- Insertar Asignaturas
+INSERT INTO
+    SUBJECTS (acronym, name, id_department, credits)
+VALUES
+    ('HIW111', 'ALEMÁN NIVEL ELEMENTAL', 5, 2),
+    ('HIW110', 'ALEMÁN NIVEL PRINCIPIANTE', 5, 2),
+    ('HRW200', 'ARTE E INGENIERÍA', 5, 2),
+    ('HAA101', 'ARTES VISUALES EN CHILE', 5, 2),
+    ('HAH102', 'CIENCIAS SOCIALES', 5, 2),
+    (
+        'HAC100',
+        'COMUNICACIÓN ESCRITA: LECTOESCRITURA A PARTIR DE GRANDES OBRAS',
+        5,
+        2
+    ),
+    (
+        'HAA102',
+        'COMUNICACIÓN ORAL: RETÓRICA Y PUESTA EN ESCENA',
+        5,
+        2
+    ),
+    (
+        'HRW104',
+        'CRECIMIENTO Y DESARROLLO PERSONAL',
+        5,
+        2
+    ),
+    (
+        'HAS100',
+        'DESAFIOS SOCIALES DE LAS ORGANIZACIONES Y EMPRESAS',
+        5,
+        2
+    ),
+    ('HAF101', 'EL MÉTODO CIENTÍFICO', 5, 2),
+    ('HFW145', 'ESCRITURA ACADÉMICA II', 5, 2),
+    (
+        'HFW124',
+        'ESPAÑOL COMO LENGUA EXTRANJERA II',
+        5,
+        2
+    ),
+    (
+        'HFW125',
+        'ESPAÑOL COMO LENGUA EXTRANJERA III',
+        5,
+        2
+    ),
+    ('HRW130', 'ETICA', 5, 2),
+    ('HFW144', 'EXPRESIÓN ORAL Y ESCRITA', 5, 2),
+    ('HAF100', 'FILOSOFÍA DE LA TECNOLOGÍA', 5, 2),
+    ('HRW131', 'FORMAC.Y LIDERAZGO EMPRESARIAL', 5, 2),
+    ('HRW203', 'HISTORIA DE LA CONSTRUCCIÓN', 5, 2),
+    ('HAH101', 'HISTORIA ECONÓMICA', 5, 2),
+    ('HCW100', 'INGLÉS 1', 5, 2),
+    ('HCW101', 'INGLÉS 2', 5, 2),
+    ('HCW102', 'INGLÉS 3', 5, 2),
+    ('HCW200', 'INGLÉS 4', 5, 2),
+    ('HCW201', 'INGLÉS 5', 5, 2),
+    ('HCW202', 'INGLÉS 6', 5, 2),
+    ('HCW300', 'INGLÉS 7', 5, 2),
+    ('HCW207', 'INGLÉS AMBIENTAL', 5, 2),
+    ('HCW326', 'INGLÉS CONVERSACIÓN II', 5, 2),
+    ('HTW130', 'INTRODUCCIÓN A LA MÚSICA', 5, 2),
+    ('HRW230', 'LENGUAJE MUSICAL DEL SIGLO XX', 5, 2),
+    (
+        'HFW136',
+        'MISTERIOS Y TRADICIONES DE LA CULTURA RAPA NUI',
+        5,
+        2
+    ),
+    ('HAH103', 'POLÍTICA E INSTITUCIONES', 5, 2),
+    ('HRW153', 'PRACTICA EN ACCION COMUNITARIA', 5, 2),
+    ('HRW151', 'RELACIONES INTERPERSONALES', 5, 2),
+    (
+        'HRW132',
+        'SOCIEDAD Y POLITICA CONTEMPORÁNEA',
+        5,
+        2
+    ),
+    ('HRW202', 'TEORIA DEL CINE', 5, 2),
+    (
+        'HAF102',
+        'TEORÍAS FEMINISTAS Y EQUIDAD DE GÉNERO',
+        5,
+        2
+    ),
+    (
+        'HRW103',
+        'VISIÓN ESTÉTICA DEL QUEHACER HUMANO',
+        5,
+        2
+    ),
+    (
+        'HRW102',
+        'VISIÓN INMANENTE DEL QUEHACER HUMANO',
+        5,
+        2
+    ),
+    ('HRW133', 'ÉTICA Y ARGUMENTACIÓN CRÍTICA', 5, 2),
+    ('EFI102', 'ATLETISMO', 4, 2),
+    ('EFI103', 'BÁSQUETBOL', 4, 2),
+    (
+        'EFI100',
+        'EDUCACIÓN FÍSICA I (DAMAS Y VARONES)',
+        4,
+        2
+    ),
+    ('EFI105', 'FÚTBOL', 4, 2),
+    ('EFI108', 'HANDBOL', 4, 2),
+    ('EFI109', 'JUDO', 4, 2),
+    ('EFI110', 'KÁRATE', 4, 2),
+    ('EFI115', 'TAEKWONDO', 4, 2),
+    ('EFI113', 'TENIS', 4, 2),
+    ('EFI114', 'TENIS DE MESA', 4, 2),
+    ('EFI116', 'VÓLEIBOL', 4, 2);
