@@ -1,5 +1,5 @@
-# Usa una imagen base de Node.js
-FROM node:22-alpine
+# Usar una versión específica de Node.js compatible con esbuild
+FROM node:22.14
 
 # Establece el directorio de trabajo
 WORKDIR /app
@@ -8,16 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instala las dependencias
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copia el resto de los archivos de la aplicación
 COPY . .
 
-# Compila la aplicación
-RUN npm run build
+# Expone el puerto para desarrollo
+EXPOSE 5173
 
-# Expone el puerto 80
-EXPOSE 80
-
-# Comando para ejecutar la aplicación
-CMD ["npm", "run", "serve"]
+# Comando para ejecutar la aplicación en modo desarrollo
+CMD ["npm", "run", "dev"]

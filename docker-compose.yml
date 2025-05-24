@@ -1,16 +1,15 @@
-version: '3.8'
 
 services:
   frontend:
     build:
       context: ./Client
     ports:
-      - "80:80"
+      - "5173:5173"
     depends_on:
       - backend
-      - db
     env_file:
       - ./Client/.env
+    restart: always
 
   backend:
     build:
@@ -21,6 +20,9 @@ services:
       - db
     env_file:
       - ./Server/.env
+    volumes:
+      - ./Server/database:/app/database
+    restart: always
 
   db:
     image: mariadb:latest
@@ -31,6 +33,11 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   db_data:
