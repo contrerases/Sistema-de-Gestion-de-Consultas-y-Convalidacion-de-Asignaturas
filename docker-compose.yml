@@ -26,18 +26,33 @@ services:
 
   db:
     image: mariadb:latest
+    container_name: sgc_db
     restart: always
-    env_file:
-      - ./Server/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    # Configuración para asegurar que la inicialización se complete correctamente
+    command: [
+      '--max_allowed_packet=128M',
+      '--innodb-log-file-size=48M',
+      '--innodb-buffer-pool-size=256M',
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci'
+    ]
 
 volumes:
   db_data:
+    driver: local
+  initdb_data:  
