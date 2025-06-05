@@ -2,26 +2,26 @@
 services:
   frontend:
     build:
-      context: ./Client
+      context: ./client
     ports:
       - "5173:5173"
     depends_on:
       - backend
     env_file:
-      - ./Client/.env
+      - ./client/.env
     restart: always
 
   backend:
     build:
-      context: ./Server
+      context: ./server
     ports:
       - "8000:8000"
     depends_on:
       - db
     env_file:
-      - ./Server/.env
+      - ./server/.env
     volumes:
-      - ./Server/database:/app/database
+      - ./server/database:/app/database
     restart: always
 
   db:
@@ -37,7 +37,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./server/database:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
@@ -55,4 +55,3 @@ services:
 volumes:
   db_data:
     driver: local
-  initdb_data:  
