@@ -1,24 +1,30 @@
 import os
 from dotenv import load_dotenv
-import mysql.connector
+import mariadb 
 
 # Cargar variables de entorno desde .env
-load_dotenv()
+dotenv_path = os.getenv('ENV_PATH', '.env')
+load_dotenv(dotenv_path)
 
 def get_db_connection():
-    """
-    Establece y retorna una conexión a la base de datos usando las variables de entorno.
-    """
+   
+    db_host =  os.getenv('DB_HOST')
+    db_port =  int(os.getenv('DB_PORT', '3306'))
+    db_user = os.getenv('DB_USER')
+    db_password = os.getenv('DB_USER_PASSWORD')
+    db_name = os.getenv('DB_NAME')
+
     try:
-        conn = mysql.connector.connect(
-            host=os.getenv('DB_HOST'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            database=os.getenv('DB_NAME'),
-            port=int(os.getenv('DB_PORT', '3306'))
+        print(f"Intentando conectar a la base de datos en host: {db_host}, puerto: {db_port}, usuario: {db_user}, base: {db_name}")
+        conn = mariadb.connect(
+            host=db_host,
+            user=db_user,
+            password=db_password,
+            database=db_name,
+            port=db_port
         )
-        print("✅ Conexión exitosa a la base de datos")
+        print(f"✅ Conexión exitosa a la base de datos en host: {db_host}, puerto: {db_port}")
         return conn
-    except mysql.connector.Error as err:
-        print(f"❌ Error al conectar a la base de datos: {err}")
-        return None
+    except mariadb.Error as err:
+        print(f"❌ Error al conectar a la base de datos en host: {db_host}, puerto: {db_port}: {err}")
+        raise

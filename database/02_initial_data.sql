@@ -342,3 +342,8 @@ VALUES (
         2
     ),
     ('EFI116', 'VÓLEIBOL', 4, 2);
+
+
+
+
+SELECT "Datos iniciales insertados correctamente";

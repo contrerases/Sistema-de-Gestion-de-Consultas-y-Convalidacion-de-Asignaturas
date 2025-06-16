@@ -60,10 +60,7 @@ data/
 # *.db
 # *.sql
 
-# Archivos de entorno
-.env
-.env.*
-!.env.example
+
 
 # Archivos de configuración de IDE
 .idea/

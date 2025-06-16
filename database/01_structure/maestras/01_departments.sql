@@ -1,6 +1,0 @@
--- Departamentos académicos
-CREATE TABLE IF NOT EXISTS DEPARTMENTS (
-    id INT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    PRIMARY KEY (id)
-);
