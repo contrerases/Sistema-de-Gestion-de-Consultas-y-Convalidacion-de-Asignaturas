@@ -4,7 +4,7 @@
 
 
 <script setup lang="ts">
-import AdminLayout from '@/layouts/admin/AdminLayout.vue';
+import AdminLayout from '@/features/shared/layout/AdminLayout.vue';
 
 import { ref, onMounted} from 'vue';
 

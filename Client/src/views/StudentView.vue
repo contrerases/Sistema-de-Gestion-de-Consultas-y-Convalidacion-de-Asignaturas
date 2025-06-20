@@ -4,7 +4,7 @@
 
 
 <script setup lang="ts">
-import StudentLayout from '@/layouts/student/StudentLayout.vue';
+import StudentLayout from '@/features/shared/layout/StudentLayout.vue';
   
 </script>
 

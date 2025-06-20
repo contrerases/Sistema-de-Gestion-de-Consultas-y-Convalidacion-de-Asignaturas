@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts" >
-import AdminSidebar from '@/layouts/admin/components/AdminSidebar.vue';
+import AdminSidebar from '@/features/shared/layout/components/AdminSidebar.vue';
 </script>
 
 <style scoped lang="postcss">

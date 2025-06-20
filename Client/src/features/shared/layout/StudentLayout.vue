@@ -8,7 +8,7 @@
    </template>
    
    <script setup lang="ts" >
-   import StudentSidebar from '@/layouts/student/components/StudentSidebar.vue';
+   import StudentSidebar from '@/features/shared/layout/components/StudentSidebar.vue';
    </script>
    
    <style scoped lang="postcss">
