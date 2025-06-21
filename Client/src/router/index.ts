@@ -8,24 +8,24 @@ import HomeView from '@/views/HomeView.vue'
 
 
 
-import RequestModule from '@/modules/admin/requests/RequestModule.vue'
-import HistoryModule from '@/modules/admin/history/HistoryModule.vue'
-import CurriculumCoursesModule from '@/modules/admin/curriculum_courses/CurriculumCoursesModule.vue'
-import StatsModule from '@/modules/admin/stats/StatsModule.vue'
-import SubjectsModule from '@/modules/admin/subjects/SubjectsModule.vue'
-import WorkshopsModule from '@/modules/admin/workshops/WorkshopsModule.vue'
-import DepartmentModule from '@/modules/admin/department/DepartmentModule.vue'
-import WorkshopsCurrentList from '@/modules/admin/workshops/WorkshopsCurrentList.vue'
-import WorkshopsPastList from '@/modules/admin/workshops/WorkshopsPastList.vue'
+import RequestModule from '@/features/convalidations/requests/components/RequestModule.vue'
+import HistoryModule from '@/features/convalidations/history/components/HistoryModule.vue'
+import CurriculumCoursesModule from '@/features/academic/curriculum/components/CurriculumCoursesModule.vue'
+import StatsModule from '@/features/dashboard/components/StatsModule.vue' 
+import SubjectsModule from '@/features/academic/subjects/components/SubjectsModule.vue'
+import WorkshopsModule from '@/features/workshops/WorkshopsModule.vue'
+import DepartmentModule from '@/features/academic/departments/components/DepartmentModule.vue'
+import WorkshopsCurrentList from '@/features/workshops/WorkshopsCurrentList.vue'
+import WorkshopsPastList from '@/features/workshops/WorkshopsPastList.vue'
 
 
-import WorkshopsModuleStudent from '@/modules/student/workshops/WorkshopsModuleStudent.vue'
-import NewRequestModule from '@/modules/student/new_request/NewRequestModule.vue'
-import HomeModule from '@/modules/student/home/HomeModule.vue'
-import HistoryModuleStudent from '@/modules/student/history/HistoryModuleStudent.vue'
+import WorkshopsModuleStudent from '@/features/workshops/WorkshopsModuleStudent.vue'
+import NewRequestModule from '@/features/convalidations/requests/components/NewRequestModule.vue'
+import HomeModule from '@/features/home/HomeModule.vue'
+import HistoryModuleStudent from '@/features/convalidations/history/components/HistoryModuleStudent.vue'
 
 
-import { useAuthStore } from '@/stores/auth_store';
+import { useAuthStore } from '@/shared/stores/auth_store';
 
 
 

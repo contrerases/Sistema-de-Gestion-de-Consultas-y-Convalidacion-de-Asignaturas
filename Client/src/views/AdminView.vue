@@ -4,11 +4,11 @@
 
 
 <script setup lang="ts">
-import AdminLayout from '@/features/shared/layout/AdminLayout.vue';
+import AdminLayout from '@/layouts/AdminLayout.vue';
 
 import { ref, onMounted} from 'vue';
 
-import { useRequestStore } from '@/stores/request_store';
+import { useRequestStore } from '@/shared/stores/request_store';
     
 const request_store = useRequestStore();
 

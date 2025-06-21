@@ -196,7 +196,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useAuthStore } from "@/stores/auth_store"; // Importa el auth store
+import { useAuthStore } from "@/shared/stores/auth_store"; // Importa el auth store
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
 
