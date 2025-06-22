@@ -23,15 +23,15 @@
 </template>
 
 <script setup lang="ts">
+
 import HistoryViewCardList from '@/features/convalidations/history/components/HistoryViewCardList.vue';
 import HistoryFiltersDialog from '@/features/convalidations/history/components/HistoryFiltersDialog.vue';
 
-import type { RequestFiltered } from '@/interfaces/request_model';
+import type { RequestFiltered } from '@/shared/types/request_model';
 
 import { ref } from 'vue';
 
-const showFiltersModal = ref(false);
-
+const showFiltersModal = ref<boolean>(false);
 
 const filters = ref<RequestFiltered>({
   name_student: '',
@@ -41,13 +41,11 @@ const filters = ref<RequestFiltered>({
   date_upper_bound: null,
 });
 
-
-
-function toggleFiltersModal() {
+function toggleFiltersModal(): void {
   showFiltersModal.value = !showFiltersModal.value;
 }
 
-function applyFilters(final_filters: RequestFiltered) {
+function applyFilters(final_filters: RequestFiltered): void {
   filters.value = final_filters;
   toggleFiltersModal();
 }

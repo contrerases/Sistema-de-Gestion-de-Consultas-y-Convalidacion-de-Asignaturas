@@ -39,8 +39,8 @@ import SubjectsCreation from '@/features/academic/subjects/components/SubjectsCr
 
 import type { SubjectPost } from '@/interfaces/subject_model';
 
-import AlertDialog from '@/common/dialogs/AlertDialog.vue';
-import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
+import AlertDialog from '@/shared/components/dialogs/AlertDialog.vue';
+import SuccessDialog from '@/shared/components/dialogs/SuccessDialog.vue';
 
 import { insertSubject } from '@/shared/services/api/subject_api';
 

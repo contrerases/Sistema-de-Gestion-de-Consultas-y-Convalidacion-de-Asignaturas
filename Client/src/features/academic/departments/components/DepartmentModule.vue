@@ -28,8 +28,8 @@ import DepartmentInsertDialog from '@/features/academic/departments/components/D
 import type { DepartmentPost } from '@/interfaces/department_model';
 import { insertDepartment } from '@/shared/services/api/department_api';
 
-import AlertDialog from '@/common/dialogs/AlertDialog.vue';
-import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
+import AlertDialog from '@/shared/components/dialogs/AlertDialog.vue';
+import SuccessDialog from '@/shared/components/dialogs/SuccessDialog.vue';
 
 // Estado del nuevo departamento
 const newDepartment = ref<DepartmentPost>({

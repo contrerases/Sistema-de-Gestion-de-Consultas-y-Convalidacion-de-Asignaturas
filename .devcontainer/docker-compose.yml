@@ -1,0 +1,30 @@
+name: sgc-dev-container
+
+services:
+  web:
+    extends:
+      file: ../docker-compose.dev.yml
+      service: web
+    networks:
+      - net
+  api:
+    extends:
+      file: ../docker-compose.dev.yml
+      service: api
+    networks:
+      - net
+  db:
+    extends:
+      file: ../docker-compose.dev.yml
+      service: db
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+

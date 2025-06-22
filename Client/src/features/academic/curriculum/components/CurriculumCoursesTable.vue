@@ -42,7 +42,7 @@
 
   const curriculum_coursesStore = useCurriculumCourseStore();
 
-  import { getAllCurriculumCourses } from '@/shared/services/api/curriculm_course_apiservices/curriculm_course_api';
+  import { getAllCurriculumCourses } from '@/shared/services/api/curriculm_course_api';
 
   
   async function getCurriculumCoursesHandler() {

@@ -6,7 +6,7 @@ import type { TypeCourseBase } from '@/interfaces/type_convalidation_model';
 import type { WorkshopBase } from '@/interfaces/workshop_model';
 // RECURSOS
 import { insertConvalidation } from '@/shared/services/api/convalidation_api';
-import { getAllCurriculumCourses } from '@/features/academic/curriculum/services/curriculm_course_api';
+import { getAllCurriculumCourses } from '@/shared/services/api/curriculm_course_api';
 import { getAllTypesCourses } from '@/shared/services/api/type_convalidation_api';
 import { getAllSubject } from '@/shared/services/api/subject_api';
 import { getAllWorkshops } from '@/shared/services/api/workshop_api';

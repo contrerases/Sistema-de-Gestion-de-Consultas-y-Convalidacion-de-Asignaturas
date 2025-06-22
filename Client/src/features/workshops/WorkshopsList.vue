@@ -152,7 +152,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import type { WorkshopResponse } from "@/interfaces/workshop_model";
-import WorkshopsDetail from "../../modules/admin/workshops/workshops_detail/WorkshopsDetail.vue";
+import WorkshopsDetail from "@/features/workshops/workshops_detail/WorkshopsDetail.vue";
 
 import { getWorkshopsAvailable } from "@/shared/services/api/workshop_api";
 import formatReadableDate from "@/shared/helpers/format_date";

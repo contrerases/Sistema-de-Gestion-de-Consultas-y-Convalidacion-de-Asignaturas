@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Frontend (Vue.js)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/client/node_modules/vite/bin/vite.js",
+      "args": ["--host", "--port", "5173", "--force"],
+      "cwd": "${workspaceFolder}/client",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Backend (FastAPI)",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "main:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/server"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Debug Backend (Python File)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/main.py",
+      "cwd": "${workspaceFolder}/server",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/server"
+      },
+      "justMyCode": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Full Stack",
+      "configurations": [
+        "Debug Frontend (Vue.js)",
+        "Debug Backend (FastAPI)"
+      ],
+      "stopAll": true
+    }
+  ]
+} 

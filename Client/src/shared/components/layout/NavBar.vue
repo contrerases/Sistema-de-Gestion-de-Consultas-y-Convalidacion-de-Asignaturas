@@ -82,48 +82,41 @@ const logout = () => {
 
 <template>
   <nav class="nav">
-    <div class="flex flex-row justify-center items-center"> 
+    <div class="flex flex-row justify-center items-center">
       <img src="@/assets/img/DI_IMG.png" alt="Logo" width="90">
       <h1 class="text-sm font-bold pl-4 font-mono w-52">Departamento de Informática</h1>
     </div>
- 
-    <div class="flex h-full justify-center items-center gap-10"> 
+
+    <div class="flex h-full justify-center items-center gap-10">
       <div v-if="auth_store.isAdmin" class="relative inline-block" ref="tooltipRef">
-        <Icon
-          icon="ci:notification"
-          class="text-3xl cursor-pointer"
-          @click="toggleTooltip"
-        />
-        <span
-          v-if="count_pending_requests !== 0"
-          class="absolute flex ml-4 mt-[-33px] items-center justify-center text-center align-middle w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full"
-        >
+        <Icon icon="ci:notification" class="text-3xl cursor-pointer" @click="toggleTooltip" />
+        <span v-if="count_pending_requests !== 0"
+          class="absolute flex ml-4 mt-[-33px] items-center justify-center text-center align-middle w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
           {{ count_pending_requests }}
         </span>
-    
+
         <!-- Tooltip -->
-        <div
-          v-if="tooltipVisible && count_pending_requests !== 0"
-          class="absolute left-1/2 transform -translate-x-1/2 mt-3  p-3 text-sm text-white bg-[#1e1e1e] rounded border shadow-2xl text-center"
-        >
+        <div v-if="tooltipVisible && count_pending_requests !== 0"
+          class="absolute left-1/2 transform -translate-x-1/2 mt-3  p-3 text-sm text-white bg-[#1e1e1e] rounded border shadow-2xl text-center">
           Tiene {{ count_pending_requests }} solicitudes sin revisar.
         </div>
       </div>
 
       <ColorMode />
 
-      <div class="relative" ref="dropdownRef" v-if="auth_store.isAuthenticated"> 
+      <div class="relative" ref="dropdownRef" v-if="auth_store.isAuthenticated">
         <button @click="toggleMenu" class="user-spec">
           {{ auth_store.username }}
-          <Icon icon="teenyicons:down-small-outline" class="icon"/>
+          <Icon icon="teenyicons:down-small-outline" class="icon" />
         </button>
-        <ul v-if="isOpen" class="dropdown-menu" >
+        <ul v-if="isOpen" class="dropdown-menu">
           <li @click="logout">Cerrar sesión</li>
         </ul>
       </div>
 
-      <div class="relative" ref="dropdownRef" v-if="!auth_store.isAuthenticated"> 
-        <div @click="toggleMenu" class="user-flex items-center bg-input w-auto h-1/2 border border-border rounded-full px-4 py-3 uppercase font-bold ">
+      <div class="relative" ref="dropdownRef" v-if="!auth_store.isAuthenticated">
+        <div @click="toggleMenu"
+          class="user-flex items-center bg-input w-auto h-1/2 border border-border rounded-full px-4 py-3 uppercase font-bold ">
           {{ "Inicia sesión" }}
         </div>
       </div>
@@ -154,4 +147,3 @@ const logout = () => {
   @apply p-3 hover:bg-primary cursor-pointer rounded-lg font-medium;
 }
 </style>
-

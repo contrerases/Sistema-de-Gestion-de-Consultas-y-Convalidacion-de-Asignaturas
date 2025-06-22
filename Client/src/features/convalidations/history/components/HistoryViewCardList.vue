@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import type { RequestFiltered, RequestResponse } from '@/interfaces/request_model';
+import type { RequestFiltered, RequestResponse } from '@/shared/types/request_model';
 
 import formatReadableDate from '@/shared/helpers/format_date';
 

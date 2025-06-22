@@ -5,7 +5,6 @@ services:
   # FRONTEND - Vue.js + Vite (DESARROLLO)
   # ========================================
   web:
-    container_name: sgc_frontend_dev
     build:
       context: ./client
       dockerfile: Dockerfile.dev  # Dockerfile de desarrollo
@@ -19,16 +18,16 @@ services:
       - WATCHPACK_POLLING=true    
     restart: unless-stopped
     networks:
-      - sgc_network
+      - net
     volumes:
       - ./client:/app  # Hot reload para desarrollo
       - /app/node_modules  # Excluye node_modules para evitar conflictos
+   
 
   # ========================================
   # BACKEND - Python + FastAPI (DESARROLLO)
   # ========================================
   api:
-    container_name: sgc_backend_dev
     build:
       context: ./server
       dockerfile: Dockerfile.dev  # Dockerfile de desarrollo
@@ -50,7 +49,7 @@ services:
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
     restart: unless-stopped
     networks:
-      - sgc_network
+      - net
     healthcheck:
       test: [ "CMD", "python", "-c", "from database import get_db_connection; get_db_connection()" ]
       interval: 10s
@@ -64,7 +63,6 @@ services:
   # DATABASE - MariaDB
   # ========================================
   db:
-    container_name: sgc_db_dev
     image: mariadb:10.11
     restart: unless-stopped
     environment:
@@ -75,7 +73,7 @@ services:
     ports:
       - "${DB_PORT}:3306"  # Solo se expone si DB_PORT está definido
     volumes:
-      - sgc_db_data_dev:/var/lib/mysql  # Datos persistentes
+      - db_data:/var/lib/mysql  # Datos persistentes
       # Scripts de inicialización
       - ./database/00_init_database.sql:/docker-entrypoint-initdb.d/00_init_database.sql
       - ./database/01_structure.sql:/docker-entrypoint-initdb.d/01_structure.sql
@@ -88,7 +86,7 @@ services:
       --max-connections=500 
       --max_allowed_packet=128M
     networks:
-      - sgc_network
+      - net
     healthcheck:
       test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "--password=${DB_ROOT_PASSWORD}" ]
       interval: 10s
@@ -99,13 +97,12 @@ services:
 # NETWORKS
 # ========================================
 networks:
-  sgc_network:
-    name: sgc_network_dev
+  net:
     driver: bridge
 
 # ========================================
 # VOLUMES
 # ========================================
 volumes:
-  sgc_db_data_dev:
+  db_data:
     driver: local 

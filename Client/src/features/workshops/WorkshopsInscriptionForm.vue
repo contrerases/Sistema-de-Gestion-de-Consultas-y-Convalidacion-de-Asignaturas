@@ -53,7 +53,7 @@
   
   import { ref, onMounted, reactive } from "vue";
   import type { CurriculumCourseResponse } from "@/shared/types/curriculum_course_model";
-  import { getAllCurriculumCourses } from "@/features/academic/curriculum/services/curriculm_course_api";
+  import { getAllCurriculumCourses } from "@/shared/services/api/curriculm_course_api";
   
   import { insertWorkshopsInscriptions } from "@/shared/services/api/workshop_inscriptions_api";
   

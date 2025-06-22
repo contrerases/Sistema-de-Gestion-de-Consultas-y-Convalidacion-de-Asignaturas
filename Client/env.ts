@@ -31,6 +31,7 @@ interface ImportMetaEnv {
   
     readonly VITE_DEPARTMENTS_ENDPOINT: string;
     readonly VITE_DEPARTMENTS_ID_ENDPOINT: string;
+    
   }
   
 

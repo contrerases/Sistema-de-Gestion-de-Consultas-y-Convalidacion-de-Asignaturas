@@ -326,7 +326,7 @@
 
 <script setup lang="ts">
 import { defineProps, ref } from "vue";
-import type { Request, RequestResponse } from "@/interfaces/request_model";
+import type { Request, RequestResponse } from "@/shared/types/request_model";
 import downloadPdf from "@/shared/helpers/download_file";
 import formatReadableDate from "@/shared/helpers/format_date";
 import {} from "@/shared/stores/subject_store";

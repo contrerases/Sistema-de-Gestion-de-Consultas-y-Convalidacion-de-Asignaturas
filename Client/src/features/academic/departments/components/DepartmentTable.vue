@@ -45,8 +45,8 @@ import { getAllDepartments, updateDepartment } from '@/shared/services/api/depar
 import { Icon } from '@iconify/vue';
 
 import DepartmentUpdateDialog from '@/features/academic/departments/components/DepartmentUpdateDialog.vue';
-import AlertDialog from '@/common/dialogs/AlertDialog.vue';
-import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
+import AlertDialog from '@/shared/components/dialogs/AlertDialog.vue';
+import SuccessDialog from '@/shared/components/dialogs/SuccessDialog.vue';
 
 
 

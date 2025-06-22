@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import CurriculumCourseTable from '@/features/academic/curriculum/components/CurriculumCoursesTable.vue';
 import type { CurriculumCourseResponse, CurriculumCoursePost} from '@/interfaces/curriculum_course_model';
-import { insertCurriculumCourse, getAllCurriculumCourses } from '@/shared/services/api/curriculm_course_apiservices/curriculm_course_api';
+import { insertCurriculumCourse, getAllCurriculumCourses } from '@/shared/services/api/curriculm_course_api';
 import { ref, onMounted } from 'vue';
 
 

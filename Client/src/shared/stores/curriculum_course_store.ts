@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getAllCurriculumCourses, deleteCurriculumCourse, insertCurriculumCourse,  } from '@/features/academic/curriculum/services/curriculm_course_api'
+import { getAllCurriculumCourses, deleteCurriculumCourse, insertCurriculumCourse } from '@/shared/services/api/curriculm_course_api'
 import type { CurriculumCourseBase } from '@/shared/types/curriculum_course_model'
 
 interface State {

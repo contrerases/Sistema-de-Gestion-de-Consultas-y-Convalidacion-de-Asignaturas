@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import InfoSpec from '@/modules/student/home/InfoSpec.vue';
+import InfoSpec from '@/features/home/InfoSpec.vue';
 </script>
 
 <style scoped lang="postcss">

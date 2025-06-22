@@ -52,8 +52,8 @@ import { updateSubject } from '@/shared/services/api/subject_api';
 
 import SubjectUpdateDialog from '@/features/academic/subjects/components/SubjectUpdateDialog.vue';
 
-import AlertDialog from '@/common/dialogs/AlertDialog.vue';
-import SuccessDialog from '@/common/dialogs/SuccessDialog.vue';
+import AlertDialog from '@/shared/components/dialogs/AlertDialog.vue';
+import SuccessDialog from '@/shared/components/dialogs/SuccessDialog.vue';
 
 
 

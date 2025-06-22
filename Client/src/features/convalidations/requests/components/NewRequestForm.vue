@@ -160,18 +160,10 @@ import { useRouter } from "vue-router";
 import { ref, reactive, onMounted } from "vue";
 import { Icon } from "@iconify/vue";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/common/select";
 
 
 
-import { CourseConvalidationTypes } from "@/enums/courses_convalidation_types";
+import { CourseConvalidationTypes } from "@/shared/enums/courses_convalidation_types";
 
 import type { Convalidation, ConvalidationInsert, ConvalidationResponse, ConvalidationUpdate } from "@/interfaces/convalidation_model";
 import type { RequestInsert } from "@/interfaces/request_model";
@@ -184,7 +176,7 @@ import type { WorkshopBase } from "@/interfaces/workshop_model";
 import type { TypeCurriculumCourseBase } from "@/interfaces/type_curriculum_course_model";
 
 // RECURSOS
-import { getAllCurriculumCourses } from "@/features/academic/curriculum/services/curriculm_course_api";
+import { getAllCurriculumCourses } from "@/shared/services/api/curriculm_course_api";
 import { getAllTypesConvalidations } from "@/shared/services/api/type_convalidation_api";
 import { getAllSubject } from "@/shared/services/api/subject_api";
 import { getAllWorkshops } from "@/shared/services/api/workshop_api";
@@ -193,8 +185,8 @@ import { getAllTypesCurriculumCourses } from "@/shared/services/api/type_curricu
 import { insertRequest } from "@/shared/services/api/request_api";
 
 
-import AlertDialog from "@/common/dialogs/AlertDialog.vue";
-import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
+import AlertDialog from "@/shared/components/dialogs/AlertDialog.vue";
+import SuccessDialog from "@/shared/components/dialogs/SuccessDialog.vue";
 
 import Dropdown from "@/shared/components/ui/Dropdown.vue";
 

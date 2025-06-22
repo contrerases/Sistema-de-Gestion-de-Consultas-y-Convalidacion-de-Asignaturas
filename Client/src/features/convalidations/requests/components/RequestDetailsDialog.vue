@@ -366,11 +366,11 @@ import downloadPdf from "@/shared/helpers/download_file";
 
 import { Icon } from "@iconify/vue";
 
-import ConfirmationDialog from "@/common/dialogs/ConfirmationDialog.vue";
-import AlertDialog from "@/common/dialogs/AlertDialog.vue";
-import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
+import ConfirmationDialog from "@/shared/components/dialogs/ConfirmationDialog.vue";
+import AlertDialog from "@/shared/components/dialogs/AlertDialog.vue";
+import SuccessDialog from "@/shared/components/dialogs/SuccessDialog.vue";
 
-import { RequestStates } from "@/enums/request_states";
+import { RequestStates } from "@/shared/enums/request_states";
 import { useRequestStore } from "@/shared/stores/request_store";
 
 import type {
@@ -387,7 +387,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/common/select";
+} from "@/shared/components/ui/select";
 
 import { getAllSubject } from "@/shared/services/api/subject_api";
 

@@ -155,9 +155,9 @@ import { ref, defineProps, defineEmits, watch } from "vue";
 import type { WorkshopPost } from "@/interfaces/workshop_model";
 import { insertWorkshop } from "@/shared/services/api/workshop_api";
 
-import AlertDialog from "@/common/dialogs/AlertDialog.vue";
-import SuccessDialog from "@/common/dialogs/SuccessDialog.vue";
-import ConfirmationDialog from "@/common/dialogs/ConfirmationDialog.vue";
+import AlertDialog from "@/shared/components/dialogs/AlertDialog.vue";
+import SuccessDialog from "@/shared/components/dialogs/SuccessDialog.vue";
+import ConfirmationDialog from "@/shared/components/dialogs/ConfirmationDialog.vue";
 
 const props = defineProps<{
   visible: boolean;

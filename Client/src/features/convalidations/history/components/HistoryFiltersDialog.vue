@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import type { RequestFiltered } from '@/interfaces/request_model';
+import type { RequestFiltered } from '@/shared/types/request_model';
 
 // Props que recibe el modal
 const props = defineProps({
@@ -97,36 +97,36 @@ function applyFilters() {
 </script>
 
 <style scoped lang="postcss">
-.modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center;
-}
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center;
+  }
 
-.modal-container {
-  @apply bg-background border-2 border-border rounded-xl p-8 max-w-md w-full;
-}
+  .modal-container {
+    @apply bg-background border-2 border-border rounded-xl p-8 max-w-md w-full;
+  }
 
-.modal-title {
-  @apply text-2xl font-bold uppercase mb-4;
-}
+  .modal-title {
+    @apply text-2xl font-bold uppercase mb-4;
+  }
 
-.modal-actions {
-  @apply mt-4 flex justify-end;
-}
+  .modal-actions {
+    @apply mt-4 flex justify-end;
+  }
 
-.btn-primary {
-  @apply bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 mr-2;
-}
+  .btn-primary {
+    @apply bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 mr-2;
+  }
 
-.btn-secondary {
-  @apply bg-destructive text-white px-4 py-2 rounded hover:bg-destructive-hover;
-}
+  .btn-secondary {
+    @apply bg-destructive text-white px-4 py-2 rounded hover:bg-destructive-hover;
+  }
 
-label {
-  @apply text-sm font-semibold mb-1;
-}
+  label {
+    @apply text-sm font-semibold mb-1;
+  }
 
-input,
-select {
-  @apply bg-input text-foreground p-3 rounded border border-border focus:outline-none focus:ring-2 focus:ring-primary;
-}
+  input,
+  select {
+    @apply bg-input text-foreground p-3 rounded border border-border focus:outline-none focus:ring-2 focus:ring-primary;
+  }
 </style>
