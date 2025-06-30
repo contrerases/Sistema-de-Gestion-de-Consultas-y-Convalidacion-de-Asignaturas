@@ -1,0 +1,88 @@
+{
+  "name": "Frontend - Vue.js",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "web",
+  "workspaceFolder": "/app",
+  "runServices": ["web", "api", "db"],
+  "envFile": "../.env.dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Vue.js y TypeScript
+        "vue.volar",
+        "amayakite.aya-vue3-extension-pack",
+        "hollowtree.vue-snippets",
+        "sdras.vue-vscode-snippets",
+        "wejectchan.vue3-snippets-for-vscode",
+        "znck.vue",
+        "ms-vscode.vscode-typescript-next",
+        
+        // CSS y Tailwind
+        "bradlc.vscode-tailwindcss",
+        "csstools.postcss",
+        "ecmel.vscode-html-css",
+        "pranaygp.vscode-css-peek",
+        "sibiraj-s.vscode-scss-formatter",
+        "stylelint.vscode-stylelint",
+        
+        // Formateo y Linting
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "formulahendry.auto-rename-tag",
+        "steoates.autoimport",
+        
+        // Testing
+        "vitest.explorer",
+        "ms-playwright.playwright",
+        
+        // Vite y Build Tools
+        "antfu.vite",
+        "ms-vscode.live-server",
+        "ritwickdey.liveserver",
+        
+        // Git y Utilidades
+        "github.copilot",
+        "github.copilot-chat",
+        "christian-kohler.path-intellisense",
+        "usernamehw.errorlens",
+        "wix.vscode-import-cost",
+        "gruntfuggly.todo-tree",
+        
+        // Temas e Iconos
+        "miguelsolorio.fluent-icons",
+        "pkief.material-icon-theme",
+        "github.github-vscode-theme",
+        "eliverlara.andromeda",
+        "whizkydee.material-palenight-theme",
+        "nacholaciar.tokyo-midnight",
+        
+        // Utilidades adicionales
+        "bierner.color-info",
+        "bracketpaircolordlw.bracket-pair-color-dlw",
+        "kisstkondoros.vscode-gutter-preview",
+        "parthmanhas.responsive-viewer",
+        "wallabyjs.console-ninja"
+      ],
+      "settings": {
+        "typescript.preferences.includePackageJsonAutoImports": "on",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "tailwindCSS.includeLanguages": {
+          "vue": "html",
+          "vue-html": "html"
+        },
+        "eslint.validate": [
+          "javascript",
+          "typescript",
+          "vue"
+        ],
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true
+        }
+      }
+    }
+  },
+  "forwardPorts": [3000],
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+} 

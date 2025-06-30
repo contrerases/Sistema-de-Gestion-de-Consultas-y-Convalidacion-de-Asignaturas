@@ -1,0 +1,71 @@
+{
+  "name": "Database - MariaDB",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "db",
+  "workspaceFolder": "/workspace",
+  "runServices": ["web", "api", "db"],
+  "envFile": "../.env.dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Database
+        "cweijan.vscode-mysql-client2",
+        "cweijan.dbclient-jdbc",
+        "inferrinizzard.prettier-sql-vscode",
+        
+        // SQL y Utilidades
+        "mechatroner.rainbow-csv",
+        "phplasma.csv-to-table",
+        "adpyke.codesnap",
+        
+        // Docker
+        "docker.docker",
+        "ms-azuretools.vscode-docker",
+        
+        // Git y Utilidades
+        "github.copilot",
+        "github.copilot-chat",
+        "usernamehw.errorlens",
+        "gruntfuggly.todo-tree",
+        "christian-kohler.path-intellisense",
+        
+        // Formateo
+        "esbenp.prettier-vscode",
+        "formulahendry.auto-rename-tag",
+        
+        // Temas e Iconos
+        "miguelsolorio.fluent-icons",
+        "pkief.material-icon-theme",
+        "github.github-vscode-theme",
+        "eliverlara.andromeda",
+        "whizkydee.material-palenight-theme",
+        "nacholaciar.tokyo-midnight",
+        
+        // Utilidades adicionales
+        "bierner.color-info",
+        "bracketpaircolordlw.bracket-pair-color-dlw",
+        "kisstkondoros.vscode-gutter-preview",
+        "wallabyjs.console-ninja",
+        "mikestead.dotenv",
+        "pflannery.vscode-versionlens"
+      ],
+      "settings": {
+        "sqltools.connections": [
+          {
+            "name": "MariaDB Local",
+            "driver": "MySQL",
+            "server": "localhost",
+            "port": 3306,
+            "database": "sgc_db",
+            "username": "sgc_user",
+            "password": "sgc_password"
+          }
+        ],
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+  "forwardPorts": [3306],
+  "remoteUser": "root"
+} 
