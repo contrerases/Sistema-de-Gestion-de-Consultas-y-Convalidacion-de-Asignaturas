@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import mariadb 
 
 # Cargar variables de entorno desde .env
-dotenv_path = os.getenv('ENV_PATH', '.env')
+dotenv_path = os.getenv('ENV_PATH', '.env.dev')
 load_dotenv(dotenv_path)
 
 def get_db_connection():

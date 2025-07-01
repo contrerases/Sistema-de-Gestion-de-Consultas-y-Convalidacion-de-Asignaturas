@@ -16,7 +16,7 @@
           <h3 class="font-bold text-2xl mb-4 font-mono">Convalidación {{ index + 1 }}</h3>
 
           <label class="font-semibold my-2">Tipo de curso a convalidar:</label>
-            <Dropdown v-model="tcc[index]" :options="types_curriculum_courses"/>
+            <CustomDropdown v-model="tcc[index]" :options="types_curriculum_courses"/>
           
 
           <label class="font-semibold my-2">Tipo de convalidación:</label>
@@ -26,10 +26,10 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="1">{{ CourseConvalidationTypes.INF }}</SelectItem>
-              <SelectItem value="2" v-if="tcc[index] != 2">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
-              <SelectItem value="3" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
-              <SelectItem value="4" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
-              <SelectItem value="5" v-if="tcc[index] === 1">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
+              <SelectItem value="2" v-if="String(tcc[index]) != '2'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
+              <SelectItem value="3" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
+              <SelectItem value="4" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
+              <SelectItem value="5" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -40,7 +40,7 @@
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <div v-if="tcc[index] === 1">
+                <div v-if="String(tcc[index]) === '1'">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
                       v-if="course.id_type_curriculum_course === tcc[index]">
@@ -48,7 +48,7 @@
                     </SelectItem>
                   </div>
                 </div>
-                <div v-if="tcc[index] === 2">
+                <div v-if="String(tcc[index]) === '2'">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
                       v-if="course.id_type_curriculum_course === tcc[index]">
@@ -56,7 +56,7 @@
                     </SelectItem>
                   </div>
                 </div>
-                <div v-if="tcc[index] === 3">
+                <div v-if="String(tcc[index]) === '3'">
                   <div v-for="course in curriculum_courses" :key="course.id">
                     <SelectItem :value="String(course.id)"
                       v-if="course.id_type_curriculum_course === tcc[index]">
@@ -68,7 +68,7 @@
             </SelectContent>
           </Select>
 
-          <div class="pb-8" v-if="convalidation.id_convalidation_type === '2'">
+          <div class="pb-8" v-if="String(convalidation.id_convalidation_type) === '2'">
             <label class="font-semibold my-2">Asignatura cursada:</label>
             <Select v-model="convalidation.id_subject_to_convalidate" class="mb-4">
               <SelectTrigger>
@@ -82,7 +82,7 @@
             </Select>
           </div>
 
-          <div class="pb-8" v-if="convalidation.id_convalidation_type === '1'">
+          <div class="pb-8" v-if="String(convalidation.id_convalidation_type) === '1'">
             <label class="font-semibold my-2">Asignatura cursada:</label>
             <Select v-model="convalidation.id_subject_to_convalidate" class="mb-4">
               <SelectTrigger>
@@ -96,13 +96,13 @@
             </Select>
           </div>
 
-          <div class="pb-8" v-if="convalidation.id_convalidation_type === '5'">
+          <div class="pb-8" v-if="String(convalidation.id_convalidation_type) === '5'">
             <label class="font-semibold my-2">Nombre del Curso Certificado:</label>
             <input type="text" class="bg-input border w-full rounded-lg p-2 mb-4"
               v-model="convalidation.certified_course_name" />
           </div>
 
-          <div v-if="convalidation.id_convalidation_type === '3'">
+          <div v-if="String(convalidation.id_convalidation_type) === '3'">
             <label class="font-semibold my-2">Taller a Convalidar:</label>
             <Select v-model="convalidation.id_workshop_to_convalidate" class="mb-4">
               <SelectTrigger>
@@ -116,7 +116,7 @@
             </Select>
           </div>
 
-          <div class="pb-8" v-if="convalidation.id_convalidation_type === '4'">
+          <div class="pb-8" v-if="String(convalidation.id_convalidation_type) === '4'">
             <label class="font-semibold my-2">Nombre del Proyecto Personal:</label>
             <input type="text" class="bg-input border w-full rounded-lg p-2 mb-4"
               v-model="convalidation.personal_project_name" />
@@ -165,15 +165,15 @@ import { Icon } from "@iconify/vue";
 
 import { CourseConvalidationTypes } from "@/shared/enums/courses_convalidation_types";
 
-import type { Convalidation, ConvalidationInsert, ConvalidationResponse, ConvalidationUpdate } from "@/interfaces/convalidation_model";
-import type { RequestInsert } from "@/interfaces/request_model";
+import type { Convalidation, ConvalidationInsert, ConvalidationResponse, ConvalidationUpdate } from "@/shared/types/convalidation_model";
+import type { RequestInsert } from "@/shared/types/request_model";
 
 
-import type { CurriculumCourseBase } from "@/interfaces/curriculum_course_model";
-import type { SubjectBase } from "@/interfaces/subject_model";
-import type { TypeConvalidationBase } from "@/interfaces/type_convalidation_model";
-import type { WorkshopBase } from "@/interfaces/workshop_model";
-import type { TypeCurriculumCourseBase } from "@/interfaces/type_curriculum_course_model";
+import type { CurriculumCourseBase } from "@/shared/types/curriculum_course_model";
+import type { SubjectBase } from "@/shared/types/subject_model";
+import type { TypeConvalidationBase } from "@/shared/types/type_convalidation_model";
+import type { WorkshopBase } from "@/shared/types/workshop_model";
+import type { TypeCurriculumCourseBase } from "@/shared/types/type_curriculum_course_model";
 
 // RECURSOS
 import { getAllCurriculumCourses } from "@/shared/services/api/curriculm_course_api";
@@ -188,7 +188,7 @@ import { insertRequest } from "@/shared/services/api/request_api";
 import AlertDialog from "@/shared/components/dialogs/AlertDialog.vue";
 import SuccessDialog from "@/shared/components/dialogs/SuccessDialog.vue";
 
-import Dropdown from "@/shared/components/ui/Dropdown.vue";
+
 
 
 
@@ -257,7 +257,7 @@ function toggleErrorDialog() {
 function toggleSuccessDialog() {
   if (showSuccessDialog.value) {
     showSuccessDialog.value = false;
-    router.push({ name: "s/inicio" });
+    router.push({ name: "student.dashboard" });
   } else {
     showSuccessDialog.value = true;
   }

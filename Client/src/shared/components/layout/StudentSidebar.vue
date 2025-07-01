@@ -45,7 +45,7 @@ const selectItem = (index: number, route: string) => {
 };
 
 const pushNewRequest = () => {
-  router.push("/estudiante/nueva_solicitud");
+  router.push("/student/new-request");
 };
 
 const isSelected = (route: string) => {
@@ -56,17 +56,17 @@ const topMenu = [
   {
     icon: "material-symbols:home",
     text: "Inicio",
-    route: "/estudiante/inicio",
+    route: "/student/dashboard",
   },
   {
     icon: "ph:list-bullets-fill",
     text: "Mis Convalidaciones",
-    route: "/estudiante/convalidaciones",
+    route: "/student/convalidations",
   },
   {
     icon: "ic:baseline-library-books",
     text: "Talleres",
-    route: "/estudiante/talleres",
+    route: "/student/workshops",
   },
 ];
 </script>

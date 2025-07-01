@@ -47,16 +47,16 @@ const isSelected = (route: string) => {
 };
 
 const topMenu = [
-  { icon: 'gridicons:stats-alt', text: 'Estadísticas', route: '/administrador/estadisticas' },
-  { icon: 'lets-icons:order', text: 'Solicitudes', route: '/administrador/solicitudes' },
-  { icon: 'ph:list-bullets-fill', text: 'Historial', route: '/administrador/historial' }
+  { icon: 'gridicons:stats-alt', text: 'Estadísticas', route: '/admin/dashboard' },
+  { icon: 'lets-icons:order', text: 'Solicitudes', route: '/admin/requests' },
+  { icon: 'ph:list-bullets-fill', text: 'Historial', route: '/admin/history' }
 ];
 
 const bottomMenu = [
-  { icon: 'ic:baseline-library-books', text: 'Talleres', route: '/administrador/talleres' },
-  { icon: 'uiw:document', text: 'Cursos', route: '/administrador/cursos' },
-  { icon: 'wpf:books', text: 'Asignaturas', route: '/administrador/asignaturas' },
-  { icon: 'wpf:books', text: 'Departamentos', route: '/administrador/departamentos'}
+  { icon: 'ic:baseline-library-books', text: 'Talleres', route: '/admin/workshops' },
+  { icon: 'uiw:document', text: 'Cursos', route: '/admin/courses' },
+  { icon: 'wpf:books', text: 'Asignaturas', route: '/admin/subjects' },
+  { icon: 'wpf:books', text: 'Departamentos', route: '/admin/departments'}
 
 ];
 </script>

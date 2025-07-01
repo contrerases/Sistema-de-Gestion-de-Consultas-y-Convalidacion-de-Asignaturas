@@ -23,33 +23,7 @@ services:
       - ./client:/app  # Hot reload para desarrollo
       - /app/node_modules  # Excluye node_modules para evitar conflictos
     labels:
-      - "devcontainer.metadata": |
-          {
-            "customizations": {
-              "vscode": {
-                "extensions": [
-                  "vue.volar",
-                  "ms-vscode.vscode-typescript-next",
-                  "bradlc.vscode-tailwindcss",
-                  "esbenp.prettier-vscode",
-                  "dbaeumer.vscode-eslint",
-                  "vitest.explorer",
-                  "usernamehw.errorlens"
-                ],
-                "settings": {
-                  "typescript.preferences.includePackageJsonAutoImports": "on",
-                  "editor.formatOnSave": true,
-                  "editor.defaultFormatter": "esbenp.prettier-vscode",
-                  "tailwindCSS.includeLanguages": {
-                    "vue": "html",
-                    "vue-html": "html"
-                  }
-                }
-              }
-            },
-            "postCreateCommand": "npm install",
-            "remoteUser": "node"
-          }
+      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"vue.volar\",\"ms-vscode.vscode-typescript-next\",\"bradlc.vscode-tailwindcss\",\"esbenp.prettier-vscode\",\"dbaeumer.vscode-eslint\",\"vitest.explorer\",\"usernamehw.errorlens\"],\"settings\":{\"typescript.preferences.includePackageJsonAutoImports\":\"on\",\"editor.formatOnSave\":true,\"editor.defaultFormatter\":\"esbenp.prettier-vscode\",\"tailwindCSS.includeLanguages\":{\"vue\":\"html\",\"vue-html\":\"html\"}}}},\"postCreateCommand\":\"npm install\",\"remoteUser\":\"node\"}"
    
 
   # ========================================
@@ -79,35 +53,15 @@ services:
     networks:
       - net
     healthcheck:
-      test: [ "CMD", "python", "-c", "from database import get_db_connection; get_db_connection()" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/docs" ]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     volumes:
       - ./server:/app  # Hot reload para desarrollo
     labels:
-      - "devcontainer.metadata": |
-          {
-            "customizations": {
-              "vscode": {
-                "extensions": [
-                  "ms-python.python",
-                  "ms-python.vscode-pylance",
-                  "cweijan.vscode-mysql-client2",
-                  "esbenp.prettier-vscode",
-                  "usernamehw.errorlens"
-                ],
-                "settings": {
-                  "python.defaultInterpreterPath": "/usr/local/bin/python",
-                  "python.linting.enabled": true,
-                  "editor.formatOnSave": true
-                }
-              }
-            },
-            "postCreateCommand": "pip install -r requirements.txt",
-            "remoteUser": "root"
-          }
+      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"ms-python.python\",\"ms-python.vscode-pylance\",\"cweijan.vscode-mysql-client2\",\"esbenp.prettier-vscode\",\"usernamehw.errorlens\"],\"settings\":{\"python.defaultInterpreterPath\":\"/usr/local/bin/python\",\"python.linting.enabled\":true,\"editor.formatOnSave\":true}}},\"postCreateCommand\":\"pip install -r requirements.txt\",\"remoteUser\":\"root\"}"
 
   # ========================================
   # DATABASE - MariaDB
@@ -143,23 +97,7 @@ services:
       timeout: 5s
       retries: 5
     labels:
-      - "devcontainer.metadata": |
-          {
-            "customizations": {
-              "vscode": {
-                "extensions": [
-                  "cweijan.vscode-mysql-client2",
-                  "esbenp.prettier-vscode",
-                  "usernamehw.errorlens"
-                ],
-                "settings": {
-                  "editor.formatOnSave": true,
-                  "editor.defaultFormatter": "esbenp.prettier-vscode"
-                }
-              }
-            },
-            "remoteUser": "root"
-          }
+      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"cweijan.vscode-mysql-client2\",\"esbenp.prettier-vscode\",\"usernamehw.errorlens\"],\"settings\":{\"editor.formatOnSave\":true,\"editor.defaultFormatter\":\"esbenp.prettier-vscode\"}}},\"remoteUser\":\"root\"}"
 
 # ========================================
 # NETWORKS

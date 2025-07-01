@@ -1,50 +1,93 @@
 <template>
-  <main class="stats-main">
-    <h1 class="stats-title">Estadísticas</h1>
-    <div class="stats-content">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Gráfico de barras: Asignaturas más cursadas -->
-        <div class="bg-card shadow-md rounded-lg p-5 chart-container">
+  <div class="flex flex-col space-y-6 p-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-foreground">Estadísticas</h1>
+      <p class="text-muted-foreground">Resumen de actividades del departamento</p>
+    </div>
+
+    <!-- Primera fila de gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card class="p-6">
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            Asignaturas más cursadas
+          </h3>
+          <p class="text-sm text-muted-foreground">
+            Distribución de estudiantes por asignatura
+          </p>
+        </div>
+        <div class="h-80">
           <Bar :data="mostCursedSubjectsData" :options="chartOptions" />
         </div>
+      </Card>
 
-        <div class="bg-card shadow-md rounded-lg p-5 chart-container">
+      <Card class="p-6">
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            Talleres con mejores calificaciones
+          </h3>
+          <p class="text-sm text-muted-foreground">
+            Promedio de notas por taller
+          </p>
+        </div>
+        <div class="h-80">
           <Bar :data="bestRatedWorkshopsData" :options="chartOptions" />
         </div>
-      </div>
+      </Card>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <!-- Gráfico de pastel: Porcentaje de tipos de convalidación -->
-        <div class="bg-card shadow-md rounded-lg p-5 chart-container">
+    <!-- Segunda fila de gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card class="p-6">
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            Tipos de convalidación
+          </h3>
+          <p class="text-sm text-muted-foreground">
+            Distribución porcentual por tipo
+          </p>
+        </div>
+        <div class="h-80">
           <Pie :data="convalidationTypesData" :options="chartOptions" />
         </div>
+      </Card>
 
-         <!-- Gráfico de líneas: Talleres con más participación -->
-         <div class="bg-card shadow-md rounded-lg p-5 chart-container">
+      <Card class="p-6">
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold text-foreground mb-2">
+            Talleres con más participación
+          </h3>
+          <p class="text-sm text-muted-foreground">
+            Número de participantes por taller
+          </p>
+        </div>
+        <div class="h-80">
           <Bar :data="mostParticipatedWorkshopsData" :options="chartOptions" />
         </div>
-      </div>
+      </Card>
     </div>
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Bar, Line, Pie } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement } from 'chart.js';
+import { Bar, Line, Pie } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement } from 'chart.js'
+
 
 // Registrar los componentes de Chart.js
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement);
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 
 // Opciones del gráfico
 const chartOptions = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: true,
-      position: 'top',
+      position: 'top' as const,
     },
   },
-};
+}
 
 // Datos para asignaturas más cursadas
 const mostCursedSubjectsData = {
@@ -56,7 +99,7 @@ const mostCursedSubjectsData = {
       data: [120, 90, 75, 60, 50],
     },
   ],
-};
+}
 
 // Datos para talleres con más participación
 const mostParticipatedWorkshopsData = {
@@ -68,7 +111,7 @@ const mostParticipatedWorkshopsData = {
       data: [200, 150, 180, 120, 100],
     },
   ],
-};
+}
 
 // Datos para porcentaje de tipos de convalidación
 const convalidationTypesData = {
@@ -80,7 +123,7 @@ const convalidationTypesData = {
       data: [30, 25, 20, 15, 10],
     },
   ],
-};
+}
 
 // Datos para talleres con mejores notas
 const bestRatedWorkshopsData = {
@@ -92,32 +135,9 @@ const bestRatedWorkshopsData = {
       data: [4.5, 4.0, 3.8, 4.2, 3.5],
     },
   ],
-};
-
-// Datos para la tabla de convalidaciones
-const convalidationsData = [
-  { id: 1, courseName: 'Matemáticas', convalidationType: 'Interna', status: 'Aprobada' },
-  { id: 2, courseName: 'Física', convalidationType: 'Externa', status: 'Pendiente' },
-  { id: 3, courseName: 'Química', convalidationType: 'Interna', status: 'Rechazada' },
-  { id: 4, courseName: 'Historia', convalidationType: 'Externa', status: 'Aprobada' },
-  { id: 5, courseName: 'Inglés', convalidationType: 'Taller', status: 'Aprobada' },
-];
+}
 </script>
 
-<style scoped lang="postcss">
-.stats-main {
-  @apply flex flex-col mx-5 px-10 mt-16 h-screen relative;
-}
-
-.stats-title {
-  @apply text-5xl font-bold tracking-tight border-b border-border pb-5;
-}
-
-.stats-content {
-  @apply m-0 pt-10;
-}
-
-.chart-container {
-  @apply w-full h-96; /* Asegúrate de que los gráficos tengan un tamaño adecuado */
-}
+<style scoped>
+/* Estilos adicionales si se requieren */
 </style>

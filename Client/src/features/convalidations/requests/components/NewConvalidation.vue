@@ -13,15 +13,6 @@ import { getAllWorkshops } from '@/shared/services/api/workshop_api';
 // VUE
 import { ref, onMounted } from 'vue';
 // COMPONENTES
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-
 
 
 

@@ -1,8 +1,7 @@
 export enum CourseConvalidationTypes {
-    INF = 'Asignatura INF',
-    EXTERNA = 'Asignatura Externa',
-    CERTIFICADO = 'Curso Certificado',
-    TALLER = 'Taller de INF',
-    PROYECTO = 'Proyecto Personal',
-    VACIO = '...'
-  }
+  ELECTIVO_DI = 'Electivo DI',
+  ELECTIVO_EXTERNO = 'Electivo Externo',
+  CURSO_CERTIFICADO = 'Curso Certificado',
+  TALLER_INF = 'Taller de INF',
+  PROYECTO_PERSONAL = 'Proyecto Personal'
+}

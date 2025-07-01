@@ -1,149 +1,171 @@
 <script setup lang="ts">
-import ColorMode from '@/shared/components/ui/ColorMode.vue';
-import { Icon } from "@iconify/vue";
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useAuthStore } from '@/shared/stores/auth_store';
-import { useRequestStore } from '@/shared/stores/request_store';
-import { useRouter } from 'vue-router';
-
-const auth_store = useAuthStore();
-const request_store = useRequestStore();
-const router = useRouter();
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { Icon } from "@iconify/vue"
+import { Button,  ColorMode } from '@/shared/components/ui'
 
 
+import { useAuthStore } from '@/shared/stores/auth_store'
+import { useRequestStore } from '@/shared/stores/request_store'
 
-const isOpen = ref(false);
-const dropdownRef = ref<HTMLElement | null>(null);
-const tooltipVisible = ref(false);
-const tooltipRef = ref<HTMLElement | null>(null);
-const count_pending_requests = ref(0);
+// Composables
+const authStore = useAuthStore()
+const requestStore = useRequestStore()
+const router = useRouter()
 
-// Función para alternar el menú
+// Estado reactivo
+const isOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+const tooltipVisible = ref(false)
+const tooltipRef = ref<HTMLElement | null>(null)
+const countPendingRequests = ref(0)
+
+// Métodos
 const toggleMenu = () => {
-  isOpen.value = !isOpen.value;
-};
-
-// Función para cerrar el menú
-const closeMenu = () => {
-  isOpen.value = false;
-};
-
-// Función para manejar clics fuera del menú
-const handleClickOutsideMenu = (event: MouseEvent) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    closeMenu();
-  }
-};
-
-// Función para manejar clics fuera del tooltip
-const handleClickOutsideTooltip = (event: MouseEvent) => {
-  if (tooltipRef.value && !tooltipRef.value.contains(event.target as Node)) {
-    closeTooltip();
-  }
-};
-
-// Función para cerrar el tooltip
-const closeTooltip = () => {
-  tooltipVisible.value = false;
-};
-
-// Función para alternar el tooltip
-const toggleTooltip = () => {
-  tooltipVisible.value = !tooltipVisible.value;
-};
-
-// Función para contar solicitudes pendientes
-async function CountPendingRequestsHandler() {
-  await request_store.getSendRequestsStore();
-  count_pending_requests.value = request_store.count_pending_requests;
+  isOpen.value = !isOpen.value
 }
 
-onMounted(() => {
-  CountPendingRequestsHandler();
-  document.addEventListener('click', handleClickOutsideMenu);
-  document.addEventListener('click', handleClickOutsideTooltip);
-});
+const closeMenu = () => {
+  isOpen.value = false
+}
 
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutsideMenu);
-  document.removeEventListener('click', handleClickOutsideTooltip);
-});
+const handleClickOutsideMenu = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+    closeMenu()
+  }
+}
+
+const handleClickOutsideTooltip = (event: MouseEvent) => {
+  if (tooltipRef.value && !tooltipRef.value.contains(event.target as Node)) {
+    closeTooltip()
+  }
+}
+
+const closeTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const toggleTooltip = () => {
+  tooltipVisible.value = !tooltipVisible.value
+}
+
+const countPendingRequestsHandler = async () => {
+  await requestStore.getSendRequestsStore()
+  countPendingRequests.value = requestStore.count_pending_requests
+}
 
 const logout = () => {
-  auth_store.clearUser();
-  closeMenu();
-  router.push({ name: 'Inicio' });
-};
+  authStore.clearUser()
+  closeMenu()
+  router.push({ name: 'home' })
+}
 
+// Lifecycle
+onMounted(() => {
+  countPendingRequestsHandler()
+  document.addEventListener('click', handleClickOutsideMenu)
+  document.addEventListener('click', handleClickOutsideTooltip)
+})
 
-
-
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutsideMenu)
+  document.removeEventListener('click', handleClickOutsideTooltip)
+})
 </script>
 
 <template>
-  <nav class="nav">
-    <div class="flex flex-row justify-center items-center">
-      <img src="@/assets/img/DI_IMG.png" alt="Logo" width="90">
-      <h1 class="text-sm font-bold pl-4 font-mono w-52">Departamento de Informática</h1>
+  <nav class="flex items-center justify-between w-full h-16 px-6 border-b border-border bg-background">
+    <!-- Logo y título -->
+    <div class="flex items-center space-x-4">
+      <img src="@/assets/img/DI_IMG.png" alt="Logo" class="w-16 h-12 object-contain">
+      <h1 class="text-lg font-bold text-foreground font-mono">
+        Departamento de Informática
+      </h1>
     </div>
 
-    <div class="flex h-full justify-center items-center gap-10">
-      <div v-if="auth_store.isAdmin" class="relative inline-block" ref="tooltipRef">
-        <Icon icon="ci:notification" class="text-3xl cursor-pointer" @click="toggleTooltip" />
-        <span v-if="count_pending_requests !== 0"
-          class="absolute flex ml-4 mt-[-33px] items-center justify-center text-center align-middle w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
-          {{ count_pending_requests }}
-        </span>
+    <!-- Acciones del usuario -->
+    <div class="flex items-center space-x-4">
+      <!-- Notificaciones para administradores -->
+      <div v-if="authStore.isAdmin" class="relative" ref="tooltipRef">
+        <Button
+          variant="ghost"
+          size="icon"
+          @click="toggleTooltip"
+          class="relative"
+        >
+          <Icon icon="ci:notification" class="w-5 h-5" />
+          <Badge
+            v-if="countPendingRequests !== 0"
+            variant="destructive"
+            size="sm"
+            class="absolute -top-1 -right-1 min-w-[20px] h-5 flex items-center justify-center"
+          >
+            {{ countPendingRequests }}
+          </Badge>
+        </Button>
 
-        <!-- Tooltip -->
-        <div v-if="tooltipVisible && count_pending_requests !== 0"
-          class="absolute left-1/2 transform -translate-x-1/2 mt-3  p-3 text-sm text-white bg-[#1e1e1e] rounded border shadow-2xl text-center">
-          Tiene {{ count_pending_requests }} solicitudes sin revisar.
+        <!-- Tooltip de notificaciones -->
+        <div
+          v-if="tooltipVisible && countPendingRequests !== 0"
+          class="absolute right-0 mt-2 p-3 text-sm text-white bg-popover border border-border rounded-lg shadow-lg z-50 min-w-[200px]"
+        >
+          <p class="font-medium mb-1">Notificaciones</p>
+          <p>Tiene {{ countPendingRequests }} solicitudes sin revisar.</p>
         </div>
       </div>
 
+      <!-- Selector de tema -->
       <ColorMode />
 
-      <div class="relative" ref="dropdownRef" v-if="auth_store.isAuthenticated">
-        <button @click="toggleMenu" class="user-spec">
-          {{ auth_store.username }}
-          <Icon icon="teenyicons:down-small-outline" class="icon" />
-        </button>
-        <ul v-if="isOpen" class="dropdown-menu">
-          <li @click="logout">Cerrar sesión</li>
-        </ul>
-      </div>
+      <!-- Menú de usuario -->
+      <div class="relative" ref="dropdownRef">
+        <div v-if="authStore.isAuthenticated">
+          <Button
+            variant="outline"
+            @click="toggleMenu"
+            class="flex items-center space-x-2"
+          >
+            <span class="font-medium">{{ authStore.username }}</span>
+            <Icon 
+              icon="teenyicons:down-small-outline" 
+              class="w-4 h-4 transition-transform duration-200"
+              :class="{ 'rotate-180': isOpen }"
+            />
+          </Button>
 
-      <div class="relative" ref="dropdownRef" v-if="!auth_store.isAuthenticated">
-        <div @click="toggleMenu"
-          class="user-flex items-center bg-input w-auto h-1/2 border border-border rounded-full px-4 py-3 uppercase font-bold ">
-          {{ "Inicia sesión" }}
+          <!-- Dropdown menu -->
+          <div
+            v-if="isOpen"
+            class="absolute right-0 mt-2 w-48 bg-popover border border-border rounded-lg shadow-lg z-50"
+          >
+            <div class="p-1">
+              <Button
+                variant="ghost"
+                class="w-full justify-start"
+                @click="logout"
+              >
+                <Icon icon="lucide:log-out" class="w-4 h-4 mr-2" />
+                Cerrar sesión
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de inicio de sesión -->
+        <div v-else>
+          <Button
+            variant="outline"
+            @click="toggleMenu"
+            class="font-medium"
+          >
+            Iniciar sesión
+          </Button>
         </div>
       </div>
-
-
     </div>
   </nav>
 </template>
 
-<style scoped lang="postcss">
-.nav {
-  @apply flex rounded w-full h-24 items-center m-auto border-b border-border mb-5 px-48 justify-between;
-}
-
-.user-spec {
-  @apply flex items-center bg-input w-auto h-1/2 border border-border rounded-full px-4 py-3 uppercase font-bold hover:border-primary cursor-pointer;
-}
-
-.icon {
-  @apply text-2xl scale-x-125 pl-1;
-}
-
-.dropdown-menu {
-  @apply absolute right-0 mt-2 w-48 bg-[#1e1e1e] border border-border rounded-lg shadow-lg z-50;
-}
-
-.dropdown-menu li {
-  @apply p-3 hover:bg-primary cursor-pointer rounded-lg font-medium;
-}
+<style scoped>
+/* Estilos adicionales si se requieren */
 </style>
