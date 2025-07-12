@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getAllWorkshops, deleteWorkshop, insertWorkshop } from '@/shared/services/api/workshop_api'
 
-import type { WorkshopResponse, WorkshopBase, WorkshopPost } from '@/shared/types/workshop_model'
+import type { WorkshopResponse, WorkshopBase, WorkshopPost } from '@/features/workshops/management/types/workshop_model'
 
 interface State {
   workshops: WorkshopResponse[]

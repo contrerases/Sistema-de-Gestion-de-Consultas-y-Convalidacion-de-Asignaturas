@@ -1,0 +1,84 @@
+{
+  "name": "Frontend - Vue3 + TypeScript + Tailwind",
+  "dockerComposeFile": "../../docker-compose.dev.yml",
+  "service": "web",
+  "workspaceFolder": "/app",
+  "runServices": ["web", "api", "db"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "ms-ceintl.vscode-language-pack-es",
+        "rvest.vs-code-prettier-eslint",
+        "usernamehw.errorlens",
+        "vue.volar",
+        "vunguyentuan.vscode-postcss"
+      ],
+      "settings": {
+        // ========================================
+        // CONFIGURACIÓN DE TYPESCRIPT
+        // ========================================
+        "typescript.preferences.includePackageJsonAutoImports": "on", // Auto-importa desde package.json
+        "typescript.suggest.autoImports": true,                        // Sugiere imports automáticamente
+        "typescript.updateImportsOnFileMove.enabled": "always",        // Actualiza imports al mover archivos
+
+        // ========================================
+        // CONFIGURACIÓN DE VUE 3 (VOLAR)
+        // ========================================
+        "volar.completion.autoImportComponent": true,                  // Auto-importa componentes Vue
+        "volar.completion.preferredTagNameCase": "pascal",             // Componentes en PascalCase
+        "volar.takeOverMode.enabled": true,                            // Volar maneja TypeScript en archivos .vue
+        "volar.codeLens.scriptSetupTools": true,                       // Herramientas para <script setup>
+
+        // ========================================
+        // CONFIGURACIÓN DE TAILWIND CSS
+        // ========================================
+        "tailwindCSS.includeLanguages": {
+          "vue": "html",                                               // Tailwind funciona en archivos .vue
+          "vue-html": "html"                                           // Y en templates Vue
+        },
+        "tailwindCSS.experimental.classRegex": [
+          ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],       // IntelliSense en clsx()
+          ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]         // IntelliSense en cn() (tailwind-merge)
+        ],
+        "tailwindCSS.validate": true,                                  // Valida clases de Tailwind
+
+        // ========================================
+        // CONFIGURACIÓN DE FORMATEO
+        // ========================================
+        "editor.formatOnSave": true,                                   // Formatea automáticamente al guardar
+        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",    // Usa Prettier ESLint como formateador por defecto
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"                           // Ejecuta ESLint al guardar
+        },
+
+        // ========================================
+        // CONFIGURACIÓN DE ERROR LENS
+        // ========================================
+        "errorLens.enabled": true,                                     // Habilita Error Lens
+        "errorLens.messageEnabled": true,                              // Muestra mensajes de error
+        "errorLens.statusBarMessageEnabled": true,                     // Muestra errores en la barra de estado
+
+        // ========================================
+        // CONFIGURACIÓN DE ARCHIVOS
+        // ========================================
+        "files.associations": {
+          "*.vue": "vue"                                               // Archivos .vue se tratan como Vue
+        },
+        "emmet.includeLanguages": {
+          "vue": "html",                                               // Emmet funciona en Vue
+          "vue-html": "html"                                           // Y en templates Vue
+        },
+
+        // ========================================
+        // DESHABILITAR VALIDACIONES CONFLICTIVAS
+        // ========================================
+        "css.validate": false,                                         // Deshabilita validación CSS nativa
+        "less.validate": false,                                        // Deshabilita validación Less
+        "scss.validate": false                                         // Deshabilita validación SCSS
+      }
+    }
+  },
+  "postCreateCommand": "npm install"                                // Instala dependencias al crear el contenedor                                               // Usa el usuario node en el contenedor
+}

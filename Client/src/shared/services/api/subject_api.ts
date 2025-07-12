@@ -1,4 +1,4 @@
-import type  { SubjectResponse, SubjectBase, SubjectPost } from '@/shared/types/subject_model';
+import type  { SubjectResponse, SubjectBase, SubjectPost } from '@/features/academic/subjects/types/subject_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

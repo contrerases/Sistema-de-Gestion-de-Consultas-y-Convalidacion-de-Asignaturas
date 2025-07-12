@@ -1,0 +1,77 @@
+{
+  "name": "Backend - Python + FastAPI + MariaDB",
+  "dockerComposeFile": "../../docker-compose.dev.yml",
+  "service": "api",
+  "workspaceFolder": "/app",
+  "runServices": ["web", "api", "db"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",              // Soporte completo para Python
+        "ms-python.black-formatter",     // Formateo automático con Black
+        "usernamehw.errorlens",          // Muestra errores y warnings directamente en el código
+        "anysphere.cursorpyright",       // IntelliSense avanzado y verificación de tipos
+        "ms-python.isort",               // Organización automática de imports
+        "ms-python.flake8"               // Linting estándar de Python
+      ],
+      "settings": {
+        // ========================================
+        // CONFIGURACIÓN DE PYTHON
+        // ========================================
+        "python.defaultInterpreterPath": "/usr/local/bin/python",    // Interprete de Python en el contenedor
+        "python.linting.enabled": true,                              // Habilita el sistema de linting
+        "python.linting.flake8Enabled": true,                        // Usa Flake8 como linter principal
+        "python.formatting.provider": "black",                       // Usa Black como formateador
+        "python.formatting.blackArgs": ["--line-length=88"],         // Longitud de línea estándar de Black
+
+        // ========================================
+        // CONFIGURACIÓN DE FORMATEO
+        // ========================================
+        "editor.formatOnSave": true,                                 // Formatea automáticamente al guardar
+        "editor.defaultFormatter": "ms-python.black-formatter",     // Black como formateador por defecto
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit"                       // Organiza imports automáticamente al guardar
+        },
+
+        // ========================================
+        // CONFIGURACIÓN DE ISORT
+        // ========================================
+        "isort.args": ["--profile", "black"],                        // Perfil compatible con Black
+        "isort.check": true,                                         // Verifica y organiza imports al guardar
+
+        // ========================================
+        // CONFIGURACIÓN DE ERROR LENS
+        // ========================================
+        "errorLens.enabled": true,                                   // Habilita Error Lens
+        "errorLens.messageEnabled": true,                            // Muestra mensajes de error en línea
+        "errorLens.statusBarMessageEnabled": true,                   // Muestra errores en la barra de estado
+
+        // ========================================
+        // CONFIGURACIÓN DE PYRIGHT
+        // ========================================
+        "python.analysis.typeCheckingMode": "basic",                // Verificación de tipos básica
+        "python.analysis.autoImportCompletions": true,               // Auto-completado de imports
+        "python.analysis.autoSearchPaths": true,                     // Búsqueda automática de paths
+        "python.analysis.diagnosticMode": "workspace",               // Diagnósticos a nivel workspace
+        "python.analysis.extraPaths": ["/app"],                      // Paths adicionales para análisis
+        "python.analysis.include": ["**/*.py"],                      // Incluir todos los archivos .py
+        "python.analysis.exclude": ["**/node_modules", "**/__pycache__", "**/.git"], // Excluir carpetas innecesarias
+
+        // ========================================
+        // CONFIGURACIÓN DE ARCHIVOS
+        // ========================================
+        "files.associations": {
+          "*.py": "python"                                           // Archivos .py se tratan como Python
+        },
+
+        // ========================================
+        // DESHABILITAR LINTERS CONFLICTIVOS
+        // ========================================
+        "python.linting.pylintEnabled": false,                       // Deshabilita Pylint para evitar conflictos
+        "python.linting.mypyEnabled": false                          // Deshabilita MyPy para evitar conflictos
+      }
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt",            // Instala dependencias al crear el contenedor
+  "remoteUser": "root"                                               // Usa el usuario root en el contenedor
+}

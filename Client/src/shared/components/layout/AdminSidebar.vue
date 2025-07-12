@@ -1,27 +1,19 @@
 <template>
   <div class="sidebar">
     <ul>
-      <li 
-        v-for="(item, index) in topMenu" 
-        :key="index"
-        :class="{ selected: isSelected(item.route) }"
-        @click="selectItem(index, item.route)"
-      >
+      <li v-for="(item, index) in topMenu" :key="index" :class="{ selected: isSelected(item.route) }"
+        @click="selectItem(index, item.route)">
         <Icon class="icon" :icon="item.icon" />
         <p>{{ item.text }}</p>
       </li>
     </ul>
-  
+
     <div class="line"></div>
-  
+
     <ul>
-      <li 
-        v-for="(item, index) in bottomMenu" 
-        :key="index + topMenu.length" 
-        :class="{ selected: isSelected(item.route) }"
-        @click="selectItem(index + topMenu.length, item.route)"
-      >
-        <Icon class="icon" :icon="item.icon"/>
+      <li v-for="(item, index) in bottomMenu" :key="index + topMenu.length"
+        :class="{ selected: isSelected(item.route) }" @click="selectItem(index + topMenu.length, item.route)">
+        <Icon class="icon" :icon="item.icon" />
         <p>{{ item.text }}</p>
       </li>
     </ul>
@@ -56,7 +48,7 @@ const bottomMenu = [
   { icon: 'ic:baseline-library-books', text: 'Talleres', route: '/admin/workshops' },
   { icon: 'uiw:document', text: 'Cursos', route: '/admin/courses' },
   { icon: 'wpf:books', text: 'Asignaturas', route: '/admin/subjects' },
-  { icon: 'wpf:books', text: 'Departamentos', route: '/admin/departments'}
+  { icon: 'wpf:books', text: 'Departamentos', route: '/admin/departments' }
 
 ];
 </script>

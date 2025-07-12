@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { getAllCurriculumCourses, deleteCurriculumCourse, insertCurriculumCourse } from '@/shared/services/api/curriculm_course_api'
-import type { CurriculumCourseBase } from '@/shared/types/curriculum_course_model'
+import type { CurriculumCourseBase } from '@/features/academic/curriculum/types/curriculum_course_model'
 
 interface State {
   curriculum_courses: CurriculumCourseBase[]

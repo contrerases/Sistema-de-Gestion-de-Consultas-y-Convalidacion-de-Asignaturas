@@ -6,7 +6,7 @@ export interface WorkshopsInscriptionsBase {
     id_curriculum_course: number  | null;
     is_convalidated: boolean;
   }
-  
+
   // Modelo para insertar una nueva inscripción
   export interface WorkshopsInscriptionsPost {
     id_student: number;
@@ -14,7 +14,7 @@ export interface WorkshopsInscriptionsBase {
     id_curriculum_course: number | null;
     is_convalidated: boolean;
   }
-  
+
   // Modelo para la respuesta de una actualización de inscripción
   export interface WorkshopsInscriptionsResponse {
     id: number;
@@ -27,4 +27,3 @@ export interface WorkshopsInscriptionsBase {
     curriculum_course: string | null; // Optional property
     is_convalidated: boolean;
   }
-  

@@ -1,4 +1,4 @@
-import type  { WorkshopsInscriptionsBase, WorkshopsInscriptionsPost, WorkshopsInscriptionsResponse} from '@/shared/types/workshop_inscription_model';
+import type  { WorkshopsInscriptionsBase, WorkshopsInscriptionsPost, WorkshopsInscriptionsResponse} from '@/features/workshops/inscription/types/workshop_inscription_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

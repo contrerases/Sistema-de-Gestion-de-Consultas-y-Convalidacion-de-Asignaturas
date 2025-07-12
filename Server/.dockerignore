@@ -1,24 +1,12 @@
 # Python cache
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
 .eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
 
 # Testing
 .pytest_cache/
@@ -26,52 +14,37 @@ wheels/
 htmlcov/
 .tox/
 .nox/
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-
-# Type checking
 .mypy_cache/
 .dmypy.json
-dmypy.json
 
 # Virtual environments
 venv/
 env/
 ENV/
-env.bak/
-venv.bak/
 
-# IDE
+# IDE/editor
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# Sistema operativo
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
 logs/
 
-# Environment variables
+# Git y docs
+.git
+.gitignore
+README.md
+
+# Archivos de entorno (descomenta si no quieres copiar tus .env locales)
 # .env
-# .env.local
-# .env.development.local
-# .env.test.local
-# .env.production.local
+# .env.*
 
 env
 pip-log.txt
@@ -80,11 +53,10 @@ nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
 .mypy_cache
 .pytest_cache
 .venv
 venv/
 ENV/
 env.bak/
-venv.bak/ 
+venv.bak/

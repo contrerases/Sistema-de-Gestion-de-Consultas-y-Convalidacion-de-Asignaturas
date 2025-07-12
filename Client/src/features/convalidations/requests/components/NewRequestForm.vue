@@ -16,8 +16,8 @@
           <h3 class="font-bold text-2xl mb-4 font-mono">Convalidación {{ index + 1 }}</h3>
 
           <label class="font-semibold my-2">Tipo de curso a convalidar:</label>
-            <CustomDropdown v-model="tcc[index]" :options="types_curriculum_courses"/>
-          
+          <CustomDropdown v-model="tcc[index]" :options="types_curriculum_courses" />
+
 
           <label class="font-semibold my-2">Tipo de convalidación:</label>
           <Select v-model="convalidation.id_convalidation_type" class="mb-4">
@@ -28,8 +28,10 @@
               <SelectItem value="1">{{ CourseConvalidationTypes.INF }}</SelectItem>
               <SelectItem value="2" v-if="String(tcc[index]) != '2'">{{ CourseConvalidationTypes.EXTERNA }}</SelectItem>
               <SelectItem value="3" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.TALLER }}</SelectItem>
-              <SelectItem value="4" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.PROYECTO }}</SelectItem>
-              <SelectItem value="5" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}</SelectItem>
+              <SelectItem value="4" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.PROYECTO }}
+              </SelectItem>
+              <SelectItem value="5" v-if="String(tcc[index]) === '1'">{{ CourseConvalidationTypes.CERTIFICADO }}
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -42,24 +44,21 @@
               <SelectGroup>
                 <div v-if="String(tcc[index]) === '1'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)"
-                      v-if="course.id_type_curriculum_course === tcc[index]">
+                    <SelectItem :value="String(course.id)" v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
                 <div v-if="String(tcc[index]) === '2'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)"
-                      v-if="course.id_type_curriculum_course === tcc[index]">
+                    <SelectItem :value="String(course.id)" v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
                 </div>
                 <div v-if="String(tcc[index]) === '3'">
                   <div v-for="course in curriculum_courses" :key="course.id">
-                    <SelectItem :value="String(course.id)"
-                      v-if="course.id_type_curriculum_course === tcc[index]">
+                    <SelectItem :value="String(course.id)" v-if="course.id_type_curriculum_course === tcc[index]">
                       {{ course.name }}
                     </SelectItem>
                   </div>
@@ -90,7 +89,7 @@
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="subject in subjects" :key="subject.id" :value="String(subject.id)">
-                  {{subject.acronym   }} - {{ subject.name }}
+                  {{ subject.acronym }} - {{ subject.name }}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -169,10 +168,10 @@ import type { Convalidation, ConvalidationInsert, ConvalidationResponse, Convali
 import type { RequestInsert } from "@/shared/types/request_model";
 
 
-import type { CurriculumCourseBase } from "@/shared/types/curriculum_course_model";
-import type { SubjectBase } from "@/shared/types/subject_model";
+import type { CurriculumCourseBase } from "@/features/academic/curriculum/types/curriculum_course_model";
+import type { SubjectBase } from "@/features/academic/subjects/types/subject_model";
 import type { TypeConvalidationBase } from "@/shared/types/type_convalidation_model";
-import type { WorkshopBase } from "@/shared/types/workshop_model";
+import type { WorkshopBase } from "@/features/workshops/management/types/workshop_model";
 import type { TypeCurriculumCourseBase } from "@/shared/types/type_curriculum_course_model";
 
 // RECURSOS
@@ -364,7 +363,7 @@ async function cook_convalidations_insert() {
         file_name: convalidation.file_data ? (convalidation.file_data as File).name : '',
       };
 
-        
+
       convalidations_cooked.push(convalidation_cooked);
 
 

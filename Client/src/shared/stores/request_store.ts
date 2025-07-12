@@ -5,7 +5,7 @@ import type {
   RequestResponse,
   RequestUpdate,
   RequestFiltered,
-} from "@/shared/types/request_model";
+} from "@/shared/types/request_model"
 import { getRequestsByState, insertRequest, updateRequest, getRequestByID, getRequestByStudentRut, getRequestsByDateRange, getRequestsByStudentRol, getFilteredRequests } from "@/shared/services/api/request_api";
 import { RequestStates } from "@/shared/enums/request_states";
 

@@ -1,4 +1,4 @@
-import type { Convalidation, ConvalidationUpdate, ConvalidationResponse, ConvalidationInsert } from "./convalidation_model";
+import type { Convalidation, ConvalidationUpdate, ConvalidationResponse, ConvalidationInsert } from "@/shared/types/convalidation_model";
 
 export interface RequestInsert {
   id_student : number;

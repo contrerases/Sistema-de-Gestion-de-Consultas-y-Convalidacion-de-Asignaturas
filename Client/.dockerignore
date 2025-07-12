@@ -19,13 +19,13 @@ coverage/
 
 # # Environment variables
 # .env
-# .env.local
-# .env.development.local
-# .env.test.local
-# .env.production.local
+# .env.example
+# .env.dev
+# .env.test
+# .env.prod
 
 # IDE
-.vscode/
+#.vscode/
 .idea/
 *.swp
 *.swo
@@ -64,3 +64,11 @@ README.md
 **/dist
 *Dockerfile*
 *docker-compose*
+
+# Archivos de configuración de linting/format
+.eslintignore
+.eslintrc*
+.prettierignore
+.prettierrc*
+eslint.config.ts
+prettier.config.*

@@ -1,4 +1,4 @@
-import type  { WorkshopBase, WorkshopPost, WorkshopResponse } from '@/shared/types/workshop_model';
+import type  { WorkshopBase, WorkshopPost, WorkshopResponse } from '@/features/workshops/management/types/workshop_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

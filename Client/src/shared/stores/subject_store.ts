@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import {getAllSubject,  insertSubject  } from '@/shared/services/api/subject_api'
 
-import type { SubjectResponse, SubjectBase, SubjectPost } from '@/shared/types/subject_model'
+import type { SubjectResponse, SubjectBase, SubjectPost } from '@/features/academic/subjects/types/subject_model'
 
 interface State {
   subjects: SubjectResponse[]

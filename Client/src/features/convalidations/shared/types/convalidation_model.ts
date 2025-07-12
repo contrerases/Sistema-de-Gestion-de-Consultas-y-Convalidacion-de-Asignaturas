@@ -1,6 +1,6 @@
 
 export interface ConvalidationInsert {
-  
+
   id_convalidation_type : number;
   id_curriculum_course : number;
   id_subject_to_convalidate : number | null;

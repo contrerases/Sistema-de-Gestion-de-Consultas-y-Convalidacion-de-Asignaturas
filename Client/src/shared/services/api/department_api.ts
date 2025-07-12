@@ -1,4 +1,4 @@
-import type { DepartmentBase, DepartmentResponse, DepartmentPost } from '@/shared/types/department_model';
+import type { DepartmentBase, DepartmentResponse, DepartmentPost } from '@/features/academic/departments/types/department_model';
 import axios from "axios";
 import type { AxiosError } from 'axios';
 

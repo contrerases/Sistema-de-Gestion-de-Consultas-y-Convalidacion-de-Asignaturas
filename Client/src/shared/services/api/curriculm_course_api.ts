@@ -1,4 +1,4 @@
-import type  { CurriculumCourseBase, CurriculumCourseResponse, CurriculumCoursePost} from '@/shared/types/curriculum_course_model';
+import type  { CurriculumCourseBase, CurriculumCourseResponse, CurriculumCoursePost} from '@/features/academic/curriculum/types/curriculum_course_model';
 import axios from "axios";
 import type { AxiosError} from 'axios';
 

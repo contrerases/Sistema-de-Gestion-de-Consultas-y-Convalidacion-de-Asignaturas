@@ -10,21 +10,17 @@ services:
       dockerfile: Dockerfile.dev  # Dockerfile de desarrollo
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    depends_on:
-      - api
     environment:
       - VITE_API_BASE_URL=${VITE_API_BASE_URL}
       - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true    
+      - WATCHPACK_POLLING=true
     restart: unless-stopped
     networks:
       - net
     volumes:
       - ./client:/app  # Hot reload para desarrollo
       - /app/node_modules  # Excluye node_modules para evitar conflictos
-    labels:
-      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"vue.volar\",\"ms-vscode.vscode-typescript-next\",\"bradlc.vscode-tailwindcss\",\"esbenp.prettier-vscode\",\"dbaeumer.vscode-eslint\",\"vitest.explorer\",\"usernamehw.errorlens\"],\"settings\":{\"typescript.preferences.includePackageJsonAutoImports\":\"on\",\"editor.formatOnSave\":true,\"editor.defaultFormatter\":\"esbenp.prettier-vscode\",\"tailwindCSS.includeLanguages\":{\"vue\":\"html\",\"vue-html\":\"html\"}}}},\"postCreateCommand\":\"npm install\",\"remoteUser\":\"node\"}"
-   
+
 
   # ========================================
   # BACKEND - Python + FastAPI (DESARROLLO)
@@ -60,8 +56,7 @@ services:
       start_period: 10s
     volumes:
       - ./server:/app  # Hot reload para desarrollo
-    labels:
-      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"ms-python.python\",\"ms-python.vscode-pylance\",\"cweijan.vscode-mysql-client2\",\"esbenp.prettier-vscode\",\"usernamehw.errorlens\"],\"settings\":{\"python.defaultInterpreterPath\":\"/usr/local/bin/python\",\"python.linting.enabled\":true,\"editor.formatOnSave\":true}}},\"postCreateCommand\":\"pip install -r requirements.txt\",\"remoteUser\":\"root\"}"
+
 
   # ========================================
   # DATABASE - MariaDB
@@ -84,10 +79,10 @@ services:
       - ./database/02_initial_data.sql:/docker-entrypoint-initdb.d/02_initial_data.sql
       - ./database/03_procedures.sql:/docker-entrypoint-initdb.d/03_procedures.sql
     command: >-
-      --character-set-server=utf8mb4 
-      --collation-server=utf8mb4_unicode_ci 
-      --default-authentication-plugin=mysql_native_password 
-      --max-connections=500 
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+      --max-connections=500
       --max_allowed_packet=128M
     networks:
       - net
@@ -96,8 +91,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    labels:
-      - "devcontainer.metadata={\"customizations\":{\"vscode\":{\"extensions\":[\"cweijan.vscode-mysql-client2\",\"esbenp.prettier-vscode\",\"usernamehw.errorlens\"],\"settings\":{\"editor.formatOnSave\":true,\"editor.defaultFormatter\":\"esbenp.prettier-vscode\"}}},\"remoteUser\":\"root\"}"
 
 # ========================================
 # NETWORKS
@@ -111,4 +104,4 @@ networks:
 # ========================================
 volumes:
   db_data:
-    driver: local 
+    driver: local
