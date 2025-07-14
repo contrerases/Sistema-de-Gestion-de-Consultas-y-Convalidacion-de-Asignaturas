@@ -10,8 +10,8 @@ SET NAMES utf8mb4;
 -- 1. Creación de la Base de Datos
 -- =============================
 DROP DATABASE IF EXISTS `sgc_db_dev`;
-CREATE DATABASE IF NOT EXISTS `sgc_db_dev` 
-CHARACTER SET utf8mb4 
+CREATE DATABASE IF NOT EXISTS `sgc_db_dev`
+CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 USE `sgc_db_dev`;

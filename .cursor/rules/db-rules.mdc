@@ -1,0 +1,9 @@
+---
+globs: *.sql
+alwaysApply: false
+---
+
+1.No usar abreviaciones de tablas. Usar nombres de tablas en Mayuscula. Usar TABLA.atributo. Siempre.
+2.Comentar todo profesionalmente.
+3.No crear README a menos que se indique explicitamente.
+4.Usa como nombre de atributos relacionados con id: id_atributo, NO USES atributo_id
