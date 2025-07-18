@@ -7,7 +7,7 @@
 -- =============================================================================
 -- Total de constraints: 29
 -- UNIQUE: 17 | CHECK: 12
--- TYPES_CONVALIDATIONS: 1 | TYPES_CURRICULUM_COURSES: 1 | DEPARTMENTS: 1
+-- CONVALIDATION_TYPES: 1 | CURRICULUM_COURSES_TYPES: 1 | DEPARTMENTS: 1
 -- SUBJECTS: 3 | CURRICULUM_COURSES: 1 | WORKSHOPS: 5 | AUTH_USERS: 2
 -- USER_SESSIONS: 2 | STUDENTS: 4 | REQUESTS: 1 | CONVALIDATIONS: 1
 -- CONVALIDATIONS_SUBJECTS: 1 | CONVALIDATIONS_WORKSHOPS: 1 | CONVALIDATIONS_CERTIFIED_COURSES: 2
@@ -21,20 +21,20 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- =============================================================================
--- TYPES_CONVALIDATIONS
+-- CONVALIDATION_TYPES
 -- =============================================================================
 
 -- Nombre único
-ALTER TABLE TYPES_CONVALIDATIONS
-ADD CONSTRAINT uk_type_convalidation_name UNIQUE (name);
+ALTER TABLE CONVALIDATION_TYPES
+ADD CONSTRAINT uk_convalidation_type_name UNIQUE (name);
 
 -- =============================================================================
--- TYPES_CURRICULUM_COURSES
+-- CURRICULUM_COURSES_TYPES
 -- =============================================================================
 
 -- Nombre único
-ALTER TABLE TYPES_CURRICULUM_COURSES
-ADD CONSTRAINT uk_type_curriculum_course_name UNIQUE (name);
+ALTER TABLE CURRICULUM_COURSES_TYPES
+ADD CONSTRAINT uk_curriculum_course_type_name UNIQUE (name);
 
 -- =============================================================================
 -- DEPARTMENTS
@@ -257,27 +257,11 @@ ADD CONSTRAINT chk_notification_dates CHECK (
 ALTER TABLE AUTH_USERS
 ADD CONSTRAINT uk_auth_email UNIQUE (email);
 
--- Usuario único por tipo
-ALTER TABLE AUTH_USERS
-ADD CONSTRAINT uk_auth_user_type_id UNIQUE (user_type, id_user);
-
 -- Formato de email
 ALTER TABLE AUTH_USERS
 ADD CONSTRAINT chk_auth_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
 
 
-
--- =============================================================================
--- USER_SESSIONS
--- =============================================================================
-
--- Token único
-ALTER TABLE USER_SESSIONS
-ADD CONSTRAINT uk_session_token UNIQUE (session_token);
-
--- Fecha de expiración posterior a creación
-ALTER TABLE USER_SESSIONS
-ADD CONSTRAINT chk_session_expires CHECK (expires_at > created_at);
 
 -- =============================================================================
 -- CONFIGURACIÓN FINAL

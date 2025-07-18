@@ -13,22 +13,23 @@
 -- AUTH_USERS
 -- =============================================================================
 
--- Trigger para validar que id_user existe en la tabla correcta
+-- Trigger para validar que id_user existe en USERS y tiene registro específico
 DELIMITER //
 CREATE TRIGGER tr_auth_users_before_insert
 BEFORE INSERT ON AUTH_USERS
 FOR EACH ROW
 BEGIN
-    IF NEW.user_type = 'STUDENT' THEN
-        IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = NEW.id_user) THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El id_user debe existir en la tabla STUDENTS cuando user_type es STUDENT';
-        END IF;
-    ELSEIF NEW.user_type = 'ADMINISTRATOR' THEN
-        IF NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = NEW.id_user) THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El id_user debe existir en la tabla ADMINISTRATORS cuando user_type es ADMINISTRATOR';
-        END IF;
+    -- Validar que el usuario existe en la tabla principal
+    IF NOT EXISTS (SELECT 1 FROM USERS WHERE id = NEW.id_user) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El id_user debe existir en la tabla USERS';
+    END IF;
+
+    -- Validar que el usuario tiene un registro específico (estudiante o administrador)
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id_user = NEW.id_user) AND
+       NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id_user = NEW.id_user) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario debe tener un registro en STUDENTS o ADMINISTRATORS';
     END IF;
 END//
 
@@ -36,16 +37,17 @@ CREATE TRIGGER tr_auth_users_before_update
 BEFORE UPDATE ON AUTH_USERS
 FOR EACH ROW
 BEGIN
-    IF NEW.user_type = 'STUDENT' THEN
-        IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = NEW.id_user) THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El id_user debe existir en la tabla STUDENTS cuando user_type es STUDENT';
-        END IF;
-    ELSEIF NEW.user_type = 'ADMINISTRATOR' THEN
-        IF NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = NEW.id_user) THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'El id_user debe existir en la tabla ADMINISTRATORS cuando user_type es ADMINISTRATOR';
-        END IF;
+    -- Validar que el usuario existe en la tabla principal
+    IF NOT EXISTS (SELECT 1 FROM USERS WHERE id = NEW.id_user) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El id_user debe existir en la tabla USERS';
+    END IF;
+
+    -- Validar que el usuario tiene un registro específico (estudiante o administrador)
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id_user = NEW.id_user) AND
+       NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id_user = NEW.id_user) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario debe tener un registro en STUDENTS o ADMINISTRATORS';
     END IF;
 END//
 DELIMITER ;

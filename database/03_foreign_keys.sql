@@ -5,11 +5,11 @@
 -- =============================================================================
 -- RESUMEN DE CLAVES FORÁNEAS
 -- =============================================================================
--- Total de foreign keys: 21
+-- Total de foreign keys: 22
 -- CURRICULUM_COURSES: 1 | SUBJECTS: 1 | WORKSHOPS: 1 | REQUESTS: 2 | CONVALIDATIONS: 3
 -- CONVALIDATIONS_SUBJECTS: 2 | CONVALIDATIONS_WORKSHOPS: 2 | CONVALIDATIONS_CERTIFIED_COURSES: 1
 -- CONVALIDATIONS_PERSONAL_PROJECTS: 1 | WORKSHOPS_INSCRIPTIONS: 3 | WORKSHOPS_GRADES: 2
--- USER_SESSIONS: 1 | AUDIT_LOG: 4 | NOTIFICATIONS: 2
+-- AUTH_USERS: 1 | USER_SESSIONS: 1 | AUDIT_LOG: 4 | NOTIFICATIONS: 2
 
 -- =============================================================================
 -- CONFIGURACIÓN INICIAL
@@ -25,7 +25,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 ALTER TABLE CURRICULUM_COURSES
 ADD CONSTRAINT fk_curriculum_course_type
 FOREIGN KEY (id_type_curriculum_course)
-REFERENCES TYPES_CURRICULUM_COURSES (id)
+REFERENCES CURRICULUM_COURSES_TYPES (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
@@ -89,7 +89,7 @@ ON UPDATE CASCADE;
 ALTER TABLE CONVALIDATIONS
 ADD CONSTRAINT fk_convalidation_type
 FOREIGN KEY (id_convalidation_type)
-REFERENCES TYPES_CONVALIDATIONS (id)
+REFERENCES CONVALIDATION_TYPES (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
@@ -150,12 +150,12 @@ ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
 -- =============================================================================
--- CONVALIDATIONS_CERTIFIED_COURSES
+-- CONVALIDATIONS_CERTIFICATED_COURSES
 -- =============================================================================
 
 -- Relación con convalidaciones
-ALTER TABLE CONVALIDATIONS_CERTIFIED_COURSES
-ADD CONSTRAINT fk_convalidation_certified_course_convalidation
+ALTER TABLE CONVALIDATIONS_CERTIFICATED_COURSES
+ADD CONSTRAINT fk_convalidation_certificated_course_convalidation
 FOREIGN KEY (id_convalidation)
 REFERENCES CONVALIDATIONS(id)
 ON DELETE CASCADE
@@ -225,23 +225,11 @@ ON UPDATE CASCADE;
 -- AUTH_USERS
 -- =============================================================================
 
--- Relación con estudiantes (cuando user_type = 'STUDENT')
--- Nota: Esta FK solo se aplica cuando user_type = 'STUDENT'
--- La validación completa se hace con constraints
-
--- Relación con administradores (cuando user_type = 'ADMINISTRATOR')
--- Nota: Esta FK solo se aplica cuando user_type = 'ADMINISTRATOR'
--- La validación completa se hace con constraints
-
--- =============================================================================
--- USER_SESSIONS
--- =============================================================================
-
--- Relación con usuarios de autenticación
-ALTER TABLE USER_SESSIONS
-ADD CONSTRAINT fk_session_auth_user
-FOREIGN KEY (id_auth_user)
-REFERENCES AUTH_USERS(id)
+-- Relación de autenticación con usuarios principales
+ALTER TABLE AUTH_USERS
+ADD CONSTRAINT fk_auth_user
+FOREIGN KEY (id_user)
+REFERENCES USERS(id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -275,8 +263,8 @@ ON UPDATE CASCADE;
 
 -- Relación con usuarios de autenticación
 ALTER TABLE AUDIT_LOG
-ADD CONSTRAINT fk_audit_log_auth_user
-FOREIGN KEY (id_auth_user) REFERENCES AUTH_USERS(id)
+ADD CONSTRAINT fk_audit_log_user
+FOREIGN KEY (id_user) REFERENCES USERS(id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -302,10 +290,34 @@ ON UPDATE CASCADE;
 
 -- Relación con usuarios de autenticación
 ALTER TABLE NOTIFICATIONS
-ADD CONSTRAINT fk_notification_auth_user
-FOREIGN KEY (id_auth_user) REFERENCES AUTH_USERS(id)
+ADD CONSTRAINT fk_notification_user
+FOREIGN KEY (id_user) REFERENCES USERS(id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
+-- =============================================================================
+-- STUDENTS
+-- =============================================================================
+ALTER TABLE STUDENTS
+ADD CONSTRAINT fk_students_user
+FOREIGN KEY (id) REFERENCES USERS(id)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- =============================================================================
+-- ADMINISTRATORS
+-- =============================================================================
+ALTER TABLE ADMINISTRATORS
+ADD CONSTRAINT fk_administrators_user
+FOREIGN KEY (id) REFERENCES USERS(id)
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- =============================================================================
+-- AUTH_USERS
+-- =============================================================================
+ALTER TABLE AUTH_USERS
+ADD CONSTRAINT fk_auth_users_user
+FOREIGN KEY (id) REFERENCES USERS(id)
+ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- =============================================================================
 -- CONFIGURACIÓN FINAL

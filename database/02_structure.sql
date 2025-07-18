@@ -17,12 +17,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Eliminación de tablas en orden inverso (dependencias primero)
 DROP TABLE IF EXISTS AUDIT_LOG;
 DROP TABLE IF EXISTS NOTIFICATIONS;
-DROP TABLE IF EXISTS USER_SESSIONS;
 DROP TABLE IF EXISTS AUTH_USERS;
 DROP TABLE IF EXISTS WORKSHOPS_GRADES;
 DROP TABLE IF EXISTS WORKSHOPS_INSCRIPTIONS;
 DROP TABLE IF EXISTS CONVALIDATIONS_PERSONAL_PROJECTS;
-DROP TABLE IF EXISTS CONVALIDATIONS_CERTIFIED_COURSES;
+DROP TABLE IF EXISTS CONVALIDATIONS_CERTIFICATED_COURSES;
 DROP TABLE IF EXISTS CONVALIDATIONS_WORKSHOPS;
 DROP TABLE IF EXISTS CONVALIDATIONS_SUBJECTS;
 DROP TABLE IF EXISTS CONVALIDATIONS;
@@ -39,8 +38,8 @@ DROP TABLE IF EXISTS AUDIT_FIELDS;
 DROP TABLE IF EXISTS AUDIT_ACTIONS;
 DROP TABLE IF EXISTS CONVALIDATION_STATES;
 DROP TABLE IF EXISTS WORKSHOP_STATES;
-DROP TABLE IF EXISTS TYPES_CURRICULUM_COURSES;
-DROP TABLE IF EXISTS TYPES_CONVALIDATIONS;
+DROP TABLE IF EXISTS CURRICULUM_COURSES_TYPES;
+DROP TABLE IF EXISTS CONVALIDATION_TYPES;
 
 -- Eliminación de triggers
 DROP TRIGGER IF EXISTS tr_auth_users_before_insert;
@@ -57,14 +56,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- =============================================================================
 
 -- Tipos de convalidaciones disponibles
-CREATE TABLE IF NOT EXISTS TYPES_CONVALIDATIONS (
+CREATE TABLE IF NOT EXISTS CONVALIDATION_TYPES (
     id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
 
 -- Tipos de cursos del currículum
-CREATE TABLE IF NOT EXISTS TYPES_CURRICULUM_COURSES (
+CREATE TABLE IF NOT EXISTS CURRICULUM_COURSES_TYPES (
     id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
@@ -116,10 +115,7 @@ CREATE TABLE IF NOT EXISTS NOTIFICATION_TYPES (
 
 -- Nombres de tablas para auditoría
 CREATE TABLE IF NOT EXISTS AUDIT_TABLES (
-    id INT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT(1000) NULL,
-    PRIMARY KEY (id)
+    name VARCHAR(255) PRIMARY KEY
 );
 
 -- =============================================================================
@@ -147,7 +143,7 @@ CREATE TABLE IF NOT EXISTS SUBJECTS (
 CREATE TABLE IF NOT EXISTS CURRICULUM_COURSES (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    id_type_curriculum_course INT NOT NULL,
+    id_curriculum_course_type INT NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -180,7 +176,6 @@ CREATE TABLE IF NOT EXISTS REQUESTS (
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_reviewed_by INT NULL,
     reviewed_at TIMESTAMP NULL,
-    review_comments TEXT(1000) NULL,
     PRIMARY KEY (id)
 );
 
@@ -210,9 +205,9 @@ CREATE TABLE IF NOT EXISTS CONVALIDATIONS_WORKSHOPS (
 );
 
 -- Convalidaciones de cursos certificados
-CREATE TABLE IF NOT EXISTS CONVALIDATIONS_CERTIFIED_COURSES (
+CREATE TABLE IF NOT EXISTS CONVALIDATIONS_CERTIFICATED_COURSES (
     id_convalidation INT NOT NULL,
-    course_name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     file_data LONGBLOB DEFAULT NULL,
     file_name VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (id_convalidation)
@@ -221,7 +216,7 @@ CREATE TABLE IF NOT EXISTS CONVALIDATIONS_CERTIFIED_COURSES (
 -- Convalidaciones de proyectos personales
 CREATE TABLE IF NOT EXISTS CONVALIDATIONS_PERSONAL_PROJECTS (
     id_convalidation INT NOT NULL,
-    project_name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     file_data LONGBLOB DEFAULT NULL,
     file_name VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (id_convalidation)
@@ -250,12 +245,9 @@ CREATE TABLE IF NOT EXISTS WORKSHOPS_GRADES (
 -- TABLAS DE USUARIO
 -- =============================================================================
 
--- Estudiantes del sistema
-CREATE TABLE IF NOT EXISTS STUDENTS (
+-- Tabla principal de usuarios (campos comunes)
+CREATE TABLE IF NOT EXISTS USERS (
     id INT AUTO_INCREMENT NOT NULL,
-    rol_student VARCHAR(11) NOT NULL,
-    rut_student VARCHAR(12) NOT NULL,
-    campus_student VARCHAR(255) NOT NULL,
     first_names VARCHAR(255) NOT NULL,
     last_names VARCHAR(255) NOT NULL,
     common_name VARCHAR(255) GENERATED ALWAYS AS (
@@ -268,25 +260,25 @@ CREATE TABLE IF NOT EXISTS STUDENTS (
     full_name VARCHAR(255) GENERATED ALWAYS AS (
         CONCAT(first_names, ' ', last_names)
     ) STORED,
+    campus VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
+);
+
+-- Estudiantes del sistema
+CREATE TABLE IF NOT EXISTS STUDENTS (
+    id INT PRIMARY KEY,
+    rol_student VARCHAR(11) NOT NULL,
+    rut_student VARCHAR(12) NOT NULL,
+    campus_student VARCHAR(255) NOT NULL
 );
 
 -- Administradores del sistema
 CREATE TABLE IF NOT EXISTS ADMINISTRATORS (
-    id INT AUTO_INCREMENT NOT NULL,
-    first_names VARCHAR(255) NOT NULL,
-    last_names VARCHAR(255) NOT NULL,
-    common_name VARCHAR(255) GENERATED ALWAYS AS (
-        CONCAT(
-            SUBSTRING_INDEX(first_names, ' ', 1),
-            ' ',
-            SUBSTRING_INDEX(last_names, ' ', 1)
-        )
-    ) STORED,
-    full_name VARCHAR(255) GENERATED ALWAYS AS (
-        CONCAT(first_names, ' ', last_names)
-    ) STORED,
-    PRIMARY KEY (id)
+    id INT PRIMARY KEY
+    -- campos específicos de admin si los hay
 );
 
 -- =============================================================================
@@ -295,25 +287,9 @@ CREATE TABLE IF NOT EXISTS ADMINISTRATORS (
 
 -- Autenticación centralizada
 CREATE TABLE IF NOT EXISTS AUTH_USERS (
-    id INT AUTO_INCREMENT NOT NULL,
+    id INT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    user_type ENUM('STUDENT', 'ADMINISTRATOR') NOT NULL,
-    id_user INT NOT NULL,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
-);
-
--- Sesiones
-CREATE TABLE IF NOT EXISTS USER_SESSIONS (
-    id INT AUTO_INCREMENT NOT NULL,
-    id_auth_user INT NOT NULL,
-    session_token VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP NOT NULL,
-    PRIMARY KEY (id)
+    password_hash VARCHAR(255) NOT NULL
 );
 
 -- =============================================================================
@@ -323,22 +299,20 @@ CREATE TABLE IF NOT EXISTS USER_SESSIONS (
 -- Registro de auditoría
 CREATE TABLE IF NOT EXISTS AUDIT_LOG (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
     id_audit_table INT NOT NULL,
     id_record INT NOT NULL,
     id_audit_action INT NOT NULL,
     id_audit_field INT NULL,
     old_value VARCHAR(1000) NULL,
-    new_value VARCHAR(1000) NULL,
-    id_auth_user INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id_session VARCHAR(255) NULL,
-    additional_data JSON NULL
+    new_value VARCHAR(1000) NULL
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Notificaciones del sistema
 CREATE TABLE IF NOT EXISTS NOTIFICATIONS (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_auth_user INT NOT NULL,
+    id_user INT NOT NULL,
     id_notification_type INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     message TEXT(1000) NOT NULL,
@@ -349,6 +323,48 @@ CREATE TABLE IF NOT EXISTS NOTIFICATIONS (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     read_at TIMESTAMP NULL,
     sent_at TIMESTAMP NULL
+);
+
+-- =============================================================================
+-- TABLA DE ESTADÍSTICAS MENSUALES
+-- =============================================================================
+
+-- Estadísticas mensuales del sistema para dashboard y reportes
+CREATE TABLE IF NOT EXISTS MONTHLY_STATISTICS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT NOT NULL,
+    month INT NOT NULL,
+
+    -- ESTADÍSTICAS DE CONVALIDACIONES
+    total_convalidations INT DEFAULT 0,
+    approved_convalidations INT DEFAULT 0,
+    rejected_convalidations INT DEFAULT 0  pending_convalidations INT DEFAULT 0,
+    convalidations_by_type JSON NULL, -- {tipo_id: cantidad}
+
+    -- ESTADÍSTICAS DE TALLERES
+    total_workshops INT DEFAULT 0,
+    active_workshops INT DEFAULT0   completed_workshops INT DEFAULT 0,
+    total_inscriptions INT DEFAULT 0erage_inscriptions_per_workshop DECIMAL(5,2) DEFAULT 0,
+    workshops_by_state JSON NULL, -- {estado_id: cantidad}
+
+    -- ESTADÍSTICAS DE USUARIOS
+    total_students INT DEFAULT 0   active_students INT DEFAULT 0,
+    new_students INT DEFAULT 0
+
+    -- ESTADÍSTICAS DE DEPARTAMENTOS
+    convalidations_by_department JSON NULL, -- {dept_id: cantidad}
+
+    -- ESTADÍSTICAS DE ACTIVIDAD
+    total_requests INT DEFAULT 0,
+    average_response_time DECIMAL(5DEFAULT 0, -- días promedio
+    system_activity_score DECIMAL(5DEFAULT 0, -- puntaje de actividad (00
+
+    -- METADATOS
+    calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    calculation_duration DECIMAL(5,2) NULL, -- segundos que tomó calcular
+
+    -- ÍNDICE ÚNICO PARA EVITAR DUPLICADOS
+    UNIQUE KEY unique_month_year (year, month)
 );
 
 SELECT "Estructura de la base de datos creada correctamente" AS mensaje;

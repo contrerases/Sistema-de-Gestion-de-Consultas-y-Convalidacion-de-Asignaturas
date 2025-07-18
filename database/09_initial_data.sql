@@ -1,8 +1,5 @@
--- =============================================================================
--- DATOS INICIALES DEL SISTEMA SGC
--- =============================================================================
--- Este archivo contiene los datos iniciales necesarios para el funcionamiento
--- del Sistema de Gestión de Consultas y Convalidación de Asignaturas
+-- DATOS INICIALES DEL SISTEMA SGSCT
+-- del Sistema de Gestión de Solicitudes de Convalidaciones y Talleres
 
 -- =============================================================================
 -- CONFIGURACIÓN INICIAL
@@ -33,7 +30,7 @@ INSERT INTO CONVALIDATION_STATES (name, description, is_active) VALUES
 ('APROBADA_DE', 'Aprobada por Dirección de Estudios', 1);
 
 -- Tipos de convalidaciones
-INSERT INTO TYPES_CONVALIDATIONS (name) VALUES
+INSERT INTO CONVALIDATION_TYPES (name) VALUES
 ('Electivo DI'),
 ('Electivo Externo'),
 ('Curso Certificado'),
@@ -41,7 +38,7 @@ INSERT INTO TYPES_CONVALIDATIONS (name) VALUES
 ('Proyecto Personal');
 
 -- Tipos de cursos curriculares
-INSERT INTO TYPES_CURRICULUM_COURSES (name) VALUES
+INSERT INTO CURRICULUM_COURSES_TYPES (name) VALUES
 ('Libre'),
 ('Electivo INF'),
 ('Electivo');
@@ -88,22 +85,13 @@ INSERT INTO NOTIFICATION_TYPES (name, description, is_active) VALUES
 ('SYSTEM_ANNOUNCEMENT', 'Anuncio del sistema', 1),
 ('GRADES_UPLOADED', 'Calificaciones subidas', 1);
 
--- Nombres de tablas para auditoría
-INSERT INTO AUDIT_TABLES (name, description) VALUES
-('REQUESTS', 'Solicitudes de convalidación'),
-('CONVALIDATIONS', 'Convalidaciones'),
-('WORKSHOPS', 'Talleres'),
-('WORKSHOPS_INSCRIPTIONS', 'Inscripciones a talleres'),
-('WORKSHOPS_GRADES', 'Calificaciones de talleres'),
-('STUDENTS', 'Estudiantes'),
-('ADMINISTRATORS', 'Administradores'),
-('AUTH_USERS', 'Usuarios de autenticación'),
-('USER_SESSIONS', 'Sesiones de usuario'),
-('SUBJECTS', 'Asignaturas'),
-('CURRICULUM_COURSES', 'Cursos curriculares'),
-('DEPARTMENTS', 'Departamentos'),
-('TYPES_CONVALIDATIONS', 'Tipos de convalidación'),
-('TYPES_CURRICULUM_COURSES', 'Tipos de curso curricular');
+-- Nombres de tablas para auditoría (solo las que generan notificaciones)
+INSERT INTO AUDIT_TABLES (name) VALUES
+('CONVALIDATIONS'),
+('REQUESTS'),
+('WORKSHOPS'),
+('WORKSHOPS_INSCRIPTIONS'),
+('WORKSHOPS_GRADES');
 
 -- =============================================================================
 -- DATOS DE DEPARTAMENTOS
@@ -119,104 +107,81 @@ INSERT INTO DEPARTMENTS (name) VALUES
 ('MATEMATICA');
 
 -- =============================================================================
--- DATOS DE ADMINISTRADORES
+-- DATOS DE USUARIOS PRINCIPALES
 -- =============================================================================
 
--- Insertar Administradores (datos personales)
--- Nota: Los datos de autenticación se insertan en AUTH_USERS
-INSERT INTO ADMINISTRATORS (
+-- Insertar usuarios principales (datos comunes)
+INSERT INTO USERS (
     first_names,
     last_names
 ) VALUES (
     'Pedro Ignacio',
     'Godoy Barrera'
+), (
+    'Camilo Eugenio',
+    'Contreras Espinoza'
+), (
+    'Alvaro Nicolas',
+    'Carrasco Escobar'
+);
+
+-- =============================================================================
+-- DATOS DE ADMINISTRADORES
+-- =============================================================================
+
+-- Insertar Administradores (datos específicos)
+-- Nota: Los datos de autenticación se insertan en AUTH_USERS
+INSERT INTO ADMINISTRATORS (
+    id_user
+) VALUES (
+    1 -- ID del usuario Pedro Godoy
 );
 
 -- =============================================================================
 -- DATOS DE ESTUDIANTES
 -- =============================================================================
 
--- Insertar Estudiantes (datos personales)
+-- Insertar Estudiantes (datos específicos)
 -- Nota: Los datos de autenticación se insertan en AUTH_USERS
 INSERT INTO STUDENTS (
+    id_user,
     rol_student,
     rut_student,
-    campus_student,
-    first_names,
-    last_names
+    campus_student
 ) VALUES (
+    2, -- ID del usuario Camilo Contreras
     '2018730637',
     '203695381',
-    'Casa Central',
-    'Camilo Eugenio',
-    'Contreras Espinoza'
+    'Casa Central'
 ), (
+    3, -- ID del usuario Alvaro Carrasco
     '2018730181',
     '203606729',
-    'Casa Central',
-    'Alvaro Nicolas',
-    'Carrasco Escobar'
+    'Casa Central'
 );
 
 -- =============================================================================
 -- DATOS DE AUTENTICACIÓN
 -- =============================================================================
 
--- Insertar datos de autenticación para Administradores
+-- Insertar datos de autenticación para todos los usuarios
 -- Nota: Las contraseñas están hasheadas con bcrypt para máxima seguridad
 INSERT INTO AUTH_USERS (
     email,
     password_hash,
-    user_type,
     id_user
 ) VALUES (
     'pgodoy@usm.cl',
     '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8K5QKqG', -- hash de ejemplo para 'pedro123'
-    'ADMINISTRATOR',
-    1 -- ID del administrador Pedro Godoy
-);
-
--- Insertar datos de autenticación para Estudiantes
--- Nota: Las contraseñas están hasheadas con bcrypt para máxima seguridad
-INSERT INTO AUTH_USERS (
-    email,
-    password_hash,
-    user_type,
-    id_user
-) VALUES (
+    1 -- ID del usuario Pedro Godoy (Administrador)
+), (
     'camilocontrerases@gmail.com',
     '$2b$12$Nx9mK8pQ2rS5tU7vW1yZ3A6B9C0D1E2F3G4H5I6J7K8L9M0N1O2P3Q4R5S6T', -- hash de ejemplo para 'camilo123'
-    'STUDENT',
-    1 -- ID del estudiante Camilo Contreras
+    2 -- ID del usuario Camilo Contreras (Estudiante)
 ), (
     'alvarocarrasco@gmail.com',
     '$2b$12$Pq8rL5mN2sK9tU3vW7yZ1A4B6C9D2E5F8G1H4I7J0K3L6M9N2O5P8Q1R4S7T', -- hash de ejemplo para 'alvaro123'
-    'STUDENT',
-    2 -- ID del estudiante Alvaro Carrasco
-);
-
--- =============================================================================
--- DATOS DE SESIONES DE EJEMPLO
--- =============================================================================
-
--- Insertar sesiones de ejemplo para usuarios
--- Nota: Los tokens son ejemplos y deben ser generados dinámicamente
-INSERT INTO USER_SESSIONS (
-    id_auth_user,
-    session_token,
-    expires_at
-) VALUES (
-    1, -- Usuario autenticado Pedro Godoy
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example_token_admin_001',
-    DATE_ADD(NOW(), INTERVAL 24 HOUR)
-), (
-    2, -- Usuario autenticado Camilo Contreras
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example_token_student_001',
-    DATE_ADD(NOW(), INTERVAL 24 HOUR)
-), (
-    3, -- Usuario autenticado Alvaro Carrasco
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example_token_student_002',
-    DATE_ADD(NOW(), INTERVAL 24 HOUR)
+    3 -- ID del usuario Alvaro Carrasco (Estudiante)
 );
 
 -- =============================================================================

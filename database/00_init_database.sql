@@ -1,6 +1,5 @@
--- ==========================================
--- Script de Inicialización de la Base de Datos SGC
--- Sistema de Gestión de Consultas y Convalidación de Asignaturas
+-- Script de Inicialización de la Base de Datos SGSCT
+-- Sistema de Gestión de Solicitudes de Convalidaciones y Talleres
 -- ==========================================
 
 -- 0. Configuración Inicial
