@@ -16,7 +16,7 @@ SELECT
     AUTH_USERS.email AS email_student
 FROM STUDENTS
 JOIN USERS ON STUDENTS.id = USERS.id
-LEFT JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
+JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
 
 -- =====================================================================================
 -- Vista: vw_admins_basic
@@ -85,245 +85,105 @@ FROM WORKSHOPS
 JOIN WORKSHOP_STATES ON WORKSHOPS.id_workshop_state = WORKSHOP_STATES.id;
 
 
-
-
 -- =====================================================================================
--- Vista: vw_requests_full
--- Descripción: Solicitudes con datos de estudiante, estado y revisor
+-- Vista: vw_request
+-- Descripción: Etiqueta simple para solicitudes (id y nombre de estudiante)
 -- =====================================================================================
-CREATE OR REPLACE VIEW vw_requests_full AS
+CREATE OR REPLACE VIEW vw_request AS
 SELECT
     REQUESTS.id AS id_request,
     REQUESTS.sent_at,
     REQUESTS.reviewed_at,
-    REQUESTS.review_comments,
     vw_students.id_student,
-    vw_students.name_student,
-    vw_students.rol_student,
-    vw_students.rut_student,
-    vw_students.campus_student,
-    vw_admins.id_admin AS id_admin_reviewer,
-    vw_admins.name_admin,
-    vw_admins.campus_admin
-FROM REQUESTS
-JOIN vw_students ON REQUESTS.id_student = vw_students.id_student
-LEFT JOIN vw_admins ON REQUESTS.id_reviewed_by = vw_admins.id_admin;
-
--- =====================================================================================
--- Vista: vw_request_label
--- Descripción: Etiqueta simple para solicitudes (id y nombre de estudiante)
--- =====================================================================================
-CREATE OR REPLACE VIEW vw_request_label AS
-SELECT
-    REQUESTS.id AS id_request,
     vw_students.name_student AS student_name,
     vw_students.rut_student AS student_rut,
     vw_students.rol_student AS student_rol,
     vw_students.campus_student AS student_campus,
-    vw_admins.name_admin AS admin_name,
-    REQUESTS.sent_at,
-    REQUESTS.reviewed_at,
+    vw_admins.id_admin AS id_reviewed_by,
+    vw_admins.name_admin AS reviewed_by
 FROM REQUESTS
 JOIN vw_students ON REQUESTS.id_student = vw_students.id_student
 LEFT JOIN vw_admins ON REQUESTS.id_reviewed_by = vw_admins.id_admin;
 
 
+
 -- =====================================================================================
--- Vista: vw_convalidations_full
--- Descripción: Convalidaciones con tipo, estado, curso, estudiante y solicitud
+-- Vista: vw_convalidations
+-- Descripción: Etiqueta simple para convalidaciones (id y nombre de estudiante)
 -- =====================================================================================
-CREATE OR REPLACE VIEW vw_convalidations_full AS
+
+CREATE OR REPLACE VIEW vw_convalidations AS
 SELECT
+    vw_request.*,
     CONVALIDATIONS.id AS id_convalidation,
-    CONVALIDATIONS.id_request,
+    CONVALIDATIONS.review_comments,
     CONVALIDATION_TYPES.id AS id_convalidation_type,
     CONVALIDATION_TYPES.name AS convalidation_type,
     CONVALIDATION_STATES.id AS id_convalidation_state,
     CONVALIDATION_STATES.name AS convalidation_state,
     CURRICULUM_COURSES.id AS id_curriculum_course,
-    CURRICULUM_COURSES.name AS curriculum_course,
-    CONVALIDATIONS.review_comments
+    CURRICULUM_COURSES.name AS curriculum_course
 FROM CONVALIDATIONS
 JOIN CONVALIDATION_TYPES ON CONVALIDATIONS.id_convalidation_type = CONVALIDATION_TYPES.id
 JOIN CONVALIDATION_STATES ON CONVALIDATIONS.id_convalidation_state = CONVALIDATION_STATES.id
-JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id;
+JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id
+JOIN vw_request ON CONVALIDATIONS.id_request = vw_request.id_request;
 
--- =====================================================================================
--- Vista: vw_convalidations_label
--- Descripción: Etiqueta simple para convalidaciones (id y nombre de estudiante)
--- =====================================================================================
-
-CREATE OR REPLACE VIEW vw_convalidations_label AS
-SELECT
-    CONVALIDATIONS.review_comments,
-    CONVALIDATIONS.id AS id_convalidation,
-    CONVALIDATION_TYPES.name AS convalidation_type,
-    CONVALIDATION_STATES.name AS convalidation_state,
-    CURRICULUM_COURSES.name AS curriculum_course,
-FROM CONVALIDATIONS
-JOIN CONVALIDATION_TYPES ON CONVALIDATIONS.id_convalidation_type = CONVALIDATION_TYPES.id
-JOIN CONVALIDATION_STATES ON CONVALIDATIONS.id_convalidation_state = CONVALIDATION_STATES.id
-JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id;
 
 
 -- =====================================================================================
 -- Vista: vw_convalidation_subjects
--- Descripción: Asignaturas de convalidaciones
--- =====================================================================================
-CREATE OR REPLACE VIEW vw_convalidation_subjects_full AS
-SELECT
-    vw_convalidations_full.id_convalidation,
-    vw_convalidations_full.id_request,
-    vw_convalidations_full.id_convalidation_type,
-    vw_convalidations_full.convalidation_type,
-    vw_convalidations_full.id_convalidation_state,
-    vw_convalidations_full.convalidation_state,
-    vw_convalidations_full.id_curriculum_course,
-    vw_convalidations_full.curriculum_course,
-    SUBJECTS.id AS id_subject,
-    SUBJECTS.name AS subject,
-    DEPARTMENTS.name AS department,
-    vw_convalidations_full.review_comments
-FROM CONVALIDATIONS_SUBJECTS
-JOIN vw_convalidations_full ON CONVALIDATIONS_SUBJECTS.id_convalidation = vw_convalidations_full.id_convalidation
-JOIN SUBJECTS ON CONVALIDATIONS_SUBJECTS.id_subject = SUBJECTS.id
-JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id;
-
--- =====================================================================================
--- Vista: vw_convalidation_subjects_label
 -- Descripción: Etiqueta simple para asignaturas de convalidaciones
 -- =====================================================================================
 
-CREATE OR REPLACE VIEW vw_convalidation_subjects_label AS
+CREATE OR REPLACE VIEW vw_convalidation_subjects AS
 SELECT
-    vw_convalidations_label.review_comments,
-    vw_convalidations_label.convalidation_type,
-    vw_convalidations_label.convalidation_state,
-    vw_convalidations_label.curriculum_course,
+    vw_convalidations.*,
+    CONVALIDATIONS_SUBJECTS.id_subject,
     SUBJECTS.name AS subject,
     DEPARTMENTS.name AS department
 FROM CONVALIDATIONS_SUBJECTS
-JOIN vw_convalidations_label ON CONVALIDATIONS_SUBJECTS.id_convalidation = vw_convalidations_label.id_convalidation
+JOIN vw_convalidations ON CONVALIDATIONS_SUBJECTS.id_convalidation = vw_convalidations.id_convalidation
 JOIN SUBJECTS ON CONVALIDATIONS_SUBJECTS.id_subject = SUBJECTS.id
 JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id;
 
+
+
+
+
 -- =====================================================================================
--- Vista: vw_convalidation_workshops_full
+-- Vista: vw_convalidation_workshops
 -- Descripción: Talleres de convalidaciones
 -- =====================================================================================
 
-CREATE OR REPLACE VIEW vw_convalidation_workshops_full AS
+CREATE OR REPLACE VIEW vw_convalidation_workshops AS
 SELECT
-    vw_convalidations_full.id_convalidation,
-    vw_convalidations_full.id_request,
-    vw_convalidations_full.id_convalidation_type,
-    vw_convalidations_full.convalidation_type,
-    vw_convalidations_full.id_convalidation_state,
-    vw_convalidations_full.convalidation_state,
-    vw_convalidations_full.id_curriculum_course,
-    vw_convalidations_full.curriculum_course,
+    vw_convalidations.*,
     WORKSHOPS.id AS id_workshop,
     WORKSHOPS.name AS workshop,
     WORKSHOPS.semester,
-    WORKSHOPS.year,
-    vw_convalidations_full.review_comments
+    WORKSHOPS.year
 FROM CONVALIDATIONS_WORKSHOPS
-JOIN vw_convalidations_full ON CONVALIDATIONS_WORKSHOPS.id_convalidation = vw_convalidations_full.id_convalidation
+JOIN vw_convalidations ON CONVALIDATIONS_WORKSHOPS.id_convalidation = vw_convalidations.id_convalidation
 JOIN WORKSHOPS ON CONVALIDATIONS_WORKSHOPS.id_workshop = WORKSHOPS.id;
 
+
+
 -- =====================================================================================
--- Vista: vw_convalidation_workshops_label
--- Descripción: Etiqueta simple para talleres de convalidaciones
+-- Vista: vw_convalidation_external_activities
+-- Descripción: Actividades externas de convalidaciones (cursos certificados y proyectos personales)
 -- =====================================================================================
 
-CREATE OR REPLACE VIEW vw_convalidation_workshops_label AS
+CREATE OR REPLACE VIEW vw_convalidation_external_activities AS
 SELECT
-    vw_convalidations_label.review_comments,
-    vw_convalidations_label.convalidation_type,
-    vw_convalidations_label.convalidation_state,
-    vw_convalidations_label.curriculum_course,
-    WORKSHOPS.name AS workshop
-FROM CONVALIDATIONS_WORKSHOPS
-JOIN vw_convalidations_label ON CONVALIDATIONS_WORKSHOPS.id_convalidation = vw_convalidations_label.id_convalidation
-JOIN WORKSHOPS ON CONVALIDATIONS_WORKSHOPS.id_workshop = WORKSHOPS.id;
+    vw_convalidations.*,
+    CONVALIDATIONS_EXTERNAL_ACTIVITIES.activity_name,
+    CONVALIDATIONS_EXTERNAL_ACTIVITIES.file_name,
+    CONVALIDATIONS_EXTERNAL_ACTIVITIES.file_data
+FROM CONVALIDATIONS_EXTERNAL_ACTIVITIES
+JOIN vw_convalidations ON CONVALIDATIONS_EXTERNAL_ACTIVITIES.id_convalidation = vw_convalidations.id_convalidation;
 
--- =====================================================================================
--- Vista: vw_convalidation_certificated_courses_full
--- Descripción: Cursos certificados de convalidaciones
--- =====================================================================================
 
-CREATE OR REPLACE VIEW vw_convalidation_certificated_courses_full AS
-SELECT
-    vw_convalidations_full.id_convalidation,
-    vw_convalidations_full.id_request,
-    vw_convalidations_full.id_convalidation_type,
-    vw_convalidations_full.convalidation_type,
-    vw_convalidations_full.id_convalidation_state,
-    vw_convalidations_full.convalidation_state,
-    vw_convalidations_full.id_curriculum_course,
-    vw_convalidations_full.curriculum_course,
-    CONVALIDATIONS_CERTIFICATED_COURSES.name AS certified_course,
-    CONVALIDATIONS_CERTIFICATED_COURSES.file_name,
-    CONVALIDATIONS_CERTIFICATED_COURSES.file_data,
-    vw_convalidations_full.review_comments
-FROM CONVALIDATIONS_CERTIFICATED_COURSES
-JOIN vw_convalidations_full ON CONVALIDATIONS_CERTIFICATED_COURSES.id_convalidation = vw_convalidations_full.id_convalidation;
-
--- =====================================================================================
--- Vista: vw_convalidation_certificated_courses_label
--- Descripción: Etiqueta simple para cursos certificados de convalidaciones
--- =====================================================================================
-
-CREATE OR REPLACE VIEW vw_convalidation_certificated_courses_label AS
-SELECT
-    vw_convalidations_label.review_comments,
-    vw_convalidations_label.convalidation_type,
-    vw_convalidations_label.convalidation_state,
-    vw_convalidations_label.curriculum_course,
-    CONVALIDATIONS_CERTIFICATED_COURSES.name AS certificated_course,
-    CONVALIDATIONS_CERTIFICATED_COURSES.file_data,
-    CONVALIDATIONS_CERTIFICATED_COURSES.file_name
-FROM CONVALIDATIONS_CERTIFICATED_COURSES
-JOIN vw_convalidations_label ON CONVALIDATIONS_CERTIFICATED_COURSES.id_convalidation = vw_convalidations_label.id_convalidation;
-
--- =====================================================================================
--- Vista: vw_convalidation_personal_projects_full
--- Descripción: Proyectos personales de convalidaciones
--- =====================================================================================
-
-CREATE OR REPLACE VIEW vw_convalidation_personal_projects_full AS
-SELECT
-    vw_convalidations_full.id_convalidation,
-    vw_convalidations_full.id_request,
-    vw_convalidations_full.id_convalidation_type,
-    vw_convalidations_full.convalidation_type,
-    vw_convalidations_full.id_convalidation_state,
-    vw_convalidations_full.convalidation_state,
-    vw_convalidations_full.id_curriculum_course,
-    vw_convalidations_full.curriculum_course,
-    CONVALIDATIONS_PERSONAL_PROJECTS.name AS personal_project,
-    CONVALIDATIONS_PERSONAL_PROJECTS.file_data,
-    CONVALIDATIONS_PERSONAL_PROJECTS.file_name,
-    vw_convalidations_full.review_comments
-FROM CONVALIDATIONS_PERSONAL_PROJECTS
-JOIN vw_convalidations_full ON CONVALIDATIONS_PERSONAL_PROJECTS.id_convalidation = vw_convalidations_full.id_convalidation;
-
--- =====================================================================================
--- Vista: vw_convalidation_personal_projects_label
--- Descripción: Etiqueta simple para proyectos personales de convalidaciones
--- =====================================================================================
-
-CREATE OR REPLACE VIEW vw_convalidation_personal_projects_label AS
-SELECT
-    vw_convalidations_label.review_comments,
-    vw_convalidations_label.convalidation_type,
-    vw_convalidations_label.convalidation_state,
-    vw_convalidations_label.curriculum_course,
-    CONVALIDATIONS_PERSONAL_PROJECTS.name AS personal_project,
-    CONVALIDATIONS_PERSONAL_PROJECTS.file_data,
-    CONVALIDATIONS_PERSONAL_PROJECTS.file_name
-FROM CONVALIDATIONS_PERSONAL_PROJECTS
-JOIN vw_convalidations_label ON CONVALIDATIONS_PERSONAL_PROJECTS.id_convalidation = vw_convalidations_label.id_convalidation;
 
 -- =====================================================================================
 -- Vista: vw_workshops_inscriptions
@@ -346,7 +206,7 @@ SELECT
 FROM WORKSHOPS_INSCRIPTIONS
 JOIN vw_students ON WORKSHOPS_INSCRIPTIONS.id_student = vw_students.id_student
 JOIN WORKSHOPS ON WORKSHOPS_INSCRIPTIONS.id_workshop = WORKSHOPS.id
-JOIN CURRICULUM_COURSES ON WORKSHOPS_INSCRIPTIONS.id_curriculum_course = CURRICULUM_COURSES.id;
+LEFT JOIN CURRICULUM_COURSES ON WORKSHOPS_INSCRIPTIONS.id_curriculum_course = CURRICULUM_COURSES.id;
 
 -- =====================================================================================
 -- Vista: vw_workshops_grades
@@ -382,7 +242,7 @@ SELECT
     AUDIT_LOG.id AS id_audit_log,
     AUDIT_LOG.id_record,
     AUDIT_ACTIONS.name AS action_name,
-    AUDIT_TABLES.name AS table,
+    AUDIT_TABLES.name AS table_name,
     AUDIT_FIELDS.name AS field,
     AUDIT_LOG.timestamp,
     AUDIT_LOG.old_value,
@@ -390,7 +250,7 @@ SELECT
 FROM AUDIT_LOG
 JOIN AUDIT_ACTIONS ON AUDIT_LOG.id_audit_action = AUDIT_ACTIONS.id
 JOIN AUDIT_TABLES ON AUDIT_LOG.id_audit_table = AUDIT_TABLES.id
-JOIN AUDIT_FIELDS ON AUDIT_LOG.id_audit_field = AUDIT_FIELDS.id
+LEFT JOIN AUDIT_FIELDS ON AUDIT_LOG.id_audit_field = AUDIT_FIELDS.id
 JOIN USERS ON AUDIT_LOG.id_user = USERS.id;
 
 

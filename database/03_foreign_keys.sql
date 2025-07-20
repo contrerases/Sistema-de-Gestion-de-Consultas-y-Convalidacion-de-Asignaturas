@@ -5,17 +5,17 @@
 -- =============================================================================
 -- RESUMEN DE CLAVES FORÁNEAS
 -- =============================================================================
--- Total de foreign keys: 22
+-- Total de foreign keys: 20
 -- CURRICULUM_COURSES: 1 | SUBJECTS: 1 | WORKSHOPS: 1 | REQUESTS: 2 | CONVALIDATIONS: 3
--- CONVALIDATIONS_SUBJECTS: 2 | CONVALIDATIONS_WORKSHOPS: 2 | CONVALIDATIONS_CERTIFIED_COURSES: 1
--- CONVALIDATIONS_PERSONAL_PROJECTS: 1 | WORKSHOPS_INSCRIPTIONS: 3 | WORKSHOPS_GRADES: 2
--- AUTH_USERS: 1 | USER_SESSIONS: 1 | AUDIT_LOG: 4 | NOTIFICATIONS: 2
+-- CONVALIDATIONS_SUBJECTS: 2 | CONVALIDATIONS_WORKSHOPS: 2 | CONVALIDATIONS_EXTERNAL_ACTIVITIES: 1
+-- WORKSHOPS_INSCRIPTIONS: 3 | WORKSHOPS_GRADES: 2 | AUTH_USERS: 1 | STUDENTS: 1 | ADMINISTRATORS: 1
+-- AUDIT_LOG: 4 | NOTIFICATIONS: 2
 
 -- =============================================================================
 -- CONFIGURACIÓN INICIAL
 -- =============================================================================
 
-SET FOREIGN_KEY_CHECKS = 0;
+
 
 -- =============================================================================
 -- CURRICULUM_COURSES
@@ -24,7 +24,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Relación con tipos de cursos curriculares
 ALTER TABLE CURRICULUM_COURSES
 ADD CONSTRAINT fk_curriculum_course_type
-FOREIGN KEY (id_type_curriculum_course)
+FOREIGN KEY (id_curriculum_course_type)
 REFERENCES CURRICULUM_COURSES_TYPES (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
@@ -150,24 +150,12 @@ ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
 -- =============================================================================
--- CONVALIDATIONS_CERTIFICATED_COURSES
+-- CONVALIDATIONS_EXTERNAL_ACTIVITIES
 -- =============================================================================
 
 -- Relación con convalidaciones
-ALTER TABLE CONVALIDATIONS_CERTIFICATED_COURSES
-ADD CONSTRAINT fk_convalidation_certificated_course_convalidation
-FOREIGN KEY (id_convalidation)
-REFERENCES CONVALIDATIONS(id)
-ON DELETE CASCADE
-ON UPDATE CASCADE;
-
--- =============================================================================
--- CONVALIDATIONS_PERSONAL_PROJECTS
--- =============================================================================
-
--- Relación con convalidaciones
-ALTER TABLE CONVALIDATIONS_PERSONAL_PROJECTS
-ADD CONSTRAINT fk_convalidation_personal_project_convalidation
+ALTER TABLE CONVALIDATIONS_EXTERNAL_ACTIVITIES
+ADD CONSTRAINT fk_convalidation_external_activity_convalidation
 FOREIGN KEY (id_convalidation)
 REFERENCES CONVALIDATIONS(id)
 ON DELETE CASCADE
@@ -222,14 +210,14 @@ ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- =============================================================================
--- AUTH_USERS
+-- USERS
 -- =============================================================================
 
--- Relación de autenticación con usuarios principales
-ALTER TABLE AUTH_USERS
-ADD CONSTRAINT fk_auth_user
-FOREIGN KEY (id_user)
-REFERENCES USERS(id)
+-- Relación de usuarios con autenticación (tabla principal)
+ALTER TABLE USERS
+ADD CONSTRAINT fk_user_auth
+FOREIGN KEY (id)
+REFERENCES AUTH_USERS(id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -311,18 +299,11 @@ ADD CONSTRAINT fk_administrators_user
 FOREIGN KEY (id) REFERENCES USERS(id)
 ON DELETE CASCADE ON UPDATE CASCADE;
 
--- =============================================================================
--- AUTH_USERS
--- =============================================================================
-ALTER TABLE AUTH_USERS
-ADD CONSTRAINT fk_auth_users_user
-FOREIGN KEY (id) REFERENCES USERS(id)
-ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 -- =============================================================================
 -- CONFIGURACIÓN FINAL
 -- =============================================================================
 
-SET FOREIGN_KEY_CHECKS = 1;
 
 SELECT "Foreign keys creadas correctamente" AS mensaje;

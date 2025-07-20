@@ -5,14 +5,13 @@
 -- =============================================================================
 -- RESUMEN DE CONSTRAINTS
 -- =============================================================================
--- Total de constraints: 29
--- UNIQUE: 17 | CHECK: 12
+-- Total of constraints: 25
+-- UNIQUE: 17 | CHECK: 8
 -- CONVALIDATION_TYPES: 1 | CURRICULUM_COURSES_TYPES: 1 | DEPARTMENTS: 1
 -- SUBJECTS: 3 | CURRICULUM_COURSES: 1 | WORKSHOPS: 5 | AUTH_USERS: 2
--- USER_SESSIONS: 2 | STUDENTS: 4 | REQUESTS: 1 | CONVALIDATIONS: 1
--- CONVALIDATIONS_SUBJECTS: 1 | CONVALIDATIONS_WORKSHOPS: 1 | CONVALIDATIONS_CERTIFIED_COURSES: 2
--- CONVALIDATIONS_PERSONAL_PROJECTS: 2 | WORKSHOPS_INSCRIPTIONS: 1 | WORKSHOPS_GRADES: 2
--- AUDIT_LOG: 1 | NOTIFICATIONS: 2
+-- STUDENTS: 4 | REQUESTS: 1 | CONVALIDATIONS: 1
+-- CONVALIDATIONS_SUBJECTS: 1 | CONVALIDATIONS_WORKSHOPS: 1 | CONVALIDATIONS_EXTERNAL_ACTIVITIES: 2
+-- WORKSHOPS_INSCRIPTIONS: 1 | WORKSHOPS_GRADES: 2 | NOTIFICATIONS: 1
 
 -- =============================================================================
 -- CONFIGURACIÓN INICIAL
@@ -157,31 +156,16 @@ ALTER TABLE CONVALIDATIONS_WORKSHOPS
 ADD CONSTRAINT uk_convalidation_workshop_request UNIQUE (id_workshop, id_convalidation);
 
 -- =============================================================================
--- CONVALIDATIONS_CERTIFIED_COURSES
+-- CONVALIDATIONS_EXTERNAL_ACTIVITIES
 -- =============================================================================
 
--- Nombre de curso no vacío
-ALTER TABLE CONVALIDATIONS_CERTIFIED_COURSES
-ADD CONSTRAINT chk_certified_course_name CHECK (LENGTH(TRIM(course_name)) > 0);
+-- Nombre de actividad no vacío
+ALTER TABLE CONVALIDATIONS_EXTERNAL_ACTIVITIES
+ADD CONSTRAINT chk_external_activity_name CHECK (LENGTH(TRIM(activity_name)) > 0);
 
 -- Validación de archivo
-ALTER TABLE CONVALIDATIONS_CERTIFIED_COURSES
-ADD CONSTRAINT chk_certified_course_file CHECK (
-    (file_data IS NULL AND file_name IS NULL) OR
-    (file_data IS NOT NULL AND file_name IS NOT NULL)
-);
-
--- =============================================================================
--- CONVALIDATIONS_PERSONAL_PROJECTS
--- =============================================================================
-
--- Nombre de proyecto no vacío
-ALTER TABLE CONVALIDATIONS_PERSONAL_PROJECTS
-ADD CONSTRAINT chk_personal_project_name CHECK (LENGTH(TRIM(project_name)) > 0);
-
--- Validación de archivo
-ALTER TABLE CONVALIDATIONS_PERSONAL_PROJECTS
-ADD CONSTRAINT chk_personal_project_file CHECK (
+ALTER TABLE CONVALIDATIONS_EXTERNAL_ACTIVITIES
+ADD CONSTRAINT chk_external_activity_file CHECK (
     (file_data IS NULL AND file_name IS NULL) OR
     (file_data IS NOT NULL AND file_name IS NOT NULL)
 );

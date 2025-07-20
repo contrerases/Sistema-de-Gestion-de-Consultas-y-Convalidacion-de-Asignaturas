@@ -107,81 +107,84 @@ INSERT INTO DEPARTMENTS (name) VALUES
 ('MATEMATICA');
 
 -- =============================================================================
--- DATOS DE USUARIOS PRINCIPALES
--- =============================================================================
-
--- Insertar usuarios principales (datos comunes)
-INSERT INTO USERS (
-    first_names,
-    last_names
-) VALUES (
-    'Pedro Ignacio',
-    'Godoy Barrera'
-), (
-    'Camilo Eugenio',
-    'Contreras Espinoza'
-), (
-    'Alvaro Nicolas',
-    'Carrasco Escobar'
-);
-
--- =============================================================================
--- DATOS DE ADMINISTRADORES
--- =============================================================================
-
--- Insertar Administradores (datos específicos)
--- Nota: Los datos de autenticación se insertan en AUTH_USERS
-INSERT INTO ADMINISTRATORS (
-    id_user
-) VALUES (
-    1 -- ID del usuario Pedro Godoy
-);
-
--- =============================================================================
--- DATOS DE ESTUDIANTES
--- =============================================================================
-
--- Insertar Estudiantes (datos específicos)
--- Nota: Los datos de autenticación se insertan en AUTH_USERS
-INSERT INTO STUDENTS (
-    id_user,
-    rol_student,
-    rut_student,
-    campus_student
-) VALUES (
-    2, -- ID del usuario Camilo Contreras
-    '2018730637',
-    '203695381',
-    'Casa Central'
-), (
-    3, -- ID del usuario Alvaro Carrasco
-    '2018730181',
-    '203606729',
-    'Casa Central'
-);
-
--- =============================================================================
--- DATOS DE AUTENTICACIÓN
+-- DATOS DE AUTENTICACIÓN (TABLA PRINCIPAL)
 -- =============================================================================
 
 -- Insertar datos de autenticación para todos los usuarios
 -- Nota: Las contraseñas están hasheadas con bcrypt para máxima seguridad
 INSERT INTO AUTH_USERS (
     email,
-    password_hash,
-    id_user
+    password_hash
 ) VALUES (
     'pgodoy@usm.cl',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8K5QKqG', -- hash de ejemplo para 'pedro123'
-    1 -- ID del usuario Pedro Godoy (Administrador)
+    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8K5QKqG' -- hash de ejemplo para 'pedro123'
 ), (
     'camilocontrerases@gmail.com',
-    '$2b$12$Nx9mK8pQ2rS5tU7vW1yZ3A6B9C0D1E2F3G4H5I6J7K8L9M0N1O2P3Q4R5S6T', -- hash de ejemplo para 'camilo123'
-    2 -- ID del usuario Camilo Contreras (Estudiante)
+    '$2b$12$Nx9mK8pQ2rS5tU7vW1yZ3A6B9C0D1E2F3G4H5I6J7K8L9M0N1O2P3Q4R5S6T' -- hash de ejemplo para 'camilo123'
 ), (
     'alvarocarrasco@gmail.com',
-    '$2b$12$Pq8rL5mN2sK9tU3vW7yZ1A4B6C9D2E5F8G1H4I7J0K3L6M9N2O5P8Q1R4S7T', -- hash de ejemplo para 'alvaro123'
-    3 -- ID del usuario Alvaro Carrasco (Estudiante)
+    '$2b$12$Pq8rL5mN2sK9tU3vW7yZ1A4B6C9D2E5F8G1H4I7J0K3L6M9N2O5P8Q1R4S7T' -- hash de ejemplo para 'alvaro123'
+);
+
+-- =============================================================================
+-- DATOS DE USUARIOS (TABLA HIJA)
+-- =============================================================================
+
+-- Insertar usuarios principales (datos comunes)
+-- Nota: Los IDs corresponden a los generados automáticamente en AUTH_USERS
+INSERT INTO USERS (
+    id,
+    first_names,
+    last_names,
+    campus
+) VALUES (
+    1, -- ID del usuario Pedro Godoy (Administrador)
+    'Pedro Ignacio',
+    'Godoy Barrera',
+    'Casa Central'
+), (
+    2, -- ID del usuario Camilo Contreras (Estudiante)
+    'Camilo Eugenio',
+    'Contreras Espinoza',
+    'Casa Central'
+), (
+    3, -- ID del usuario Alvaro Carrasco (Estudiante)
+    'Alvaro Nicolas',
+    'Carrasco Escobar',
+    'Casa Central'
+);
+
+-- =============================================================================
+-- DATOS DE ADMINISTRADORES (TABLA HIJA ESPECÍFICA)
+-- =============================================================================
+
+-- Insertar Administradores (datos específicos)
+INSERT INTO ADMINISTRATORS (
+    id
+) VALUES (
+    1 -- ID del usuario Pedro Godoy (Administrador)
+);
+
+-- =============================================================================
+-- DATOS DE ESTUDIANTES (TABLA HIJA ESPECÍFICA)
+-- =============================================================================
+
+-- Insertar Estudiantes (datos específicos)
+INSERT INTO STUDENTS (
+    id,
+    rol_student,
+    rut_student,
+    campus_student
+) VALUES (
+    2, -- ID del usuario Camilo Contreras
+    '2018730637',
+    '20369538k',
+    'Casa Central'
+), (
+    3, -- ID del usuario Alvaro Carrasco
+    '2018730181',
+    '20360672k',
+    'Casa Central'
 );
 
 -- =============================================================================
@@ -189,7 +192,7 @@ INSERT INTO AUTH_USERS (
 -- =============================================================================
 
 -- Insertar Cursos Curriculares
-INSERT INTO CURRICULUM_COURSES (name, id_type_curriculum_course) VALUES
+INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES
 ('LIBRE 1', 1),
 ('LIBRE 2', 1),
 ('LIBRE 3', 1),
@@ -326,16 +329,13 @@ INSERT INTO WORKSHOPS (
 -- Insertar Solicitudes de ejemplo
 INSERT INTO REQUESTS (
     id_student,
-    sent_at,
-    review_comments
+    sent_at
 ) VALUES (
-    1, -- Camilo Contreras
-    '2024-01-15 10:30:00',
-    'Solicitud de convalidación de electivos'
+    2, -- Camilo Contreras
+    '2024-01-15 10:30:00'
 ), (
-    2, -- Alvaro Carrasco
-    '2024-01-20 14:45:00',
-    'Solicitud de convalidación de taller'
+    3, -- Alvaro Carrasco
+    '2024-01-20 14:45:00'
 );
 
 -- =============================================================================
@@ -393,20 +393,14 @@ INSERT INTO CONVALIDATIONS_WORKSHOPS (
     1  -- Taller de Programación Python
 );
 
--- Insertar datos específicos para convalidaciones de cursos certificados
-INSERT INTO CONVALIDATIONS_CERTIFIED_COURSES (
+-- Insertar datos específicos para convalidaciones de actividades externas
+INSERT INTO CONVALIDATIONS_EXTERNAL_ACTIVITIES (
     id_convalidation,
-    course_name
+    activity_name
 ) VALUES (
     3, -- Convalidación de Camilo (Curso Certificado)
     'Machine Learning Fundamentals'
-);
-
--- Insertar datos específicos para convalidaciones de proyectos personales
-INSERT INTO CONVALIDATIONS_PERSONAL_PROJECTS (
-    id_convalidation,
-    project_name
-) VALUES (
+), (
     4, -- Convalidación de Alvaro (Proyecto Personal)
     'Sistema de Gestión de Inventarios'
 );
@@ -458,7 +452,7 @@ INSERT INTO WORKSHOPS_GRADES (
 
 -- Insertar Notificaciones de ejemplo
 INSERT INTO NOTIFICATIONS (
-    id_auth_user,
+    id_user,
     id_notification_type,
     title,
     message,
@@ -467,22 +461,22 @@ INSERT INTO NOTIFICATIONS (
     id_notification_related_table,
     related_id
 ) VALUES (
-    2, -- Camilo Contreras (auth_user)
+    2, -- Camilo Contreras (user)
     1, -- CONVALIDATION_STATUS
     'Estado de Convalidación Actualizado',
     'Su convalidación de ALEMÁN NIVEL ELEMENTAL ha sido aprobada por DI',
     0,
     1,
-    2, -- AUDIT_TABLES.CONVALIDATIONS
+    1, -- AUDIT_TABLES.CONVALIDATIONS (ID 1)
     1
 ), (
-    3, -- Alvaro Carrasco (auth_user)
+    3, -- Alvaro Carrasco (user)
     2, -- WORKSHOP_REMINDER
     'Recordatorio de Taller',
     'El taller de Desarrollo Web comienza mañana a las 9:00 AM',
     0,
     1,
-    3, -- AUDIT_TABLES.WORKSHOPS
+    3, -- AUDIT_TABLES.WORKSHOPS (ID 3)
     2
 );
 
@@ -504,7 +498,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- - Acciones de Auditoría: 4
 -- - Campos de Auditoría: 20
 -- - Tipos de Notificación: 10
--- - Tablas de Auditoría: 14
+-- - Tablas de Auditoría: 5
 -- - Departamentos: 6
 -- - Administradores: 1
 -- - Estudiantes: 2
@@ -517,8 +511,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- - Convalidaciones: 4
 -- - Convalidaciones de Asignaturas: 1
 -- - Convalidaciones de Talleres: 1
--- - Convalidaciones de Cursos Certificados: 1
--- - Convalidaciones de Proyectos Personales: 1
+-- - Convalidaciones de Actividades Externas: 2
 -- - Inscripciones: 2
 -- - Calificaciones: 2
 -- - Notificaciones: 2
