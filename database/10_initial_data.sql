@@ -16,8 +16,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 INSERT INTO WORKSHOP_STATES (name, description) VALUES
 ('INSCRIPCION', 'Período de inscripción abierto'),
 ('EN_CURSO', 'Taller en desarrollo'),
-('CERRADO', 'Inscripciones cerradas'),
-('FINALIZADO', 'Taller completado'),
+('FINALIZADO', 'Taller finalizado'),
+('CERRADO', 'Taller cerrado'),
 ('CANCELADO', 'Taller cancelado');
 
 -- Estados de convalidaciones
@@ -41,9 +41,9 @@ INSERT INTO CONVALIDATION_TYPES (name) VALUES
 
 -- Tipos de cursos curriculares
 INSERT INTO CURRICULUM_COURSES_TYPES (name) VALUES
-('Libre'),
-('Electivo INF'),
-('Electivo');
+('LIBRE'),
+('ELECTIVO INFORMATICA'),
+('ELECTIVO');
 
 -- =============================================================================
 -- DATOS DE DEPARTAMENTOS

@@ -34,12 +34,13 @@ END//
 
 CREATE PROCEDURE sp_create_department(IN p_name VARCHAR(255))
 BEGIN
+    DECLARE v_msg VARCHAR(255);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear departamento';
+        SET v_msg = CONCAT('Error al crear departamento: ', p_name);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
     END;
-
     START TRANSACTION;
     INSERT INTO DEPARTMENTS (name) VALUES (p_name);
     COMMIT;
@@ -103,12 +104,13 @@ CREATE PROCEDURE sp_create_subject(
     IN p_credits INT
 )
 BEGIN
+    DECLARE v_msg VARCHAR(255);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear asignatura';
+        SET v_msg = CONCAT('Error al crear asignatura: ', p_name);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
     END;
-
     START TRANSACTION;
     INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES (p_acronym, p_name, p_id_department, p_credits);
     COMMIT;
@@ -176,12 +178,13 @@ CREATE PROCEDURE sp_create_curriculum_course(
     IN p_id_curriculum_course_type INT
 )
 BEGIN
+    DECLARE v_msg VARCHAR(255);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear curso curricular';
+        SET v_msg = CONCAT('Error al crear curso curricular: ', p_name);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
     END;
-
     START TRANSACTION;
     INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES (p_name, p_id_curriculum_course_type);
     COMMIT;
@@ -509,12 +512,13 @@ CREATE PROCEDURE sp_create_workshop(
     IN p_id_workshop_state INT
 )
 BEGIN
+    DECLARE v_msg VARCHAR(255);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear taller';
+        SET v_msg = CONCAT('Error al crear taller: ', p_name);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
     END;
-
     START TRANSACTION;
     INSERT INTO WORKSHOPS (
         name, semester, year, professor, description,
@@ -656,10 +660,12 @@ CREATE PROCEDURE sp_create_student(
 )
 BEGIN
     DECLARE v_auth_user_id INT;
+    DECLARE v_msg VARCHAR(255);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear estudiante';
+        SET v_msg = CONCAT('Error al crear estudiante: ', p_rut_student);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
     END;
 
     START TRANSACTION;
@@ -1019,3 +1025,6 @@ BEGIN
     COMMIT;
     SELECT 'Notificación marcada como leída exitosamente' AS mensaje;
 END//
+
+
+SELECT "Procedimientos creados correctamente" AS mensaje;
