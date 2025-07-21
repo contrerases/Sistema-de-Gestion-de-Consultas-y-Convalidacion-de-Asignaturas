@@ -1,11 +1,11 @@
---------------------------------------------------------------------------------------------------------
----------------------------------- VISTAS DE LA BASE DE DATOS ------------------------------------------
---------------------------------------------------------------------------------------------------------
+-- =============================================================================
+-- VISTAS
+-- =============================================================================
 
--- =====================================================================================
--- Vista: vw_students_basic
--- Descripción: Información básica de estudiantes para listados y búsquedas
--- =====================================================================================
+-- =============================================================================
+-- 1. USERS
+-- =============================================================================
+
 CREATE OR REPLACE VIEW vw_students AS
 SELECT
     STUDENTS.id AS id_student,
@@ -18,10 +18,6 @@ FROM STUDENTS
 JOIN USERS ON STUDENTS.id = USERS.id
 JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
 
--- =====================================================================================
--- Vista: vw_admins_basic
--- Descripción: Información básica de administradores para gestión y reportes
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_admins AS
 SELECT
     ADMINISTRATORS.id AS id_admin,
@@ -32,11 +28,10 @@ FROM ADMINISTRATORS
 JOIN USERS ON ADMINISTRATORS.id = USERS.id
 JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
 
+-- =============================================================================
+-- 2. GENERALES
+-- =============================================================================
 
--- =====================================================================================
--- Vista: vw_subjects_full
--- Descripción: Asignaturas con datos de departamento
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_subjects AS
 SELECT
     SUBJECTS.id AS id_subject,
@@ -48,11 +43,6 @@ SELECT
 FROM SUBJECTS
 JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id;
 
--- =====================================================================================
--- Vista: vw_curriculum_courses_full
--- Descripción: Cursos del currículum con datos de tipo
--- =====================================================================================
-
 CREATE OR REPLACE VIEW vw_curriculum_courses AS
 SELECT
     CURRICULUM_COURSES.id AS id_curriculum_course,
@@ -62,10 +52,6 @@ SELECT
 FROM CURRICULUM_COURSES
 JOIN CURRICULUM_COURSES_TYPES ON CURRICULUM_COURSES.id_curriculum_course_type = CURRICULUM_COURSES_TYPES.id;
 
--- =====================================================================================
--- Vista: vw_workshops_full
--- Descripción: Talleres con estado, fechas, profesor y cantidad de inscritos
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_workshops AS
 SELECT
     WORKSHOPS.id AS id_workshop,
@@ -79,16 +65,16 @@ SELECT
     WORKSHOPS.course_start_date AS course_start_date,
     WORKSHOPS.course_end_date AS course_end_date,
     WORKSHOPS.available AS available,
+    WORKSHOPS.limit_inscriptions AS limit_inscriptions,
     WORKSHOP_STATES.id AS id_workshop_state,
     WORKSHOP_STATES.name AS workshop_state
 FROM WORKSHOPS
 JOIN WORKSHOP_STATES ON WORKSHOPS.id_workshop_state = WORKSHOP_STATES.id;
 
+-- =============================================================================
+-- 2. CONVALIDACIONES
+-- =============================================================================
 
--- =====================================================================================
--- Vista: vw_request
--- Descripción: Etiqueta simple para solicitudes (id y nombre de estudiante)
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_request AS
 SELECT
     REQUESTS.id AS id_request,
@@ -104,13 +90,6 @@ SELECT
 FROM REQUESTS
 JOIN vw_students ON REQUESTS.id_student = vw_students.id_student
 LEFT JOIN vw_admins ON REQUESTS.id_reviewed_by = vw_admins.id_admin;
-
-
-
--- =====================================================================================
--- Vista: vw_convalidations
--- Descripción: Etiqueta simple para convalidaciones (id y nombre de estudiante)
--- =====================================================================================
 
 CREATE OR REPLACE VIEW vw_convalidations AS
 SELECT
@@ -129,13 +108,6 @@ JOIN CONVALIDATION_STATES ON CONVALIDATIONS.id_convalidation_state = CONVALIDATI
 JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id
 JOIN vw_request ON CONVALIDATIONS.id_request = vw_request.id_request;
 
-
-
--- =====================================================================================
--- Vista: vw_convalidation_subjects
--- Descripción: Etiqueta simple para asignaturas de convalidaciones
--- =====================================================================================
-
 CREATE OR REPLACE VIEW vw_convalidation_subjects AS
 SELECT
     vw_convalidations.*,
@@ -146,15 +118,6 @@ FROM CONVALIDATIONS_SUBJECTS
 JOIN vw_convalidations ON CONVALIDATIONS_SUBJECTS.id_convalidation = vw_convalidations.id_convalidation
 JOIN SUBJECTS ON CONVALIDATIONS_SUBJECTS.id_subject = SUBJECTS.id
 JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id;
-
-
-
-
-
--- =====================================================================================
--- Vista: vw_convalidation_workshops
--- Descripción: Talleres de convalidaciones
--- =====================================================================================
 
 CREATE OR REPLACE VIEW vw_convalidation_workshops AS
 SELECT
@@ -167,28 +130,20 @@ FROM CONVALIDATIONS_WORKSHOPS
 JOIN vw_convalidations ON CONVALIDATIONS_WORKSHOPS.id_convalidation = vw_convalidations.id_convalidation
 JOIN WORKSHOPS ON CONVALIDATIONS_WORKSHOPS.id_workshop = WORKSHOPS.id;
 
-
-
--- =====================================================================================
--- Vista: vw_convalidation_external_activities
--- Descripción: Actividades externas de convalidaciones (cursos certificados y proyectos personales)
--- =====================================================================================
-
 CREATE OR REPLACE VIEW vw_convalidation_external_activities AS
 SELECT
     vw_convalidations.*,
     CONVALIDATIONS_EXTERNAL_ACTIVITIES.activity_name,
+    CONVALIDATIONS_EXTERNAL_ACTIVITIES.description,
     CONVALIDATIONS_EXTERNAL_ACTIVITIES.file_name,
     CONVALIDATIONS_EXTERNAL_ACTIVITIES.file_data
 FROM CONVALIDATIONS_EXTERNAL_ACTIVITIES
 JOIN vw_convalidations ON CONVALIDATIONS_EXTERNAL_ACTIVITIES.id_convalidation = vw_convalidations.id_convalidation;
 
+-- =============================================================================
+-- 3. TALLERES
+-- =============================================================================
 
-
--- =====================================================================================
--- Vista: vw_workshops_inscriptions
--- Descripción: Inscripciones a talleres con datos de estudiante y taller
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_workshops_inscriptions AS
 SELECT
     vw_students.id_student,
@@ -208,10 +163,6 @@ JOIN vw_students ON WORKSHOPS_INSCRIPTIONS.id_student = vw_students.id_student
 JOIN WORKSHOPS ON WORKSHOPS_INSCRIPTIONS.id_workshop = WORKSHOPS.id
 LEFT JOIN CURRICULUM_COURSES ON WORKSHOPS_INSCRIPTIONS.id_curriculum_course = CURRICULUM_COURSES.id;
 
--- =====================================================================================
--- Vista: vw_workshops_grades
--- Descripción: Calificaciones de talleres con datos de estudiante y taller
--- =====================================================================================
 CREATE OR REPLACE VIEW vw_workshops_grades AS
 SELECT
     vw_students.id_student,
@@ -228,44 +179,115 @@ FROM WORKSHOPS_GRADES
 JOIN vw_students ON WORKSHOPS_GRADES.id_student = vw_students.id_student
 JOIN WORKSHOPS ON WORKSHOPS_GRADES.id_workshop = WORKSHOPS.id;
 
+-- =============================================================================
+-- 4. USERS
+-- =============================================================================
 
-
--- =====================================================================================
--- Vista: vw_audit_log_label
--- Descripción: Log de auditoría con usuario, acción, tabla y campo
--- =====================================================================================
-
-CREATE OR REPLACE VIEW vw_audit_log_label AS
+CREATE OR REPLACE VIEW vw_students AS
 SELECT
+    STUDENTS.id AS id_student,
+    USERS.common_name AS name_student,
+    STUDENTS.rol_student,
+    STUDENTS.rut_student,
+    USERS.campus AS campus_student,
+    AUTH_USERS.email AS email_student
+FROM STUDENTS
+JOIN USERS ON STUDENTS.id = USERS.id
+JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
+
+CREATE OR REPLACE VIEW vw_admins AS
+SELECT
+    ADMINISTRATORS.id AS id_admin,
+    USERS.common_name AS name_admin,
+    USERS.campus AS campus_admin,
+    AUTH_USERS.email AS email_admin
+FROM ADMINISTRATORS
+JOIN USERS ON ADMINISTRATORS.id = USERS.id
+JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
+
+-- =============================================================================
+-- 5. AUTH
+-- =============================================================================
+
+CREATE OR REPLACE VIEW vw_auth_users AS
+SELECT
+    AUTH_USERS.id AS id_auth_user,
+    AUTH_USERS.email,
+    AUTH_USERS.password_hash,
     USERS.id AS id_user,
-    USERS.common_name AS user,
-    AUDIT_LOG.id AS id_audit_log,
-    AUDIT_LOG.id_record,
-    AUDIT_ACTIONS.name AS action_name,
-    AUDIT_TABLES.name AS table_name,
-    AUDIT_FIELDS.name AS field,
-    AUDIT_LOG.timestamp,
-    AUDIT_LOG.old_value,
-    AUDIT_LOG.new_value
-FROM AUDIT_LOG
-JOIN AUDIT_ACTIONS ON AUDIT_LOG.id_audit_action = AUDIT_ACTIONS.id
-JOIN AUDIT_TABLES ON AUDIT_LOG.id_audit_table = AUDIT_TABLES.id
-LEFT JOIN AUDIT_FIELDS ON AUDIT_LOG.id_audit_field = AUDIT_FIELDS.id
-JOIN USERS ON AUDIT_LOG.id_user = USERS.id;
+    USERS.first_names,
+    USERS.last_names,
+    USERS.common_name,
+    USERS.full_name,
+    USERS.campus,
+    USERS.created_at,
+    USERS.updated_at,
+    -- Determinar tipo de usuario
+    CASE
+        WHEN STUDENTS.id IS NOT NULL THEN 'STUDENT'
+        WHEN ADMINISTRATORS.id IS NOT NULL THEN 'ADMINISTRATOR'
+        ELSE 'USER'
+    END AS user_type,
+    -- Datos específicos de estudiante
+    STUDENTS.id AS id_student,
+    STUDENTS.rol_student,
+    STUDENTS.rut_student,
+    STUDENTS.campus_student,
+    -- Datos específicos de administrador
+    ADMINISTRATORS.id AS id_admin
+FROM AUTH_USERS
+JOIN USERS ON AUTH_USERS.id = USERS.id
+LEFT JOIN STUDENTS ON USERS.id = STUDENTS.id
+LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
+
+-- =============================================================================
+-- 6. NOTIFICACIONES
+-- =============================================================================
+
+CREATE OR REPLACE VIEW vw_notifications_detailed AS
+SELECT
+    NOTIFICATIONS.id AS id_notification,
+    NOTIFICATIONS.id_user,
+    USERS.common_name AS user_name,
+    USERS.full_name AS user_full_name,
+    USERS.campus AS user_campus,
+    NOTIFICATIONS.notification_type,
+    NOTIFICATIONS.message,
+    NOTIFICATIONS.is_read,
+    NOTIFICATIONS.is_sent,
+    NOTIFICATIONS.id_notification_related_table,
+    CASE NOTIFICATIONS.id_notification_related_table
+        WHEN 1 THEN 'WORKSHOPS'
+        WHEN 2 THEN 'WORKSHOP_INSCRIPTIONS'
+        WHEN 3 THEN 'CONVALIDATIONS'
+        ELSE 'OTRO'
+    END AS related_table_name,
+    NOTIFICATIONS.created_at,
+    NOTIFICATIONS.read_at,
+    NOTIFICATIONS.sent_at,
+    -- Determinar tipo de usuario que recibe la notificación
+    CASE
+        WHEN STUDENTS.id IS NOT NULL THEN 'STUDENT'
+        WHEN ADMINISTRATORS.id IS NOT NULL THEN 'ADMINISTRATOR'
+        ELSE 'USER'
+    END AS user_type,
+    -- Calcular tiempo transcurrido
+    TIMESTAMPDIFF(MINUTE, NOTIFICATIONS.created_at, NOW()) AS minutes_ago,
+    TIMESTAMPDIFF(HOUR, NOTIFICATIONS.created_at, NOW()) AS hours_ago,
+    TIMESTAMPDIFF(DAY, NOTIFICATIONS.created_at, NOW()) AS days_ago
+FROM NOTIFICATIONS
+JOIN USERS ON NOTIFICATIONS.id_user = USERS.id
+LEFT JOIN STUDENTS ON USERS.id = STUDENTS.id
+LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
 
 
--- =====================================================================================
--- Vista: vw_notifications_user_label
--- Descripción: Notificaciones de usuario con tipo y estado de lectura
--- =====================================================================================
+
 CREATE OR REPLACE VIEW vw_notifications_user_label AS
 SELECT
     NOTIFICATIONS.id AS id_notification,
     USERS.id AS id_user,
     USERS.common_name AS user,
-    NOTIFICATION_TYPES.id AS id_notification_type,
-    NOTIFICATION_TYPES.name AS notification_type,
-    NOTIFICATIONS.title,
+    NOTIFICATIONS.notification_type,
     NOTIFICATIONS.message,
     NOTIFICATIONS.is_read AS is_read,
     NOTIFICATIONS.is_sent AS is_sent,
@@ -274,4 +296,8 @@ SELECT
     NOTIFICATIONS.sent_at AS sent_at
 FROM NOTIFICATIONS
 JOIN USERS ON NOTIFICATIONS.id_user = USERS.id
-JOIN NOTIFICATION_TYPES ON NOTIFICATIONS.id_notification_type = NOTIFICATION_TYPES.id;
+LEFT JOIN STUDENTS ON USERS.id = STUDENTS.id
+LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
+
+
+SELECT "Vistas creadas correctamente" AS mensaje;

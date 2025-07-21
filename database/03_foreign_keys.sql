@@ -3,21 +3,6 @@
 --------------------------------------------------------------------------------------------------------
 
 -- =============================================================================
--- RESUMEN DE CLAVES FORÁNEAS
--- =============================================================================
--- Total de foreign keys: 20
--- CURRICULUM_COURSES: 1 | SUBJECTS: 1 | WORKSHOPS: 1 | REQUESTS: 2 | CONVALIDATIONS: 3
--- CONVALIDATIONS_SUBJECTS: 2 | CONVALIDATIONS_WORKSHOPS: 2 | CONVALIDATIONS_EXTERNAL_ACTIVITIES: 1
--- WORKSHOPS_INSCRIPTIONS: 3 | WORKSHOPS_GRADES: 2 | AUTH_USERS: 1 | STUDENTS: 1 | ADMINISTRATORS: 1
--- AUDIT_LOG: 4 | NOTIFICATIONS: 2
-
--- =============================================================================
--- CONFIGURACIÓN INICIAL
--- =============================================================================
-
-
-
--- =============================================================================
 -- CURRICULUM_COURSES
 -- =============================================================================
 
@@ -222,59 +207,9 @@ ON DELETE CASCADE
 ON UPDATE CASCADE;
 
 -- =============================================================================
--- AUDIT_LOG
--- =============================================================================
-
--- Relación con tablas de auditoría
-ALTER TABLE AUDIT_LOG
-ADD CONSTRAINT fk_audit_table
-FOREIGN KEY (id_audit_table)
-REFERENCES AUDIT_TABLES (id)
-ON DELETE RESTRICT
-ON UPDATE CASCADE;
-
--- Relación con acciones de auditoría
-ALTER TABLE AUDIT_LOG
-ADD CONSTRAINT fk_audit_action
-FOREIGN KEY (id_audit_action)
-REFERENCES AUDIT_ACTIONS (id)
-ON DELETE RESTRICT
-ON UPDATE CASCADE;
-
--- Relación con campos de auditoría (opcional)
-ALTER TABLE AUDIT_LOG
-ADD CONSTRAINT fk_audit_field
-FOREIGN KEY (id_audit_field)
-REFERENCES AUDIT_FIELDS (id)
-ON DELETE RESTRICT
-ON UPDATE CASCADE;
-
--- Relación con usuarios de autenticación
-ALTER TABLE AUDIT_LOG
-ADD CONSTRAINT fk_audit_log_user
-FOREIGN KEY (id_user) REFERENCES USERS(id)
-ON DELETE CASCADE
-ON UPDATE CASCADE;
-
--- =============================================================================
 -- NOTIFICATIONS
 -- =============================================================================
 
--- Relación con tipos de notificación
-ALTER TABLE NOTIFICATIONS
-ADD CONSTRAINT fk_notification_type
-FOREIGN KEY (id_notification_type)
-REFERENCES NOTIFICATION_TYPES (id)
-ON DELETE RESTRICT
-ON UPDATE CASCADE;
-
--- Relación con tablas relacionadas (opcional)
-ALTER TABLE NOTIFICATIONS
-ADD CONSTRAINT fk_notification_related_table
-FOREIGN KEY (id_notification_related_table)
-REFERENCES AUDIT_TABLES (id)
-ON DELETE RESTRICT
-ON UPDATE CASCADE;
 
 -- Relación con usuarios de autenticación
 ALTER TABLE NOTIFICATIONS
@@ -299,11 +234,8 @@ ADD CONSTRAINT fk_administrators_user
 FOREIGN KEY (id) REFERENCES USERS(id)
 ON DELETE CASCADE ON UPDATE CASCADE;
 
-
-
 -- =============================================================================
 -- CONFIGURACIÓN FINAL
 -- =============================================================================
-
 
 SELECT "Foreign keys creadas correctamente" AS mensaje;

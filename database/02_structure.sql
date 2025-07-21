@@ -3,23 +3,16 @@
 --------------------------------------------------------------------------------------------------------
 
 -- =============================================================================
--- RESUMEN DE TABLAS
--- =============================================================================
--- Total de tablas: 23
--- Catálogos: 8 | Maestras: 4 | Negocio: 10 | Usuario: 2 | Autenticación: 2 | Auditoría: 2
-
--- =============================================================================
 -- CONFIGURACIÓN INICIAL
 -- =============================================================================
 
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Eliminación de tablas en orden inverso (dependencias primero)
-DROP TABLE IF EXISTS AUDIT_LOG;
 DROP TABLE IF EXISTS NOTIFICATIONS;
 DROP TABLE IF EXISTS AUTH_USERS;
 DROP TABLE IF EXISTS WORKSHOPS_GRADES;
-DROP TABLE IF EXISTS WORKSHOPS_INSCRIPTIONS;
+DROP TABLE IF EXISTS WORKSHOP_INSCRIPTIONS;
 DROP TABLE IF EXISTS CONVALIDATIONS_EXTERNAL_ACTIVITIES;
 DROP TABLE IF EXISTS CONVALIDATIONS_WORKSHOPS;
 DROP TABLE IF EXISTS CONVALIDATIONS_SUBJECTS;
@@ -31,22 +24,10 @@ DROP TABLE IF EXISTS SUBJECTS;
 DROP TABLE IF EXISTS STUDENTS;
 DROP TABLE IF EXISTS ADMINISTRATORS;
 DROP TABLE IF EXISTS DEPARTMENTS;
-DROP TABLE IF EXISTS AUDIT_TABLES;
-DROP TABLE IF EXISTS NOTIFICATION_TYPES;
-DROP TABLE IF EXISTS AUDIT_FIELDS;
-DROP TABLE IF EXISTS AUDIT_ACTIONS;
 DROP TABLE IF EXISTS CONVALIDATION_STATES;
 DROP TABLE IF EXISTS WORKSHOP_STATES;
 DROP TABLE IF EXISTS CURRICULUM_COURSES_TYPES;
 DROP TABLE IF EXISTS CONVALIDATION_TYPES;
-
--- Eliminación de triggers
-DROP TRIGGER IF EXISTS tr_auth_users_before_insert;
-DROP TRIGGER IF EXISTS tr_auth_users_before_update;
-DROP TRIGGER IF EXISTS tr_requests_before_insert;
-DROP TRIGGER IF EXISTS tr_requests_before_update;
-DROP TRIGGER IF EXISTS tr_workshops_inscriptions_before_insert;
-DROP TRIGGER IF EXISTS tr_workshops_inscriptions_before_update;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -74,7 +55,6 @@ CREATE TABLE IF NOT EXISTS WORKSHOP_STATES (
     id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT(1000) NULL,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
@@ -83,41 +63,9 @@ CREATE TABLE IF NOT EXISTS CONVALIDATION_STATES (
     id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT(1000) NULL,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
-
--- Acciones de auditoría
-CREATE TABLE IF NOT EXISTS AUDIT_ACTIONS (
-    id INT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT(1000) NULL,
-    PRIMARY KEY (id)
-);
-
--- Campos de auditoría
-CREATE TABLE IF NOT EXISTS AUDIT_FIELDS (
-    id INT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT(1000) NULL,
-    PRIMARY KEY (id)
-);
-
--- Tipos de notificación
-CREATE TABLE IF NOT EXISTS NOTIFICATION_TYPES (
-    id INT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT(1000) NULL,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (id)
-);
-
--- Nombres de tablas para auditoría
-CREATE TABLE IF NOT EXISTS AUDIT_TABLES (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
-);
 
 -- =============================================================================
 -- TABLAS MAESTRAS
@@ -163,6 +111,7 @@ CREATE TABLE IF NOT EXISTS WORKSHOPS (
     syllabus_data LONGBLOB DEFAULT NULL,
     available TINYINT(1) NOT NULL DEFAULT 1,
     id_workshop_state INT NOT NULL,
+    limit_inscriptions INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
 
@@ -209,6 +158,7 @@ CREATE TABLE IF NOT EXISTS CONVALIDATIONS_WORKSHOPS (
 CREATE TABLE IF NOT EXISTS CONVALIDATIONS_EXTERNAL_ACTIVITIES (
     id_convalidation INT NOT NULL,
     activity_name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NULL,
     file_name VARCHAR(255) NULL,
     file_data LONGBLOB NULL,
     PRIMARY KEY (id_convalidation)
@@ -268,7 +218,6 @@ CREATE TABLE IF NOT EXISTS USERS (
     campus VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 );
 
@@ -287,33 +236,18 @@ CREATE TABLE IF NOT EXISTS ADMINISTRATORS (
 );
 
 -- =============================================================================
--- TABLAS DE AUDITORÍA
+-- TABLAS DE NOTIFICACIONES
 -- =============================================================================
-
--- Registro de auditoría
-CREATE TABLE IF NOT EXISTS AUDIT_LOG (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_user INT NOT NULL,
-    id_audit_table INT NOT NULL,
-    id_record INT NOT NULL,
-    id_audit_action INT NOT NULL,
-    id_audit_field INT NULL,
-    old_value VARCHAR(1000) NULL,
-    new_value VARCHAR(1000) NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 -- Notificaciones del sistema
 CREATE TABLE IF NOT EXISTS NOTIFICATIONS (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
-    id_notification_type INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
+    notification_type VARCHAR(50) NOT NULL,
     message TEXT(1000) NOT NULL,
     is_read TINYINT(1) DEFAULT 0,
     is_sent TINYINT(1) DEFAULT 0,
     id_notification_related_table INT NULL,
-    related_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     read_at TIMESTAMP NULL,
     sent_at TIMESTAMP NULL
