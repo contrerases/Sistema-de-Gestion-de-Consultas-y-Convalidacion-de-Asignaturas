@@ -14,6 +14,7 @@ from api.v1.endpoints.statistics import router as statistics_router
 from api.v1.endpoints.workshop_inscriptions import router as workshop_inscriptions_router
 from api.v1.endpoints.workshop_grades import router as workshop_grades_router
 from api.v1.endpoints.workshop import router as workshop_router
+from api.v1.endpoints.notifications import router as notifications_router
 
 
 # Crear la aplicación
@@ -45,5 +46,4 @@ app.include_router(statistics_router, prefix=f"{API_PREFIX}")
 app.include_router(workshop_inscriptions_router, prefix=f"{API_PREFIX}")
 app.include_router(workshop_grades_router, prefix=f"{API_PREFIX}")
 app.include_router(workshop_router, prefix=f"{API_PREFIX}")
-
-
+app.include_router(notifications_router, prefix=f"{API_PREFIX}")

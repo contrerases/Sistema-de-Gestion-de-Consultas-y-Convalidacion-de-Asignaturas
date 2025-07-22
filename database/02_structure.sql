@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS NOTIFICATIONS (
     message TEXT(1000) NOT NULL,
     is_read TINYINT(1) DEFAULT 0,
     is_sent TINYINT(1) DEFAULT 0,
-    id_notification_related_table INT NULL,
+    id_event_type INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     read_at TIMESTAMP NULL,
     sent_at TIMESTAMP NULL

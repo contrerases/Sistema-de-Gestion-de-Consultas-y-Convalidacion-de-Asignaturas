@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 import mariadb
-from crud.notification import create_notification, get_notifications, mark_notification_read
+from crud.notification import create_notification, get_notifications, mark_notification_read, get_notifications_not_read_by_id_user
 from schemas.notification.notification_in import NotificationIn
 from schemas.notification.notification_out import NotificationOut
 from schemas.notification.notification_filter_in import NotificationFilterIn
@@ -29,4 +29,11 @@ def mark_notification_read_service(id_notification: int, id_user: int):
     try:
         return mark_notification_read(id_notification, id_user)
     except mariadb.Error as e:
-        raise HTTPException(status_code=400, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e))
+
+def get_notifications_not_read_by_id_user_service(id_user: int):
+    try:
+        rows = get_notifications_not_read_by_id_user(id_user)
+        return [NotificationOut(**row) for row in rows]
+    except mariadb.Error as e:
+        raise HTTPException(status_code=500, detail=str(e)) 

@@ -22,3 +22,9 @@ def mark_notification_read(id_notification, id_user):
         with conn.cursor() as cursor:
             cursor.callproc(PROCEDURES['mark_notification_read'], [id_notification, id_user])
             return True 
+
+def get_notifications_not_read_by_id_user(id_user):
+    with get_db_connection() as conn:
+        with conn.cursor(dictionary=True) as cursor:
+            cursor.callproc(PROCEDURES['get_notifications'], [id_user, None, 0, None, None, None])
+            return cursor.fetchall()

@@ -23,7 +23,8 @@ SELECT
     ADMINISTRATORS.id AS id_admin,
     USERS.common_name AS name_admin,
     USERS.campus AS campus_admin,
-    AUTH_USERS.email AS email_admin
+    AUTH_USERS.email AS email_admin,
+    AUTH_USERS.password_hash AS password_hash
 FROM ADMINISTRATORS
 JOIN USERS ON ADMINISTRATORS.id = USERS.id
 JOIN AUTH_USERS ON AUTH_USERS.id = USERS.id;
@@ -147,10 +148,7 @@ JOIN vw_convalidations ON CONVALIDATIONS_EXTERNAL_ACTIVITIES.id_convalidation = 
 CREATE OR REPLACE VIEW vw_workshops_inscriptions AS
 SELECT
     vw_students.id_student,
-    vw_students.name_student,
     vw_students.rut_student,
-    vw_students.campus_student,
-    vw_students.rol_student,
     WORKSHOPS_INSCRIPTIONS.id_workshop,
     WORKSHOPS.name AS workshop,
     WORKSHOPS.semester,
@@ -166,10 +164,7 @@ LEFT JOIN CURRICULUM_COURSES ON WORKSHOPS_INSCRIPTIONS.id_curriculum_course = CU
 CREATE OR REPLACE VIEW vw_workshops_grades AS
 SELECT
     vw_students.id_student,
-    vw_students.name_student,
     vw_students.rut_student,
-    vw_students.rol_student,
-    vw_students.campus_student,
     WORKSHOPS_GRADES.id_workshop,
     WORKSHOPS.name AS workshop,
     WORKSHOPS.semester,
@@ -220,8 +215,6 @@ SELECT
     USERS.common_name,
     USERS.full_name,
     USERS.campus,
-    USERS.created_at,
-    USERS.updated_at,
     -- Determinar tipo de usuario
     CASE
         WHEN STUDENTS.id IS NOT NULL THEN 'STUDENT'
@@ -247,21 +240,9 @@ LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
 CREATE OR REPLACE VIEW vw_notifications_detailed AS
 SELECT
     NOTIFICATIONS.id AS id_notification,
-    NOTIFICATIONS.id_user,
-    USERS.common_name AS user_name,
-    USERS.full_name AS user_full_name,
-    USERS.campus AS user_campus,
+    NOTIFICATIONS.id_user as id_auth_user, 
     NOTIFICATIONS.notification_type,
     NOTIFICATIONS.message,
-    NOTIFICATIONS.is_read,
-    NOTIFICATIONS.is_sent,
-    NOTIFICATIONS.id_notification_related_table,
-    CASE NOTIFICATIONS.id_notification_related_table
-        WHEN 1 THEN 'WORKSHOPS'
-        WHEN 2 THEN 'WORKSHOP_INSCRIPTIONS'
-        WHEN 3 THEN 'CONVALIDATIONS'
-        ELSE 'OTRO'
-    END AS related_table_name,
     NOTIFICATIONS.created_at,
     NOTIFICATIONS.read_at,
     NOTIFICATIONS.sent_at,
@@ -302,13 +283,16 @@ LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
 -- =============================================================================
 -- CURSOS CURRICULARES NO CONVALIDADOS POR ESTUDIANTE
 -- =============================================================================
-CREATE OR REPLACE VIEW vw_curriculum_courses_not_convalidated AS
+CREATE OR REPLACE VIEW vw_curriculum_courses_not_convalidated_by_student AS
 SELECT
-    STUDENTS.id AS id_student,
     CURRICULUM_COURSES.id AS id_curriculum_course,
-    CURRICULUM_COURSES.name AS curriculum_course
+    CURRICULUM_COURSES.name AS curriculum_course,
+    CURRICULUM_COURSES.id_curriculum_course_type,
+    CURRICULUM_COURSES_TYPES.name AS curriculum_course_type
 FROM STUDENTS
 CROSS JOIN CURRICULUM_COURSES
+JOIN CURRICULUM_COURSES_TYPES
+  ON CURRICULUM_COURSES.id_curriculum_course_type = CURRICULUM_COURSES_TYPES.id
 WHERE CURRICULUM_COURSES.id NOT IN (
     SELECT vw_convalidations.id_curriculum_course
     FROM vw_convalidations
