@@ -1,0 +1,1 @@
+# Funciones para formatear fechas, textos y otros datos. 

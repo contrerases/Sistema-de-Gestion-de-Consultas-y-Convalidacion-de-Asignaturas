@@ -1,6 +1,11 @@
 fastapi
 uvicorn
-pydantic
 mariadb
+bcrypt
 python-dotenv
-mysql-connector-python
+pydantic
+email-validator
+pydantic-settings
+autopep8
+PyJWT
+python-multipart

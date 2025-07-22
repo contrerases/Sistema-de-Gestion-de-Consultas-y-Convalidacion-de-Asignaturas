@@ -299,5 +299,21 @@ JOIN USERS ON NOTIFICATIONS.id_user = USERS.id
 LEFT JOIN STUDENTS ON USERS.id = STUDENTS.id
 LEFT JOIN ADMINISTRATORS ON USERS.id = ADMINISTRATORS.id;
 
+-- =============================================================================
+-- CURSOS CURRICULARES NO CONVALIDADOS POR ESTUDIANTE
+-- =============================================================================
+CREATE OR REPLACE VIEW vw_curriculum_courses_not_convalidated AS
+SELECT
+    STUDENTS.id AS id_student,
+    CURRICULUM_COURSES.id AS id_curriculum_course,
+    CURRICULUM_COURSES.name AS curriculum_course
+FROM STUDENTS
+CROSS JOIN CURRICULUM_COURSES
+WHERE CURRICULUM_COURSES.id NOT IN (
+    SELECT vw_convalidations.id_curriculum_course
+    FROM vw_convalidations
+    WHERE vw_convalidations.id_student = STUDENTS.id
+);
+
 
 SELECT "Vistas creadas correctamente" AS mensaje;

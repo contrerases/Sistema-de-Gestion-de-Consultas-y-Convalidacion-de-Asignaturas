@@ -2,7 +2,8 @@ FROM node:22.14 AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+# Eliminar la siguiente línea si existe
+# COPY .eslintignore ./
 RUN npm run build
 
 FROM nginx:stable-alpine

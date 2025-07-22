@@ -1,0 +1,1 @@
+# Funciones auxiliares reutilizables en todo el proyecto. 

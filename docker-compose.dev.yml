@@ -72,12 +72,37 @@ services:
     ports:
       - "${DB_PORT}:3306"  # Solo se expone si DB_PORT está definido
     volumes:
-      - db_data:/var/lib/mysql  # Datos persistentes
-      # Scripts de inicialización
-      - ./database/00_init_database.sql:/docker-entrypoint-initdb.d/00_init_database.sql
-      - ./database/01_structure.sql:/docker-entrypoint-initdb.d/01_structure.sql
-      - ./database/02_initial_data.sql:/docker-entrypoint-initdb.d/02_initial_data.sql
-      - ./database/03_procedures.sql:/docker-entrypoint-initdb.d/03_procedures.sql
+      - db_data:/var/lib/mysql
+      - type: bind
+        source: ./database/01_init_database.sql
+        target: /docker-entrypoint-initdb.d/01_init_database.sql
+      - type: bind
+        source: ./database/02_structure.sql
+        target: /docker-entrypoint-initdb.d/02_structure.sql
+      - type: bind
+        source: ./database/03_foreign_keys.sql
+        target: /docker-entrypoint-initdb.d/03_foreign_keys.sql
+      - type: bind
+        source: ./database/04_constraints.sql
+        target: /docker-entrypoint-initdb.d/04_constraints.sql
+      - type: bind
+        source: ./database/05_indexes.sql
+        target: /docker-entrypoint-initdb.d/05_indexes.sql
+      - type: bind
+        source: ./database/06_views.sql
+        target: /docker-entrypoint-initdb.d/06_views.sql
+      - type: bind
+        source: ./database/07_procedures.sql
+        target: /docker-entrypoint-initdb.d/07_procedures.sql
+      - type: bind
+        source: ./database/08_events.sql
+        target: /docker-entrypoint-initdb.d/08_events.sql
+      - type: bind
+        source: ./database/09_triggers.sql
+        target: /docker-entrypoint-initdb.d/09_triggers.sql
+      - type: bind
+        source: ./database/10_initial_data.sql
+        target: /docker-entrypoint-initdb.d/10_initial_data.sql
     command: >-
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci

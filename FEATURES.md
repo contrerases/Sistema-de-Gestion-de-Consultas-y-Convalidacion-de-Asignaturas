@@ -8,7 +8,6 @@
 2. Solicitudes de Convalidación
    - Crear nueva solicitud de convalidación
    - Agregar convalidaciones por tipo: asignaturas universitarias, talleres completados, cursos certificados (adjunto), proyectos personales (adjunto)
-   - Modificar solicitud antes de ser revisada
    - Ver historial de solicitudes enviadas
    - Ver estado actual de cada solicitud
    - Ver comentarios del revisor
@@ -24,9 +23,9 @@
    - Ver historial de talleres cursados
    - Ver calificaciones obtenidas
 
-4. Progreso Académico
+4. Progreso Académico *
    - Ver resumen de cursos curriculares completados
-   - Ver progreso en el plan de estudios
+   - Ver progreso en el plan de estudios  
 
 5. Notificaciones
    - Recibir notificaciones sobre cambios en solicitudes, inscripciones, talleres, calificaciones
@@ -34,7 +33,7 @@
 
 6. Ayuda
    - Ver guías sobre el proceso de convalidación
-   - Descargar documentos de ayuda
+   - Descargar documentos de ayuda (FICHA PROYECTO PERSONAL)
 
 ---
 
@@ -47,13 +46,13 @@
 2. Gestión de Solicitudes
    - Ver solicitudes pendientes de revisión
    - Ver historial completo de solicitudes
-   - Revisar solicitudes: aprobar/rechazar convalidaciones, agregar comentarios
+   - Revisar solicitude s, agregar comentarios
    - Filtrar solicitudes por estado, estudiante, fecha, tipo de convalidación, departamento
-   - Exportar reportes de convalidaciones (Excel/PDF)
+  
 
 3. Gestión de Talleres
    - Crear, editar, eliminar talleres
-   - Cambiar estado de taller (activo/inactivo/cancelado)
+   - Cambiar estado de taller 
    - Subir syllabus del taller
    - Ver lista de estudiantes inscritos
    - Gestionar inscripciones
@@ -73,3 +72,9 @@
    - CRUD de tipos de convalidación
    - CRUD de estados de solicitud
    - CRUD de roles y otros catálogos relevantes
+
+6. Estadisticas
+   - Crear reportes de estadisicas importantes para dashboard de administrador.
+
+7. Perfil de estudiante.
+- Obtener un resumen de convalidaciones y talleres con notas del estudiante.

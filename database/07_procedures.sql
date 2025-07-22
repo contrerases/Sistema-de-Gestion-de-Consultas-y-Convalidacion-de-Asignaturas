@@ -2,9 +2,16 @@
 -- PROCEDIMIENTOS ALMACENADOS
 -- =============================================================================
 
+
 -- =============================================================================
 -- 1. GENERALES
 -- =============================================================================
+
+-- CATÁLOGOS Y ESTADOS
+DROP PROCEDURE IF EXISTS sp_get_convalidation_types;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_types;
+DROP PROCEDURE IF EXISTS sp_get_workshop_states;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_states;
 
 -- DEPARTMENTS
 DROP PROCEDURE IF EXISTS sp_get_departments;
@@ -24,6 +31,102 @@ DROP PROCEDURE IF EXISTS sp_create_curriculum_course;
 DROP PROCEDURE IF EXISTS sp_update_curriculum_course;
 DROP PROCEDURE IF EXISTS sp_delete_curriculum_course;
 
+-- Cursos curriculares no convalidados por estudiante
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_not_convalidated_by_student;
+
+
+-- =============================================================================
+-- 0. CATÁLOGOS Y ESTADOS
+-- =============================================================================
+
+
+-- Tipos de convalidación
+CREATE PROCEDURE sp_get_convalidation_types()
+BEGIN
+    SELECT * FROM CONVALIDATION_TYPES;
+END//
+
+-- Tipos de cursos del currículum
+
+CREATE PROCEDURE sp_get_curriculum_courses_types()
+BEGIN
+    SELECT * FROM CURRICULUM_COURSES_TYPES;
+END//
+
+-- Estados de talleres
+
+CREATE PROCEDURE sp_get_workshop_states()
+BEGIN
+    SELECT * FROM WORKSHOP_STATES;
+END//
+
+-- Estados de convalidaciones
+DROP PROCEDURE IF EXISTS sp_get_convalidation_states;
+CREATE PROCEDURE sp_get_convalidation_states()
+BEGIN
+    SELECT * FROM CONVALIDATION_STATES;
+END//
+
+
+
+-- =============================================================================
+-- 2. CONVALIDACIONES
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_get_convalidations;
+DROP PROCEDURE IF EXISTS sp_create_convalidation;
+DROP PROCEDURE IF EXISTS sp_drop_convalidation_while_no_reviewed_by_id;
+DROP PROCEDURE IF EXISTS sp_review_convalidation;
+
+-- =============================================================================
+-- 3. TALLERES
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_get_workshops;
+DROP PROCEDURE IF EXISTS sp_update_workshop;
+DROP PROCEDURE IF EXISTS sp_delete_workshop;
+DROP PROCEDURE IF EXISTS sp_create_workshop;
+DROP PROCEDURE IF EXISTS sp_get_workshops_inscriptions;
+DROP PROCEDURE IF EXISTS sp_unregister_workshop_after_start;
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades;
+DROP PROCEDURE IF EXISTS sp_cancel_workshop_inscription;
+DROP PROCEDURE IF EXISTS sp_change_workshop_state;
+
+-- =============================================================================
+-- 4. USERS
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_get_students;
+DROP PROCEDURE IF EXISTS sp_create_student;
+DROP PROCEDURE IF EXISTS sp_update_student;
+DROP PROCEDURE IF EXISTS sp_delete_student;
+DROP PROCEDURE IF EXISTS sp_get_administrators;
+DROP PROCEDURE IF EXISTS sp_create_administrator;
+DROP PROCEDURE IF EXISTS sp_update_administrator;
+DROP PROCEDURE IF EXISTS sp_delete_administrator;
+
+-- =============================================================================
+-- 5. AUTH
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_login;
+DROP PROCEDURE IF EXISTS sp_logout;
+DROP PROCEDURE IF EXISTS sp_change_password;
+DROP PROCEDURE IF EXISTS sp_reset_password;
+DROP PROCEDURE IF EXISTS sp_get_user_by_email;
+
+-- =============================================================================
+-- 6. NOTIFICACIONES
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_create_notification;
+DROP PROCEDURE IF EXISTS sp_get_notifications;
+DROP PROCEDURE IF EXISTS sp_mark_notification_read;
+
+-- =============================================================================
+-- DASHBOARD STATISTICS
+-- =============================================================================
+DROP PROCEDURE IF EXISTS sp_get_dashboard_general_stats;
+DROP PROCEDURE IF EXISTS sp_get_dashboard_convalidation_stats;
+DROP PROCEDURE IF EXISTS sp_get_dashboard_workshop_stats;
+DROP PROCEDURE IF EXISTS sp_get_dashboard_student_stats;
+DROP PROCEDURE IF EXISTS sp_get_dashboard_activity_stats;
+
 DELIMITER //
 
 -- DEPARTMENTS
@@ -34,61 +137,33 @@ END//
 
 CREATE PROCEDURE sp_create_department(IN p_name VARCHAR(255))
 BEGIN
-    DECLARE v_msg VARCHAR(255);
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET v_msg = CONCAT('Error al crear departamento: ', p_name);
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
-    END;
     START TRANSACTION;
-    INSERT INTO DEPARTMENTS (name) VALUES (p_name);
+    IF NOT EXISTS (SELECT 1 FROM DEPARTMENTS WHERE name = p_name) THEN
+        INSERT INTO DEPARTMENTS (name) VALUES (p_name);
+    ELSE
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El departamento ya existe';
+    END IF;
     COMMIT;
-    SELECT 'Departamento creado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_update_department(IN p_department_id INT, IN p_name VARCHAR(255))
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar departamento';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el departamento existe
-    SELECT COUNT(*) INTO v_exists FROM DEPARTMENTS WHERE id = p_department_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM DEPARTMENTS WHERE id = p_department_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El departamento no existe';
     END IF;
-
     UPDATE DEPARTMENTS SET name = p_name WHERE id = p_department_id;
     COMMIT;
-    SELECT 'Departamento actualizado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_delete_department(IN p_department_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar departamento';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el departamento existe
-    SELECT COUNT(*) INTO v_exists FROM DEPARTMENTS WHERE id = p_department_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM DEPARTMENTS WHERE id = p_department_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El departamento no existe';
     END IF;
-
     DELETE FROM DEPARTMENTS WHERE id = p_department_id;
     COMMIT;
-    SELECT 'Departamento eliminado exitosamente' AS mensaje;
 END//
 
 -- SUBJECTS
@@ -104,17 +179,16 @@ CREATE PROCEDURE sp_create_subject(
     IN p_credits INT
 )
 BEGIN
-    DECLARE v_msg VARCHAR(255);
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET v_msg = CONCAT('Error al crear asignatura: ', p_name);
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
-    END;
     START TRANSACTION;
-    INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES (p_acronym, p_name, p_id_department, p_credits);
+    IF NOT EXISTS (SELECT 1 FROM DEPARTMENTS WHERE id = p_id_department) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El departamento no existe';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM SUBJECTS WHERE acronym = p_acronym AND name = p_name AND id_department = p_id_department) THEN
+        INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES (p_acronym, p_name, p_id_department, p_credits);
+    ELSE
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'La asignatura ya existe';
+    END IF;
     COMMIT;
-    SELECT 'Asignatura creada exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_update_subject(
@@ -125,46 +199,25 @@ CREATE PROCEDURE sp_update_subject(
     IN p_credits INT
 )
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar asignatura';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que la asignatura existe
-    SELECT COUNT(*) INTO v_exists FROM SUBJECTS WHERE id = p_subject_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM SUBJECTS WHERE id = p_subject_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'La asignatura no existe';
     END IF;
-
+    IF NOT EXISTS (SELECT 1 FROM DEPARTMENTS WHERE id = p_id_department) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El departamento no existe';
+    END IF;
     UPDATE SUBJECTS SET acronym = p_acronym, name = p_name, id_department = p_id_department, credits = p_credits WHERE id = p_subject_id;
     COMMIT;
-    SELECT 'Asignatura actualizada exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_delete_subject(IN p_subject_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar asignatura';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que la asignatura existe
-    SELECT COUNT(*) INTO v_exists FROM SUBJECTS WHERE id = p_subject_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM SUBJECTS WHERE id = p_subject_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'La asignatura no existe';
     END IF;
-
     DELETE FROM SUBJECTS WHERE id = p_subject_id;
     COMMIT;
-    SELECT 'Asignatura eliminada exitosamente' AS mensaje;
 END//
 
 -- CURRICULUM_COURSES
@@ -178,17 +231,16 @@ CREATE PROCEDURE sp_create_curriculum_course(
     IN p_id_curriculum_course_type INT
 )
 BEGIN
-    DECLARE v_msg VARCHAR(255);
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET v_msg = CONCAT('Error al crear curso curricular: ', p_name);
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
-    END;
     START TRANSACTION;
-    INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES (p_name, p_id_curriculum_course_type);
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES_TYPES WHERE id = p_id_curriculum_course_type) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El tipo de curso curricular no existe';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES WHERE name = p_name AND id_curriculum_course_type = p_id_curriculum_course_type) THEN
+        INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES (p_name, p_id_curriculum_course_type);
+    ELSE
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El curso curricular ya existe';
+    END IF;
     COMMIT;
-    SELECT 'Curso curricular creado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_update_curriculum_course(
@@ -197,56 +249,38 @@ CREATE PROCEDURE sp_update_curriculum_course(
     IN p_id_curriculum_course_type INT
 )
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar curso curricular';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el curso curricular existe
-    SELECT COUNT(*) INTO v_exists FROM CURRICULUM_COURSES WHERE id = p_curriculum_course_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES WHERE id = p_curriculum_course_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El curso curricular no existe';
     END IF;
-
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES_TYPES WHERE id = p_id_curriculum_course_type) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El tipo de curso curricular no existe';
+    END IF;
     UPDATE CURRICULUM_COURSES SET name = p_name, id_curriculum_course_type = p_id_curriculum_course_type WHERE id = p_curriculum_course_id;
     COMMIT;
-    SELECT 'Curso curricular actualizado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_delete_curriculum_course(IN p_curriculum_course_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar curso curricular';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el curso curricular existe
-    SELECT COUNT(*) INTO v_exists FROM CURRICULUM_COURSES WHERE id = p_curriculum_course_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES WHERE id = p_curriculum_course_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El curso curricular no existe';
     END IF;
-
     DELETE FROM CURRICULUM_COURSES WHERE id = p_curriculum_course_id;
     COMMIT;
-    SELECT 'Curso curricular eliminado exitosamente' AS mensaje;
 END//
+
+-- =============================================================================
+-- PROCEDIMIENTO: Cursos curriculares no convalidados por estudiante
+-- =============================================================================
+CREATE PROCEDURE sp_get_curriculum_courses_not_convalidated_by_student(IN p_id_student INT)
+BEGIN
+    SELECT * FROM vw_curriculum_courses_not_convalidated WHERE id_student = p_id_student;
+END;
 
 -- =============================================================================
 -- 2. CONVALIDACIONES
 -- =============================================================================
-
-DROP PROCEDURE IF EXISTS sp_get_convalidations;
-DROP PROCEDURE IF EXISTS sp_create_convalidation;
-DROP PROCEDURE IF EXISTS sp_drop_convalidation_while_no_reviewed_by_id;
-DROP PROCEDURE IF EXISTS sp_review_convalidation;
 
 CREATE PROCEDURE sp_get_convalidations(
     IN p_id_request INT,
@@ -260,22 +294,11 @@ CREATE PROCEDURE sp_get_convalidations(
     IN p_student_name VARCHAR(255),
     IN p_id_reviewed_by INT,
     IN p_id_workshop INT,
-    IN p_activity_name VARCHAR(255),
-    IN p_file_name VARCHAR(255),
-    IN p_file_data LONGBLOB,
     IN p_id_subject INT,
     IN p_id_department INT,
     IN p_student_campus VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al obtener convalidaciones';
-    END;
-
-    START TRANSACTION;
-
     -- Convalidaciones de asignaturas
     SELECT * FROM vw_convalidation_subjects
     WHERE (p_id_convalidation IS NULL OR id_convalidation = p_id_convalidation)
@@ -312,7 +335,6 @@ BEGIN
     SELECT * FROM vw_convalidation_external_activities
     WHERE (p_id_convalidation IS NULL OR id_convalidation = p_id_convalidation)
         AND (p_activity_name IS NULL OR activity_name LIKE CONCAT('%', p_activity_name, '%'))
-        AND (p_file_name IS NULL OR file_name LIKE CONCAT('%', p_file_name, '%'))
         AND (p_id_request IS NULL OR id_request = p_id_request)
         AND (p_id_convalidation_type IS NULL OR id_convalidation_type = p_id_convalidation_type)
         AND (p_id_convalidation_state IS NULL OR id_convalidation_state = p_id_convalidation_state)
@@ -324,7 +346,6 @@ BEGIN
         AND (p_student_name IS NULL OR student_name = p_student_name)
         AND (p_student_campus IS NULL OR student_campus = p_student_campus);
 
-    COMMIT;
 END//
 
 CREATE PROCEDURE sp_create_convalidation(
@@ -343,14 +364,38 @@ BEGIN
     DECLARE v_id_request INT;
     DECLARE v_id_convalidation INT;
     DECLARE v_id_convalidation_state INT;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear convalidación';
-    END;
-
     START TRANSACTION;
+   
+
+    -- Validar existencia de estudiante
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_id_student) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El estudiante no existe';
+    END IF;
+
+    -- Validar existencia de tipo de convalidación
+    IF NOT EXISTS (SELECT 1 FROM CONVALIDATION_TYPES WHERE id = p_id_convalidation_type) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El tipo de convalidación no existe';
+    END IF;
+
+    -- Validar existencia de curso curricular
+    IF NOT EXISTS (SELECT 1 FROM CURRICULUM_COURSES WHERE id = p_id_curriculum_course) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El curso curricular no existe';
+    END IF;
+
+    -- Validar existencia de estado ENVIADA
+    IF NOT EXISTS (SELECT 1 FROM CONVALIDATION_STATES WHERE name = 'ENVIADA') THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'No existe el estado ENVIADA';
+    END IF;
+
+    -- Validar existencia de asignatura si corresponde
+    IF p_id_subject IS NOT NULL AND NOT EXISTS (SELECT 1 FROM SUBJECTS WHERE id = p_id_subject) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'La asignatura no existe';
+    END IF;
+
+    -- Validar existencia de taller si corresponde
+    IF p_id_workshop IS NOT NULL AND NOT EXISTS (SELECT 1 FROM WORKSHOPS WHERE id = p_id_workshop) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El taller no existe';
+    END IF;
 
     -- Crear solicitud
     INSERT INTO REQUESTS (sent_at, id_student) VALUES (CURRENT_TIMESTAMP, p_id_student);
@@ -370,6 +415,9 @@ BEGIN
     END IF;
 
     IF p_activity_name IS NOT NULL THEN
+        IF p_file_name IS NULL OR p_file_data IS NULL THEN
+            SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Falta el archivo para la actividad externa';
+        END IF;
         INSERT INTO CONVALIDATIONS_EXTERNAL_ACTIVITIES (id_convalidation, activity_name, description, file_name, file_data)
         VALUES (v_id_convalidation, p_activity_name, p_description, p_file_name, p_file_data);
     END IF;
@@ -379,7 +427,6 @@ BEGIN
     END IF;
 
     COMMIT;
-    SELECT 'Convalidación creada exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_drop_convalidation_while_no_reviewed_by_id(IN p_id_convalidation INT)
@@ -388,19 +435,14 @@ BEGIN
     DECLARE v_enviada_state_id INT;
     DECLARE v_id_request INT;
     DECLARE v_remaining_convalidations INT;
-
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar convalidación';
-    END;
+    START TRANSACTION;
+   
 
     SELECT id INTO v_enviada_state_id FROM CONVALIDATION_STATES WHERE name = 'ENVIADA';
 
     SELECT id_convalidation_state, id_request INTO v_convalidation_state, v_id_request
     FROM CONVALIDATIONS WHERE id = p_id_convalidation;
 
-    START TRANSACTION;
     DELETE FROM CONVALIDATIONS WHERE id = p_id_convalidation;
 
     SELECT COUNT(*) INTO v_remaining_convalidations FROM CONVALIDATIONS WHERE id_request = v_id_request;
@@ -409,8 +451,9 @@ BEGIN
     END IF;
 
     COMMIT;
-    SELECT 'Convalidación eliminada exitosamente' AS mensaje;
 END//
+
+
 
 CREATE PROCEDURE sp_review_convalidation(
     IN p_id_convalidation INT,
@@ -420,13 +463,22 @@ CREATE PROCEDURE sp_review_convalidation(
 )
 BEGIN
     DECLARE v_id_request INT;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al revisar convalidación';
-    END;
-
     START TRANSACTION;
+
+    -- Validar existencia de convalidación
+    IF NOT EXISTS (SELECT 1 FROM CONVALIDATIONS WHERE id = p_id_convalidation) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'La convalidación no existe';
+    END IF;
+
+    -- Validar existencia de estado
+    IF NOT EXISTS (SELECT 1 FROM CONVALIDATION_STATES WHERE id = p_id_convalidation_state) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El estado de convalidación no existe';
+    END IF;
+
+    -- Validar existencia de revisor
+    IF NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = p_id_reviewed_by) THEN
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'El revisor no existe';
+    END IF;
 
     -- Obtener id_request de la convalidación
     SELECT id_request INTO v_id_request FROM CONVALIDATIONS WHERE id = p_id_convalidation;
@@ -444,20 +496,11 @@ BEGIN
     WHERE id = v_id_request;
 
     COMMIT;
-    SELECT 'Convalidación revisada exitosamente' AS mensaje;
 END//
 
 -- =============================================================================
 -- 3. TALLERES
 -- =============================================================================
-
-DROP PROCEDURE IF EXISTS sp_get_workshops;
-DROP PROCEDURE IF EXISTS sp_update_workshop;
-DROP PROCEDURE IF EXISTS sp_delete_workshop;
-DROP PROCEDURE IF EXISTS sp_create_workshop;
-DROP PROCEDURE IF EXISTS sp_get_workshops_inscriptions;
-DROP PROCEDURE IF EXISTS sp_unregister_workshop_after_start;
-DROP PROCEDURE IF EXISTS sp_get_workshop_grades;
 
 CREATE PROCEDURE sp_get_workshops(
     IN p_semester ENUM('1', '2'),
@@ -466,6 +509,7 @@ CREATE PROCEDURE sp_get_workshops(
     IN p_workshop_state_id INT
 )
 BEGIN
+    START TRANSACTION;
     SELECT * , (SELECT COUNT(*) FROM WORKSHOPS_INSCRIPTIONS
     WHERE WORKSHOPS_INSCRIPTIONS.id_workshop = vw_workshops.id_workshop) AS inscriptions_count
     FROM vw_workshops
@@ -474,6 +518,7 @@ BEGIN
         AND (p_available IS NULL OR vw_workshops.available = p_available)
         AND (p_workshop_state_id IS NULL OR vw_workshops.id_workshop_state = p_workshop_state_id)
     ORDER BY vw_workshops.year DESC, vw_workshops.semester DESC, vw_workshops.workshop;
+    COMMIT;
 END//
 
 CREATE PROCEDURE sp_get_workshops_inscriptions(
@@ -482,7 +527,8 @@ CREATE PROCEDURE sp_get_workshops_inscriptions(
     IN p_is_convalidated TINYINT(1),
     IN p_curriculum_course_id INT
 )
-BEGIN
+BEGIN 
+    START TRANSACTION;
     SELECT
         WORKSHOPS_INSCRIPTIONS.id AS id_inscription,
         vw_workshops_inscriptions.*
@@ -494,9 +540,9 @@ BEGIN
         AND (p_is_convalidated IS NULL OR vw_workshops_inscriptions.is_convalidated = p_is_convalidated)
         AND (p_curriculum_course_id IS NULL OR vw_workshops_inscriptions.id_curriculum_course = p_curriculum_course_id)
     ORDER BY vw_workshops_inscriptions.year DESC, vw_workshops_inscriptions.semester DESC, vw_workshops_inscriptions.workshop, vw_workshops_inscriptions.name_student;
+    COMMIT;
 END//
 
-DROP PROCEDURE IF EXISTS sp_create_workshop;
 CREATE PROCEDURE sp_create_workshop(
     IN p_name VARCHAR(255),
     IN p_semester ENUM('1', '2'),
@@ -512,27 +558,26 @@ CREATE PROCEDURE sp_create_workshop(
     IN p_id_workshop_state INT
 )
 BEGIN
-    DECLARE v_msg VARCHAR(255);
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET v_msg = CONCAT('Error al crear taller: ', p_name);
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
-    END;
     START TRANSACTION;
-    INSERT INTO WORKSHOPS (
-        name, semester, year, professor, description,
-        inscription_start_date, inscription_end_date,
-        course_start_date, course_end_date,
-        available, limit_inscriptions, id_workshop_state
-    ) VALUES (
-        p_name, p_semester, p_year, p_professor, p_description,
-        p_inscription_start_date, p_inscription_end_date,
-        p_course_start_date, p_course_end_date,
-        p_available, p_limit_inscriptions, p_id_workshop_state
-    );
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOP_STATES WHERE id = p_id_workshop_state) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estado del taller no existe';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOPS WHERE name = p_name AND semester = p_semester AND year = p_year AND professor = p_professor AND description = p_description AND inscription_start_date = p_inscription_start_date AND inscription_end_date = p_inscription_end_date AND course_start_date = p_course_start_date AND course_end_date = p_course_end_date AND available = p_available AND limit_inscriptions = p_limit_inscriptions AND id_workshop_state = p_id_workshop_state) THEN
+        INSERT INTO WORKSHOPS (
+            name, semester, year, professor, description,
+            inscription_start_date, inscription_end_date,
+            course_start_date, course_end_date,
+            available, limit_inscriptions, id_workshop_state
+        ) VALUES (
+            p_name, p_semester, p_year, p_professor, p_description,
+            p_inscription_start_date, p_inscription_end_date,
+            p_course_start_date, p_course_end_date,
+            p_available, p_limit_inscriptions, p_id_workshop_state
+        );
+    ELSE
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El taller ya existe';
+    END IF;
     COMMIT;
-    SELECT 'Taller creado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_update_workshop(
@@ -552,20 +597,12 @@ CREATE PROCEDURE sp_update_workshop(
 )
 BEGIN
     DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar taller';
-    END;
-
-    START TRANSACTION;
-
-    -- Verificar que el taller existe
-    SELECT COUNT(*) INTO v_exists FROM WORKSHOPS WHERE id = p_workshop_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOPS WHERE id = p_workshop_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El taller no existe';
     END IF;
-
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOP_STATES WHERE id = p_workshop_state_id) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estado del taller no existe';
+    END IF;
     UPDATE WORKSHOPS SET
         name = p_name,
         semester = p_semester,
@@ -580,33 +617,17 @@ BEGIN
         limit_inscriptions = p_limit_inscriptions,
         id_workshop_state = p_workshop_state_id
     WHERE id = p_workshop_id;
-
-    COMMIT;
-    SELECT 'Taller actualizado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_delete_workshop(IN p_workshop_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar taller';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el taller existe
-    SELECT COUNT(*) INTO v_exists FROM WORKSHOPS WHERE id = p_workshop_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOPS WHERE id = p_workshop_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El taller no existe';
     END IF;
-
     -- Eliminar taller (CASCADE eliminará automáticamente inscripciones y calificaciones)
     DELETE FROM WORKSHOPS WHERE id = p_workshop_id;
-
     COMMIT;
-    SELECT 'Taller eliminado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_get_workshop_grades(
@@ -616,6 +637,7 @@ CREATE PROCEDURE sp_get_workshop_grades(
     IN p_max_grade INT
 )
 BEGIN
+    START TRANSACTION;
     SELECT
         WORKSHOPS_GRADES.id AS id_workshop_grade,
         vw_workshops_grades.*
@@ -627,21 +649,12 @@ BEGIN
         AND (p_min_grade IS NULL OR vw_workshops_grades.grade >= p_min_grade)
         AND (p_max_grade IS NULL OR vw_workshops_grades.grade <= p_max_grade)
     ORDER BY vw_workshops_grades.year DESC, vw_workshops_grades.semester DESC, vw_workshops_grades.workshop, vw_workshops_grades.name_student;
+    COMMIT;
 END//
 
 -- =============================================================================
 -- 4. USERS
 -- =============================================================================
-
-DROP PROCEDURE IF EXISTS sp_get_students;
-DROP PROCEDURE IF EXISTS sp_create_student;
-DROP PROCEDURE IF EXISTS sp_update_student;
-DROP PROCEDURE IF EXISTS sp_delete_student;
-
-DROP PROCEDURE IF EXISTS sp_get_administrators;
-DROP PROCEDURE IF EXISTS sp_create_administrator;
-DROP PROCEDURE IF EXISTS sp_update_administrator;
-DROP PROCEDURE IF EXISTS sp_delete_administrator;
 
 CREATE PROCEDURE sp_get_students(IN p_student_id INT)
 BEGIN
@@ -661,21 +674,15 @@ CREATE PROCEDURE sp_create_student(
 BEGIN
     DECLARE v_auth_user_id INT;
     DECLARE v_msg VARCHAR(255);
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SET v_msg = CONCAT('Error al crear estudiante: ', p_rut_student);
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
-    END;
-
     START TRANSACTION;
-    -- Crear en orden: principal -> hija -> hija específica
+    IF EXISTS (SELECT 1 FROM AUTH_USERS WHERE email = p_email) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El email ya existe';
+    END IF;
     INSERT INTO AUTH_USERS (email, password_hash) VALUES (p_email, p_password_hash);
     SET v_auth_user_id = LAST_INSERT_ID();
     INSERT INTO USERS (id, first_names, last_names, campus) VALUES (v_auth_user_id, p_first_names, p_last_names, p_campus);
     INSERT INTO STUDENTS (id, rol_student, rut_student, campus_student) VALUES (v_auth_user_id, p_rol_student, p_rut_student, p_campus_student);
     COMMIT;
-    SELECT 'Estudiante creado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_update_student(
@@ -691,49 +698,28 @@ CREATE PROCEDURE sp_update_student(
 )
 BEGIN
     DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar estudiante';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el estudiante existe
-    SELECT COUNT(*) INTO v_exists FROM STUDENTS WHERE id = p_student_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_student_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estudiante no existe';
     END IF;
-
-    -- Actualizar en orden: principal -> hija -> hija específica
+    IF EXISTS (SELECT 1 FROM AUTH_USERS WHERE email = p_email AND id != p_student_id) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El email ya existe';
+    END IF;
     UPDATE AUTH_USERS SET email = p_email, password_hash = p_password_hash WHERE id = p_student_id;
     UPDATE USERS SET first_names = p_first_names, last_names = p_last_names, campus = p_campus WHERE id = p_student_id;
     UPDATE STUDENTS SET rol_student = p_rol_student, rut_student = p_rut_student, campus_student = p_campus_student WHERE id = p_student_id;
     COMMIT;
-    SELECT 'Estudiante actualizado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_delete_student(IN p_student_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar estudiante';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el estudiante existe
-    SELECT COUNT(*) INTO v_exists FROM STUDENTS WHERE id = p_student_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_student_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estudiante no existe';
     END IF;
-
     -- Solo eliminar de AUTH_USERS (tabla principal) - CASCADE eliminará automáticamente USERS y STUDENTS
     DELETE FROM AUTH_USERS WHERE id = p_student_id;
     COMMIT;
-    SELECT 'Estudiante eliminado exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_get_administrators(IN p_administrator_id INT)
@@ -749,22 +735,25 @@ CREATE PROCEDURE sp_create_administrator(
     IN p_password_hash VARCHAR(255)
 )
 BEGIN
-    DECLARE v_auth_user_id INT;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear administrador';
-    END;
-
+    -- Para todos los procedures que no se usan en triggers (excepto sp_create_notification):
+    -- Agregar START TRANSACTION al inicio y COMMIT al final, sin handler general, y dejando solo los SIGNAL SQLSTATE de errores específicos.
     START TRANSACTION;
-    -- Crear en orden: principal -> hija -> hija específica
+
+    -- Validación: ¿ya existe el email?
+    IF EXISTS (SELECT 1 FROM AUTH_USERS WHERE email = p_email) THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El email ya existe';
+    END IF;
+
     INSERT INTO AUTH_USERS (email, password_hash) VALUES (p_email, p_password_hash);
-    SET v_auth_user_id = LAST_INSERT_ID();
-    INSERT INTO USERS (id, first_names, last_names, campus) VALUES (v_auth_user_id, p_first_names, p_last_names, p_campus);
-    INSERT INTO ADMINISTRATORS (id) VALUES (v_auth_user_id);
+    SET @id = LAST_INSERT_ID();
+    INSERT INTO USERS (id, first_names, last_names, campus) VALUES (@id, p_first_names, p_last_names, p_campus);
+    INSERT INTO ADMINISTRATORS (id) VALUES (@id);
+
     COMMIT;
-    SELECT 'Administrador creado exitosamente' AS mensaje;
 END//
+
+
 
 CREATE PROCEDURE sp_update_administrator(
     IN p_administrator_id INT,
@@ -776,88 +765,53 @@ CREATE PROCEDURE sp_update_administrator(
 )
 BEGIN
     DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al actualizar administrador';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el administrador existe
-    SELECT COUNT(*) INTO v_exists FROM ADMINISTRATORS WHERE id = p_administrator_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = p_administrator_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El administrador no existe';
     END IF;
-
-    -- Actualizar en orden: principal -> hija
+    IF EXISTS (SELECT 1 FROM AUTH_USERS WHERE email = p_email AND id != p_administrator_id) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El email ya existe';
+    END IF;
     UPDATE AUTH_USERS SET email = p_email, password_hash = p_password_hash WHERE id = p_administrator_id;
     UPDATE USERS SET first_names = p_first_names, last_names = p_last_names, campus = p_campus WHERE id = p_administrator_id;
     COMMIT;
-    SELECT 'Administrador actualizado exitosamente' AS mensaje;
 END//
+
 
 CREATE PROCEDURE sp_delete_administrator(IN p_administrator_id INT)
 BEGIN
-    DECLARE v_exists INT DEFAULT 0;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al eliminar administrador';
-    END;
-
     START TRANSACTION;
-
-    -- Verificar que el administrador existe
-    SELECT COUNT(*) INTO v_exists FROM ADMINISTRATORS WHERE id = p_administrator_id;
-    IF v_exists = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = p_administrator_id) THEN
         SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El administrador no existe';
     END IF;
-
     -- Solo eliminar de AUTH_USERS (tabla principal) - CASCADE eliminará automáticamente USERS y ADMINISTRATORS
     DELETE FROM AUTH_USERS WHERE id = p_administrator_id;
     COMMIT;
-    SELECT 'Administrador eliminado exitosamente' AS mensaje;
 END//
 
 -- =============================================================================
 -- 5. AUTH
 -- =============================================================================
-DROP PROCEDURE IF EXISTS sp_login;
-DROP PROCEDURE IF EXISTS sp_logout;
-DROP PROCEDURE IF EXISTS sp_change_password;
-DROP PROCEDURE IF EXISTS sp_reset_password;
-DROP PROCEDURE IF EXISTS sp_get_user_by_email;
-
 CREATE PROCEDURE sp_login(
     IN p_email VARCHAR(255),
     IN p_password_hash VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al iniciar sesión' AS mensaje;
-    END;
     START TRANSACTION;
     SELECT * FROM vw_auth_users WHERE email = p_email AND password_hash = p_password_hash;
     COMMIT;
-    SELECT 'Login exitoso' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_logout(
     IN p_user_id INT
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al cerrar sesión' AS mensaje;
-    END;
+    
+    
     START TRANSACTION;
-    -- Aquí podrías registrar el logout si lo deseas
+    
     COMMIT;
-    SELECT 'Logout exitoso' AS mensaje;
+    
 END//
 
 CREATE PROCEDURE sp_change_password(
@@ -866,15 +820,11 @@ CREATE PROCEDURE sp_change_password(
     IN p_new_password_hash VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al cambiar contraseña' AS mensaje;
-    END;
+    
     START TRANSACTION;
     UPDATE AUTH_USERS SET password_hash = p_new_password_hash WHERE id = p_user_id AND password_hash = p_current_password_hash;
     COMMIT;
-    SELECT 'Contraseña cambiada exitosamente' AS mensaje;
+    
 END//
 
 CREATE PROCEDURE sp_reset_password(
@@ -882,39 +832,28 @@ CREATE PROCEDURE sp_reset_password(
     IN p_new_password_hash VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al resetear contraseña' AS mensaje;
-    END;
+    
     START TRANSACTION;
     UPDATE AUTH_USERS SET password_hash = p_new_password_hash WHERE email = p_email;
     COMMIT;
-    SELECT 'Contraseña reseteada exitosamente' AS mensaje;
 END//
+
+    
 
 CREATE PROCEDURE sp_get_user_by_email(
     IN p_email VARCHAR(255)
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al obtener usuario' AS mensaje;
-    END;
+    
     START TRANSACTION;
     SELECT * FROM vw_auth_users WHERE email = p_email;
     COMMIT;
-    SELECT 'Usuario obtenido exitosamente' AS mensaje;
+    
 END//
 
 -- =============================================================================
 -- 6. NOTIFICACIONES
 -- =============================================================================
-DROP PROCEDURE IF EXISTS sp_create_notification;
-DROP PROCEDURE IF EXISTS sp_get_notifications;
-DROP PROCEDURE IF EXISTS sp_mark_notification_read;
-
 CREATE PROCEDURE sp_create_notification(
     IN p_user_type VARCHAR(20),
     IN p_notification_type VARCHAR(50),
@@ -925,7 +864,7 @@ BEGIN
     DECLARE v_user_id INT;
     DECLARE v_notification_count INT DEFAULT 0;
 
-    -- Cursor para usuarios específicos por tipo o todos si es null
+   
     DECLARE user_cursor CURSOR FOR
         SELECT id_auth_user
         FROM vw_auth_users
@@ -933,13 +872,7 @@ BEGIN
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
 
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = 'Error al crear notificación por tipo de usuario';
-    END;
-
-    START TRANSACTION;
+   
 
     OPEN user_cursor;
 
@@ -949,7 +882,7 @@ BEGIN
             LEAVE read_loop;
         END IF;
 
-        -- Crear notificación para cada usuario del tipo especificado o todos
+
         INSERT INTO NOTIFICATIONS (
             id_user,
             notification_type,
@@ -972,9 +905,6 @@ BEGIN
     END LOOP;
 
     CLOSE user_cursor;
-
-    COMMIT;
-    SELECT CONCAT('Notificaciones creadas exitosamente para usuarios tipo ', IFNULL(p_user_type, 'TODOS'), ': ', v_notification_count, ' notificaciones') AS mensaje;
 END//
 
 CREATE PROCEDURE sp_get_notifications(
@@ -987,11 +917,7 @@ CREATE PROCEDURE sp_get_notifications(
 )
 BEGIN
     DECLARE v_limit INT DEFAULT 50;
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al obtener notificaciones' AS mensaje;
-    END;
+   
 
     IF p_limit IS NOT NULL THEN
         SET v_limit = p_limit;
@@ -1007,7 +933,6 @@ BEGIN
     ORDER BY created_at DESC
     LIMIT v_limit;
     COMMIT;
-    SELECT 'Notificaciones obtenidas exitosamente' AS mensaje;
 END//
 
 CREATE PROCEDURE sp_mark_notification_read(
@@ -1015,16 +940,270 @@ CREATE PROCEDURE sp_mark_notification_read(
     IN p_id_user INT
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        SELECT 'Error al marcar notificación como leída' AS mensaje;
-    END;
     START TRANSACTION;
     UPDATE NOTIFICATIONS SET is_read = 1, read_at = CURRENT_TIMESTAMP WHERE id = p_id_notification AND id_user = p_id_user;
     COMMIT;
-    SELECT 'Notificación marcada como leída exitosamente' AS mensaje;
 END//
 
+-- =============================================================================
+-- PROCEDIMIENTO: Cancelar inscripción a taller
+-- =============================================================================
+CREATE PROCEDURE sp_cancel_workshop_inscription(
+    IN p_id_inscription INT,
+    IN p_id_student INT
+)
+BEGIN
+    DECLARE v_nombre_taller VARCHAR(255);
+    DECLARE v_fecha_inicio DATETIME;
+    DECLARE v_msg VARCHAR(255);
+
+  
+
+    START TRANSACTION;
+
+    -- Obtener el nombre del taller y la fecha de inicio para el mensaje de error y validación
+    SELECT WORKSHOPS.NAME, WORKSHOPS.COURSE_START_DATE INTO v_nombre_taller, v_fecha_inicio
+    FROM WORKSHOPS_INSCRIPTIONS
+    JOIN WORKSHOPS ON WORKSHOPS_INSCRIPTIONS.ID_WORKSHOP = WORKSHOPS.ID
+    WHERE WORKSHOPS_INSCRIPTIONS.ID = p_id_inscription AND WORKSHOPS_INSCRIPTIONS.ID_STUDENT = p_id_student
+    LIMIT 1;
+
+    -- Verificar si el taller ya inició
+    IF v_fecha_inicio IS NOT NULL AND v_fecha_inicio <= CURRENT_TIMESTAMP THEN
+        ROLLBACK;
+        SET v_msg = CONCAT_WS(' ', 'No se puede cancelar inscripción, el taller ya inició:', IFNULL(v_nombre_taller, ''));
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
+    END IF;
+
+    -- Eliminar la inscripción
+    DELETE FROM WORKSHOPS_INSCRIPTIONS WHERE ID = p_id_inscription AND ID_STUDENT = p_id_student;
+
+    COMMIT;
+    
+END//
+
+-- =============================================================================
+-- PROCEDIMIENTO: Cambiar estado de taller con validaciones de transición
+-- =============================================================================
+CREATE PROCEDURE sp_change_workshop_state(
+    IN p_id_workshop INT,
+    IN p_new_state_id INT,
+    IN p_new_inscription_start_date TIMESTAMP,
+    IN p_new_inscription_end_date TIMESTAMP,
+    IN p_new_course_start_date TIMESTAMP,
+    IN p_new_course_end_date TIMESTAMP
+)
+BEGIN
+    DECLARE v_current_state_id INT;
+    DECLARE v_nombre_taller VARCHAR(255) DEFAULT 'DESCONOCIDO';
+    DECLARE v_msg VARCHAR(255);
+    
+    START TRANSACTION;
+    SELECT id_workshop_state, workshop INTO v_current_state_id, v_nombre_taller FROM vw_workshops WHERE id_workshop = p_id_workshop LIMIT 1;
+    IF v_current_state_id IS NULL THEN
+        SET v_nombre_taller = 'DESCONOCIDO';
+        SET v_msg = CONCAT_WS(' ', 'No se pudo cambiar el estado del taller:', v_nombre_taller);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
+    END IF;
+    IF (v_current_state_id = 3 AND p_new_state_id = 2) OR (v_current_state_id = 4 AND p_new_state_id IN (1,2,3)) OR (v_current_state_id = 5) THEN
+        SET v_msg = CONCAT_WS(' ', 'No se pudo cambiar el estado del taller:', v_nombre_taller);
+        SIGNAL SQLSTATE '45001' SET MESSAGE_TEXT = v_msg;
+    END IF;
+    UPDATE WORKSHOPS SET
+        id_workshop_state = p_new_state_id,
+        inscription_start_date = p_new_inscription_start_date,
+        inscription_end_date = p_new_inscription_end_date,
+        course_start_date = p_new_course_start_date,
+        course_end_date = p_new_course_end_date
+    WHERE id = p_id_workshop;
+    COMMIT;
+
+END;
+
+-- =============================================================================
+-- DASHBOARD STATISTICS
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- 1. GENERAL STATISTICS
+-- -----------------------------------------------------------------------------
+CREATE PROCEDURE sp_get_dashboard_general_stats()
+BEGIN
+    SELECT
+        COUNT(*) AS total_convalidations,
+        SUM(CONVALIDATIONS.id_convalidation_state IN (
+            SELECT CONVALIDATION_STATES.id 
+            FROM CONVALIDATION_STATES 
+            WHERE CONVALIDATION_STATES.name IN ('APROBADA_DI', 'APROBADA_DE', 'ENVIADA_DE')
+        )) AS approved_convalidations,
+        SUM(CONVALIDATIONS.id_convalidation_state IN (
+            SELECT CONVALIDATION_STATES.id 
+            FROM CONVALIDATION_STATES 
+            WHERE CONVALIDATION_STATES.name IN ('RECHAZADA_DI', 'RECHAZADA_DE')
+        )) AS rejected_convalidations,
+        SUM(CONVALIDATIONS.id_convalidation_state = (
+            SELECT CONVALIDATION_STATES.id 
+            FROM CONVALIDATION_STATES 
+            WHERE CONVALIDATION_STATES.name = 'ENVIADA'
+            LIMIT 1
+        )) AS pending_convalidations,
+        (SELECT COUNT(*) FROM WORKSHOPS WHERE WORKSHOPS.id_workshop_state = (
+            SELECT WORKSHOP_STATES.id FROM WORKSHOP_STATES WHERE WORKSHOP_STATES.name = 'EN_CURSO' LIMIT 1
+        )) AS workshops_in_progress,
+        (SELECT COUNT(*) FROM WORKSHOPS WHERE WORKSHOPS.id_workshop_state = (
+            SELECT WORKSHOP_STATES.id FROM WORKSHOP_STATES WHERE WORKSHOP_STATES.name = 'FINALIZADO' LIMIT 1
+        )) AS workshops_finished,
+        SUM(
+            YEAR(REQUESTS.sent_at) = YEAR(CURDATE()) 
+            AND MONTH(REQUESTS.sent_at) = MONTH(CURDATE())
+        ) AS convalidations_this_month
+    FROM CONVALIDATIONS
+    LEFT JOIN REQUESTS ON CONVALIDATIONS.id_request = REQUESTS.id;
+END;
+
+-- -----------------------------------------------------------------------------
+-- 2. CONVALIDATION STATISTICS
+-- -----------------------------------------------------------------------------
+CREATE PROCEDURE sp_get_dashboard_convalidation_stats()
+BEGIN
+    -- Convalidations by type
+    SELECT CONVALIDATION_TYPES.name AS convalidation_type, COUNT(*) AS total
+    FROM CONVALIDATIONS
+    JOIN CONVALIDATION_TYPES ON CONVALIDATIONS.id_convalidation_type = CONVALIDATION_TYPES.id
+    GROUP BY CONVALIDATION_TYPES.name;
+
+    -- Convalidations by state
+    SELECT CONVALIDATION_STATES.name AS convalidation_state, COUNT(*) AS total
+    FROM CONVALIDATIONS
+    JOIN CONVALIDATION_STATES ON CONVALIDATIONS.id_convalidation_state = CONVALIDATION_STATES.id
+    GROUP BY CONVALIDATION_STATES.name;
+
+    -- Convalidations by department (using SUBJECTS and DEPARTMENTS via CURRICULUM_COURSES)
+    SELECT DEPARTMENTS.name AS department, COUNT(*) AS total
+    FROM CONVALIDATIONS
+    JOIN CURRICULUM_COURSES ON CONVALIDATIONS.id_curriculum_course = CURRICULUM_COURSES.id
+    JOIN SUBJECTS ON CURRICULUM_COURSES.name = SUBJECTS.name
+    JOIN DEPARTMENTS ON SUBJECTS.id_department = DEPARTMENTS.id
+    GROUP BY DEPARTMENTS.name;
+
+    -- Convalidations by month/year
+    SELECT YEAR(REQUESTS.sent_at) AS year, MONTH(REQUESTS.sent_at) AS month, COUNT(*) AS total
+    FROM CONVALIDATIONS
+    JOIN REQUESTS ON CONVALIDATIONS.id_request = REQUESTS.id
+    GROUP BY year, month
+    ORDER BY year DESC, month DESC;
+
+    -- Average resolution time (in days)
+    SELECT AVG(TIMESTAMPDIFF(DAY, REQUESTS.sent_at, REQUESTS.reviewed_at)) AS avg_resolution_days
+    FROM CONVALIDATIONS
+    JOIN REQUESTS ON CONVALIDATIONS.id_request = REQUESTS.id
+    WHERE REQUESTS.reviewed_at IS NOT NULL;
+END;
+
+-- -----------------------------------------------------------------------------
+-- 3. WORKSHOP STATISTICS
+-- -----------------------------------------------------------------------------
+CREATE PROCEDURE sp_get_dashboard_workshop_stats()
+BEGIN
+    -- Workshops by state
+    SELECT WORKSHOP_STATES.name AS workshop_state, COUNT(*) AS total
+    FROM WORKSHOPS
+    JOIN WORKSHOP_STATES ON WORKSHOPS.id_workshop_state = WORKSHOP_STATES.id
+    WHERE WORKSHOP_STATES.name IN ('EN_CURSO', 'FINALIZADO', 'INSCRIPCION', 'CERRADO', 'CANCELADO')
+    GROUP BY WORKSHOP_STATES.name;
+END;
+
+-- -----------------------------------------------------------------------------
+-- 4. STUDENT STATISTICS
+-- -----------------------------------------------------------------------------
+CREATE PROCEDURE sp_get_dashboard_student_stats()
+BEGIN
+    
+    -- Students with most workshops
+    SELECT STUDENTS.id AS id_student, USERS.first_names, USERS.last_names, COUNT(*) AS total_workshops
+    FROM STUDENTS
+    JOIN USERS ON STUDENTS.id = USERS.id
+    JOIN WORKSHOPS_INSCRIPTIONS ON WORKSHOPS_INSCRIPTIONS.id_student = STUDENTS.id
+    GROUP BY STUDENTS.id, USERS.first_names, USERS.last_names
+    ORDER BY total_workshops DESC
+    LIMIT 10;
+END;
+
+-- -----------------------------------------------------------------------------
+-- 5. ACTIVITY STATISTICS
+-- -----------------------------------------------------------------------------
+CREATE PROCEDURE sp_get_dashboard_activity_stats()
+BEGIN
+    -- New requests in last week
+    SELECT COUNT(*) AS requests_last_week
+    FROM REQUESTS
+    WHERE sent_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
+
+    -- New requests in last month
+    SELECT COUNT(*) AS requests_last_month
+    FROM REQUESTS
+    WHERE sent_at >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH);
+
+    -- Activity peaks by day (top 7 days)
+    SELECT DATE(sent_at) AS day, COUNT(*) AS total
+    FROM REQUESTS
+    GROUP BY day
+    ORDER BY total DESC
+    LIMIT 7;
+END;
+
+-- =============================================================================
+-- PROCEDIMIENTO: Crear inscripción a taller
+-- =============================================================================
+DELIMITER //
+CREATE PROCEDURE sp_create_workshop_inscription(
+    IN p_id_student INT,
+    IN p_id_workshop INT,
+    IN p_id_curriculum_course INT,
+    IN p_is_convalidated TINYINT(1)
+)
+BEGIN
+    START TRANSACTION;
+    -- Validar existencia de estudiante y taller
+    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_id_student) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estudiante no existe';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOPS WHERE id = p_id_workshop) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El taller no existe';
+    END IF;
+    -- Validar que no exista inscripción previa
+    IF EXISTS (SELECT 1 FROM WORKSHOPS_INSCRIPTIONS WHERE id_student = p_id_student AND id_workshop = p_id_workshop) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'La inscripción ya existe';
+    END IF;
+    -- Insertar inscripción
+    INSERT INTO WORKSHOPS_INSCRIPTIONS (id_student, id_workshop, id_curriculum_course, is_convalidated)
+    VALUES (p_id_student, p_id_workshop, p_id_curriculum_course, p_is_convalidated);
+    COMMIT;
+END//
+
+-- =============================================================================
+-- PROCEDIMIENTO: Crear calificación de taller
+-- =============================================================================
+CREATE PROCEDURE sp_create_workshop_grade(
+    IN p_id_workshop INT,
+    IN p_id_student INT,
+    IN p_grade INT
+)
+BEGIN
+    START TRANSACTION;
+    -- Validar existencia de inscripción
+    IF NOT EXISTS (SELECT 1 FROM WORKSHOPS_INSCRIPTIONS WHERE id_student = p_id_student AND id_workshop = p_id_workshop) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'El estudiante no está inscrito en el taller';
+    END IF;
+    -- Validar que no exista calificación previa
+    IF EXISTS (SELECT 1 FROM WORKSHOPS_GRADES WHERE id_student = p_id_student AND id_workshop = p_id_workshop) THEN
+        SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'La calificación ya existe';
+    END IF;
+    -- Insertar calificación
+    INSERT INTO WORKSHOPS_GRADES (id_student, id_workshop, grade)
+    VALUES (p_id_student, p_id_workshop, p_grade);
+    COMMIT;
+END//
+DELIMITER ;
 
 SELECT "Procedimientos creados correctamente" AS mensaje;

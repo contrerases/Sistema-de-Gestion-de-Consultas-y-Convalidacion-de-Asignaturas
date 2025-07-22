@@ -1,7 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import curriculum_courses_routes, subjects_routes, workshops_routes, department_routes, home_routes, request_routes, types_convalidations_routes, types_curriculum_courses, workshops_inscriptions_routes
-
+from api.v1.endpoints.admin import router as admin_router
+from api.v1.endpoints.auth import router as auth_router
+from api.v1.endpoints.convalidation_type import router as convalidation_type_router
+from api.v1.endpoints.curriculum_courses_type import router as curriculum_courses_type_router
+from api.v1.endpoints.workshop_state import router as workshop_state_router
+from api.v1.endpoints.convalidation_state import router as convalidation_state_router
+from api.v1.endpoints.convalidation import router as convalidation_router
+from api.v1.endpoints.department import router as department_router
+from api.v1.endpoints.student import router as student_router
+from api.v1.endpoints.subject import router as subject_router
+from api.v1.endpoints.statistics import router as statistics_router
+from api.v1.endpoints.workshop_inscriptions import router as workshop_inscriptions_router
+from api.v1.endpoints.workshop_grades import router as workshop_grades_router
+from api.v1.endpoints.workshop import router as workshop_router
 
 
 # Crear la aplicación
@@ -16,12 +28,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(home_routes.router)
-app.include_router(request_routes.router, prefix="/requests")
-app.include_router(curriculum_courses_routes.router, prefix="/curriculum_courses")
-app.include_router(subjects_routes.router, prefix="/subjects")
-app.include_router(types_convalidations_routes.router, prefix="/types_convalidations")
-app.include_router(workshops_routes.router, prefix="/workshops")
-app.include_router(workshops_inscriptions_routes.router, prefix="/workshops_inscriptions")
-app.include_router(department_routes.router, prefix="/departments")
-app.include_router(types_curriculum_courses.router, prefix="/types_curriculum_courses")
+# Prefijo de versión para la API
+API_PREFIX = "/v1"
+
+app.include_router(admin_router, prefix=f"{API_PREFIX}")
+app.include_router(auth_router, prefix=f"{API_PREFIX}")
+app.include_router(convalidation_type_router, prefix=f"{API_PREFIX}")
+app.include_router(curriculum_courses_type_router, prefix=f"{API_PREFIX}")
+app.include_router(workshop_state_router, prefix=f"{API_PREFIX}")
+app.include_router(convalidation_state_router, prefix=f"{API_PREFIX}")
+app.include_router(convalidation_router, prefix=f"{API_PREFIX}")
+app.include_router(department_router, prefix=f"{API_PREFIX}")
+app.include_router(student_router, prefix=f"{API_PREFIX}")
+app.include_router(subject_router, prefix=f"{API_PREFIX}")
+app.include_router(statistics_router, prefix=f"{API_PREFIX}")
+app.include_router(workshop_inscriptions_router, prefix=f"{API_PREFIX}")
+app.include_router(workshop_grades_router, prefix=f"{API_PREFIX}")
+app.include_router(workshop_router, prefix=f"{API_PREFIX}")
+
+
