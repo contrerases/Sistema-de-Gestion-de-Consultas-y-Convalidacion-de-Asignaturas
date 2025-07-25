@@ -1,0 +1,2 @@
+// enums.ts
+// Enums compartidos 

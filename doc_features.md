@@ -24,7 +24,7 @@
 3. Talleres
    - Ver talleres disponibles para inscripción
    - Ver detalles del taller: descripción, profesor, fechas, horarios, syllabus (Descargar syllabus) 
-   - Inscribirse a talleres disponibles
+   - Inscribirse a talleres disponibles (Aceptando la carta de compromiso (RES_CARTA DE COMPROMISO.docx)) Es obligacion firmar la carta de compromiso antes de inscribirse. Puede elegir un Libre para convalidar el taller en el mismo formulario.
    - Cancelar inscripción (antes del inicio)
    - Ver talleres inscritos actuales
    - Ver historial de talleres cursados y su calificación (filtrar por estado de taller)

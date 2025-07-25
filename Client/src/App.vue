@@ -1,9 +1,7 @@
-<script setup lang="ts">
-  import NavBar from '@/shared/components/layout/NavBar.vue'
-</script>
-
-  <template>
-    <NavBar/>
-    <RouterView/>
+<template>
+  <router-view />
 </template>
 
+<script setup lang="ts">
+// Componente raíz de la aplicación
+</script> 

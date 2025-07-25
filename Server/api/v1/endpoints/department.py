@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status
 from typing import List
-from schemas.department.department import DepartmentCreate, DepartmentUpdate, DepartmentOut
+from schemas.department.department_in import DepartmentIn
+from schemas.department.department_out import DepartmentOut
 from services.department_service import (
     get_all_departments_service,
     get_department_by_id_service,
@@ -12,21 +13,21 @@ from services.department_service import (
 router = APIRouter(prefix="/departments", tags=["departments"])
 
 @router.get("/", response_model=List[DepartmentOut])
-def get_departments():
+def get_all_departments():
     return get_all_departments_service()
 
-@router.get("/{department_id}", response_model=DepartmentOut)
-def get_department_by_id(department_id: int):
-    return get_department_by_id_service(department_id)
+@router.get("/{id_department}", response_model=DepartmentOut)
+def get_department_by_id(id_department: int):
+    return get_department_by_id_service(id_department)
 
 @router.post("/", response_model=bool, status_code=status.HTTP_201_CREATED)
-def create_department(department: DepartmentCreate):
+def create_department(department: DepartmentIn):
     return create_department_service(department)
 
-@router.put("/{department_id}", response_model=bool)
-def update_department(department_id: int, department: DepartmentUpdate):
-    return update_department_service(department_id, department)
+@router.put("/{id_department}", response_model=bool)
+def update_department(id_department: int, department: DepartmentIn):
+    return update_department_service(id_department, department)
 
-@router.delete("/{department_id}", response_model=bool)
-def delete_department(department_id: int):
-    return delete_department_service(department_id) 
+@router.delete("/{id_department}", response_model=bool)
+def delete_department(id_department: int):
+    return delete_department_service(id_department) 

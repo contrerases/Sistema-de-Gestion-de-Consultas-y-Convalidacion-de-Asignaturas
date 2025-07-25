@@ -1,5 +1,5 @@
 from pydantic import BaseModel
  
-class CurriculumCourseTypeOut(BaseModel):
-    id: int
-    name: str 
+class CurriculumCoursesTypeOut(BaseModel):
+    id_curriculum_course_type: int
+    curriculum_course_type: str 

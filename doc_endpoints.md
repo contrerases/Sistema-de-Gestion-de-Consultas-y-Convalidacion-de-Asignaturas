@@ -14,9 +14,9 @@ OUT_CONVALIDATION_STATES: {id_convalidation_state, convalidation_state}
 ### ***Master entities*** ---------------------------------------------------------------------------------
 
 #### ***Department***
-IN: {department, description}
-ID_IN: {id_department, department, description}
-OUT: {id_department, department, description}
+IN: {department}
+ID_IN: {id_department, department}
+OUT: {id_department, department}
 
 * GET departments/ [sp_get_departments] {} = {OUT}
 * GET departments/{id_department} [sp_get_departments] {id_department} = {OUT}
@@ -98,9 +98,12 @@ OUT: {id_grade, id_workshop, workshop, id_student, rut_student, semester, year, 
 #### ***Convalidations***
 IN: {id_student, id_convalidation_type, id_curriculum_course, id_workshop, id_activity_name, id_subject, description, file_name, file_data, id_department}
 ID_IN: {id_convalidation, id_student, id_convalidation_type, id_curriculum_course, id_workshop, id_activity_name, id_subject, description, file_name, file_data, id_department}
-CONVALIDATION_SUBJECTS_OUT: {id_convalidation_subject, id_convalidation, id_subject, subject, department}
-CONVALIDATION_WORKSHOPS_OUT: {id_convalidation_workshop, id_convalidation, id_workshop, workshop, semester, year}
-CONVALIDATION_EXTERNAL_ACTIVITIES_OUT: {id_convalidation_external_activity, id_convalidation, id_external_activity, external_activity, semester, year}
+
+CONVALIDATION_OUT: {id_convalidation, id_student, student_name, student_rut, student_rol, student_campus, id_convalidation_type, id_curriculum_course, description, id_convalidation_state, id_reviewed_by, reviewed_by, review_comments, sent_at, reviewed_at, id_request, convalidation_type, convalidation_state, curriculum_course}
+
+CONVALIDATION_SUBJECTS_OUT: { ... CONVALIDATION_OUT, id_convalidation_subject, id_convalidation, id_subject, subject, department}
+CONVALIDATION_WORKSHOPS_OUT: { ... CONVALIDATION_OUT, id_convalidation_workshop, id_convalidation, id_workshop, workshop, semester, year, professor}
+CONVALIDATION_EXTERNAL_ACTIVITIES_OUT: { ... CONVALIDATION_OUT, id_convalidation_external_activity, id_convalidation, id_external_activity, external_activity, semester, year}
 OUT: ['subject': CONVALIDATION_SUBJECTS_OUT, 'workshop': CONVALIDATION_WORKSHOPS_OUT, 'external_activity': CONVALIDATION_EXTERNAL_ACTIVITIES_OUT]
 SEARCH_IN: {id_request, id_student, id_convalidation_type, id_curriculum_course, id_workshop, id_activity_name, id_subject, id_department, id_convalidation_state, id_reviewed_by, student_rol, student_rut, student_name, student_campus}
 
@@ -158,9 +161,9 @@ RESET_PASSWORD_IN: {email, new_password_hash}
 OUT: {id_auth_user, email, password_hash, id_user, first_names, last_names, common_name, full_name, campus, user_type, id_student, id_admin, rut_student, campus_student, rol_student}
 
 
-* POST auth-users/login/ {LOGIN_IN} [sp_login] {LOGIN_IN} = {OUT}
-* PUT auth-users/change-password/ {CHANGE_PASSWORD_IN} [sp_change_password] {CHANGE_PASSWORD_IN}
-* PUT auth-users/reset-password/ {RESET_PASSWORD_IN} [sp_reset_password] {RESET_PASSWORD_IN}
+* POST auth/login/ {LOGIN_IN} [sp_login] {LOGIN_IN} = {OUT}
+* PUT auth/change-password/ {CHANGE_PASSWORD_IN} [sp_change_password] {CHANGE_PASSWORD_IN}
+* PUT auth/reset-password/ {RESET_PASSWORD_IN} [sp_reset_password] {RESET_PASSWORD_IN}
 
 #### ***Notifications*** ---------------------------------------------------------------------------------
 IN: {user_type, notification_type, message, id_auth_user, limit}

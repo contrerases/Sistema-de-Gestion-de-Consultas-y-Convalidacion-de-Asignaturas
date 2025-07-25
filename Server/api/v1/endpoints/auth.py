@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Dict
 from schemas.auth.change_password_in import ChangePasswordIn
 from schemas.auth.login_out import LoginOut
-from schemas.auth.logout_in import LogoutIn
 from schemas.auth.auth_user_out import AuthUserOut
 from pydantic import EmailStr
 
@@ -18,9 +17,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return login_service(form_data.username, form_data.password)
 
-@router.post("/logout", response_model=bool)
-def logout(data: LogoutIn):
-    return logout_service(data.user_id)
 
 @router.post("/change-password", response_model=bool)
 def change_password(data: ChangePasswordIn):

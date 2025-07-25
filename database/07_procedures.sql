@@ -308,7 +308,7 @@ CREATE PROCEDURE sp_get_convalidations(
 )
 BEGIN
     -- Convalidaciones de asignaturas
-    SELECT * FROM vw_convalidation_subjects
+    SELECT *  subject, department FROM vw_convalidation_subjects
     WHERE (p_id_convalidation IS NULL OR id_convalidation = p_id_convalidation)
         AND (p_id_subject IS NULL OR id_subject = p_id_subject)
         AND (p_id_department IS NULL OR department = (SELECT name FROM DEPARTMENTS WHERE id = p_id_department))
