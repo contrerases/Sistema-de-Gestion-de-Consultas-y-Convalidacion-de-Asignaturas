@@ -59,5 +59,43 @@ CREATE INDEX idx_notifications_user ON NOTIFICATIONS(id_user);
 CREATE INDEX idx_notifications_type ON NOTIFICATIONS(notification_type);
 CREATE INDEX idx_notifications_is_read ON NOTIFICATIONS(is_read);
 
+-- =============================================================================
+-- ÍNDICES PARA NUEVAS TABLAS
+-- =============================================================================
+
+-- WORKSHOPS_TOKENS: Búsqueda por token, expiración y taller
+CREATE INDEX idx_workshop_tokens_token ON WORKSHOPS_TOKENS(token);
+CREATE INDEX idx_workshop_tokens_expiration ON WORKSHOPS_TOKENS(expiration_at);
+CREATE INDEX idx_workshop_tokens_workshop ON WORKSHOPS_TOKENS(id_workshop);
+CREATE INDEX idx_workshop_tokens_professor ON WORKSHOPS_TOKENS(id_professor);
+CREATE INDEX idx_workshop_tokens_created_by ON WORKSHOPS_TOKENS(created_by);
+CREATE INDEX idx_workshop_tokens_is_used ON WORKSHOPS_TOKENS(is_used);
+
+-- PROFESSORS: Búsqueda por email y estado activo
+CREATE INDEX idx_professors_email ON PROFESSORS(email);
+CREATE INDEX idx_professors_active ON PROFESSORS(is_active);
+CREATE INDEX idx_professors_name ON PROFESSORS(name);
+
+-- WORKSHOPS: Índice faltante para profesor
+CREATE INDEX idx_workshops_professor ON WORKSHOPS(id_professor);
+
+-- =============================================================================
+-- ÍNDICES COMPUESTOS PARA OPTIMIZACIÓN
+-- =============================================================================
+
+-- WORKSHOPS_TOKENS: Búsqueda por taller y estado de uso
+CREATE INDEX idx_workshop_tokens_workshop_used ON WORKSHOPS_TOKENS(id_workshop, is_used);
+
+-- WORKSHOPS_TOKENS: Búsqueda por profesor y expiración
+CREATE INDEX idx_workshop_tokens_professor_expiration ON WORKSHOPS_TOKENS(id_professor, expiration_at);
+
+-- WORKSHOPS: Búsqueda por año, semestre y estado
+CREATE INDEX idx_workshops_year_semester_state ON WORKSHOPS(year, semester, id_workshop_state);
+
+-- WORKSHOPS_GRADES: Búsqueda por taller y estudiante
+CREATE INDEX idx_workshop_grades_workshop_student ON WORKSHOPS_GRADES(id_workshop, id_student);
+
+-- WORKSHOPS_INSCRIPTIONS: Búsqueda por taller y estudiante
+CREATE INDEX idx_workshop_inscriptions_workshop_student ON WORKSHOPS_INSCRIPTIONS(id_workshop, id_student);
 
 SELECT "Índices creados correctamente" AS mensaje;

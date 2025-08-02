@@ -102,18 +102,21 @@ CREATE TABLE IF NOT EXISTS WORKSHOPS (
     name VARCHAR(255) NOT NULL,
     semester ENUM('1', '2') NOT NULL,
     year INT NOT NULL,
-    professor VARCHAR(255) NOT NULL,
+    id_professor INT NOT NULL,
     description TEXT(1000) NOT NULL,
     inscription_start_date TIMESTAMP NOT NULL,
     inscription_end_date TIMESTAMP NOT NULL,
     course_start_date TIMESTAMP NOT NULL,
     course_end_date TIMESTAMP NOT NULL,
     syllabus_data LONGBLOB DEFAULT NULL,
-    available TINYINT(1) NOT NULL DEFAULT 1,
     id_workshop_state INT NOT NULL,
+    inscriptions_number INT NOT NULL DEFAULT 0,
     limit_inscriptions INT NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
+
+
+
 
 -- =============================================================================
 -- TABLAS DE NEGOCIO
@@ -183,6 +186,19 @@ CREATE TABLE IF NOT EXISTS WORKSHOPS_GRADES (
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS WORKSHOPS_TOKENS (
+    id INT AUTO_INCREMENT NOT NULL,
+    id_workshop INT NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    id_professor INT NOT NULL,
+    expiration_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMP NULL,
+    created_by INT NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (id)
+);
+
 
 
 -- =============================================================================
@@ -200,21 +216,21 @@ CREATE TABLE IF NOT EXISTS AUTH_USERS (
 -- TABLAS DE USUARIO
 -- =============================================================================
 
+CREATE TABLE IF NOT EXISTS PROFESSORS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
 -- Tabla de usuarios (campos comunes) - hija de AUTH_USERS
 CREATE TABLE IF NOT EXISTS USERS (
     id INT NOT NULL,
-    first_names VARCHAR(255) NOT NULL,
-    last_names VARCHAR(255) NOT NULL,
-    common_name VARCHAR(255) GENERATED ALWAYS AS (
-        CONCAT(
-            SUBSTRING_INDEX(first_names, ' ', 1),
-            ' ',
-            SUBSTRING_INDEX(last_names, ' ', 1)
-        )
-    ) STORED,
-    full_name VARCHAR(255) GENERATED ALWAYS AS (
-        CONCAT(first_names, ' ', last_names)
-    ) STORED,
+    full_name VARCHAR(255) NOT NULL,
     campus VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -247,7 +263,6 @@ CREATE TABLE IF NOT EXISTS NOTIFICATIONS (
     message TEXT(1000) NOT NULL,
     is_read TINYINT(1) DEFAULT 0,
     is_sent TINYINT(1) DEFAULT 0,
-    id_event_type INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     read_at TIMESTAMP NULL,
     sent_at TIMESTAMP NULL

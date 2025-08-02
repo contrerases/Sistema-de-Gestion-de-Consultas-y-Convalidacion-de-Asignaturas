@@ -89,4 +89,85 @@ PROCEDURES = {
     "get_curriculum_courses_types": "sp_get_curriculum_courses_types",
     "get_workshop_states": "sp_get_workshop_states",
     "get_convalidation_states": "sp_get_convalidation_states",
+
+    # =============================================================================
+    # PROCEDURES ESPECÍFICOS PARA LA API
+    # =============================================================================
+
+    # 8. ESTUDIANTES ESPECÍFICOS
+    "get_students_preview": 'sp_get_students_preview',
+    "get_students_complete": 'sp_get_students_complete',
+    "get_student_by_rut": 'sp_get_student_by_rut',
+    "get_student_by_name": 'sp_get_student_by_name',
+    "get_student_by_rol": 'sp_get_student_by_rol',
+
+    # 9. ADMINISTRADORES ESPECÍFICOS
+    "get_admins_preview": 'sp_get_admins_preview',
+    "get_admins_complete": 'sp_get_admins_complete',
+    "get_admin_by_id": 'sp_get_admin_by_id',
+    "get_admins_by_campus": 'sp_get_admins_by_campus',
+    "get_admin_by_email": 'sp_get_admin_by_email',
+
+    # 10. TALLERES ESPECÍFICOS
+    "get_workshops_preview": 'sp_get_workshops_preview',
+    "get_workshops_complete": 'sp_get_workshops_complete',
+    "get_workshop_by_id": 'sp_get_workshop_by_id',
+    "get_workshops_by_state": 'sp_get_workshops_by_state',
+    "get_workshops_by_professor": 'sp_get_workshops_by_professor',
+    "search_workshops": 'sp_search_workshops',
+
+    # 11. INSCRIPCIONES ESPECÍFICAS
+    "get_workshop_inscriptions_preview": 'sp_get_workshop_inscriptions_preview',
+    "get_workshop_inscriptions_complete": 'sp_get_workshop_inscriptions_complete',
+    "get_workshop_inscription_by_id": 'sp_get_workshop_inscription_by_id',
+    "get_workshop_inscriptions_by_workshop": 'sp_get_workshop_inscriptions_by_workshop',
+    "get_workshop_inscriptions_by_student": 'sp_get_workshop_inscriptions_by_student',
+    "get_workshop_inscriptions_by_student_rut": 'sp_get_workshop_inscriptions_by_student_rut',
+    "get_workshop_inscriptions_by_student_name": 'sp_get_workshop_inscriptions_by_student_name',
+    "get_workshop_inscriptions_by_student_rol": 'sp_get_workshop_inscriptions_by_student_rol',
+    "get_workshop_inscriptions_by_curriculum_course": 'sp_get_workshop_inscriptions_by_curriculum_course',
+
+    # 12. CALIFICACIONES ESPECÍFICAS
+    "get_workshop_grades_preview": 'sp_get_workshop_grades_preview',
+    "get_workshop_grades_complete": 'sp_get_workshop_grades_complete',
+    "get_workshop_grade_by_id": 'sp_get_workshop_grade_by_id',
+    "get_workshop_grades_by_workshop": 'sp_get_workshop_grades_by_workshop',
+    "get_workshop_grades_by_student": 'sp_get_workshop_grades_by_student',
+
+    # 13. CONVALIDACIONES ESPECÍFICAS
+    "get_convalidations_preview": 'sp_get_convalidations_preview',
+    "get_convalidations_complete": 'sp_get_convalidations_complete',
+    "get_convalidation_by_id": 'sp_get_convalidation_by_id',
+    "get_convalidations_pending": 'sp_get_convalidations_pending',
+    "get_convalidations_by_student": 'sp_get_convalidations_by_student',
+    "get_convalidations_by_student_rut": 'sp_get_convalidations_by_student_rut',
+    "get_convalidations_by_student_rol": 'sp_get_convalidations_by_student_rol',
+    "get_convalidations_by_student_name": 'sp_get_convalidations_by_student_name',
+    "get_convalidations_by_reviewed_by": 'sp_get_convalidations_by_reviewed_by',
+    "get_convalidations_by_curriculum_course": 'sp_get_convalidations_by_curriculum_course',
+    "get_convalidations_by_workshop": 'sp_get_convalidations_by_workshop',
+    "get_convalidations_by_activity": 'sp_get_convalidations_by_activity',
+    "get_convalidations_by_type": 'sp_get_convalidations_by_type',
+    "get_convalidations_by_state": 'sp_get_convalidations_by_state',
+    "filter_convalidations": 'sp_filter_convalidations',
+
+    # 14. NOTIFICACIONES ESPECÍFICAS
+    "get_notifications_preview": 'sp_get_notifications_preview',
+    "get_notifications_complete": 'sp_get_notifications_complete',
+    "get_notifications_by_user": 'sp_get_notifications_by_user',
+    "get_notifications_not_read_by_user": 'sp_get_notifications_not_read_by_user',
+
+    # 15. CATÁLOGOS ESPECÍFICOS
+    "get_subjects_by_department": 'sp_get_subjects_by_department',
+    "get_curriculum_courses_by_type": 'sp_get_curriculum_courses_by_type',
+
+    # 16. ESTADÍSTICAS ESPECÍFICAS
+    "get_stats_general": 'sp_get_stats_general',
+    "get_stats_workshops": 'sp_get_stats_workshops',
+    "get_stats_convalidations": 'sp_get_stats_convalidations',
+
+    # 17. NUEVAS FUNCIONALIDADES
+    "get_workshop_tokens_active": 'sp_get_workshop_tokens_active',
+    "get_professors_active": 'sp_get_professors_active',
+    "get_workshop_tokens_expired": 'sp_get_workshop_tokens_expired',
 }

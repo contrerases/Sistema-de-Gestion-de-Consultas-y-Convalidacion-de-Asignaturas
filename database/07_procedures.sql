@@ -1218,5 +1218,649 @@ BEGIN
     COMMIT;
 END//
 
+-- =============================================================================
+-- PROCEDURES ESPECÍFICOS PARA LA API
+-- =============================================================================
 
-SELECT "Procedimientos creados correctamente" AS mensaje;
+-- =============================================================================
+-- 1. PROCEDURES DE ESTUDIANTES
+-- =============================================================================
+
+-- Obtener estudiantes para preview (listas)
+DROP PROCEDURE IF EXISTS sp_get_students_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_students_preview()
+BEGIN
+    SELECT * FROM vw_students_preview;
+END //
+DELIMITER ;
+
+-- Obtener estudiantes completos
+DROP PROCEDURE IF EXISTS sp_get_students_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_students_complete()
+BEGIN
+    SELECT * FROM vw_students_essential;
+END //
+DELIMITER ;
+
+-- Obtener estudiante por RUT
+DROP PROCEDURE IF EXISTS sp_get_student_by_rut;
+DELIMITER //
+CREATE PROCEDURE sp_get_student_by_rut(IN p_rut VARCHAR(20))
+BEGIN
+    SELECT * FROM vw_students_essential WHERE rut_student = p_rut;
+END //
+DELIMITER ;
+
+-- Obtener estudiante por nombre
+DROP PROCEDURE IF EXISTS sp_get_student_by_name;
+DELIMITER //
+CREATE PROCEDURE sp_get_student_by_name(IN p_name VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_students_essential WHERE name_student LIKE CONCAT('%', p_name, '%');
+END //
+DELIMITER ;
+
+-- Obtener estudiante por rol
+DROP PROCEDURE IF EXISTS sp_get_student_by_rol;
+DELIMITER //
+CREATE PROCEDURE sp_get_student_by_rol(IN p_rol VARCHAR(50))
+BEGIN
+    SELECT * FROM vw_students_essential WHERE rol_student = p_rol;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 2. PROCEDURES DE ADMINISTRADORES
+-- =============================================================================
+
+-- Obtener administradores para preview
+DROP PROCEDURE IF EXISTS sp_get_admins_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_admins_preview()
+BEGIN
+    SELECT * FROM vw_admins_preview;
+END //
+DELIMITER ;
+
+-- Obtener administradores completos
+DROP PROCEDURE IF EXISTS sp_get_admins_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_admins_complete()
+BEGIN
+    SELECT * FROM vw_admins_essential;
+END //
+DELIMITER ;
+
+-- Obtener administrador por ID
+DROP PROCEDURE IF EXISTS sp_get_admin_by_id;
+DELIMITER //
+CREATE PROCEDURE sp_get_admin_by_id(IN p_id INT)
+BEGIN
+    SELECT * FROM vw_admins_essential WHERE id_admin = p_id;
+END //
+DELIMITER ;
+
+-- Obtener administradores por campus
+DROP PROCEDURE IF EXISTS sp_get_admins_by_campus;
+DELIMITER //
+CREATE PROCEDURE sp_get_admins_by_campus(IN p_campus VARCHAR(50))
+BEGIN
+    SELECT * FROM vw_admins_essential WHERE campus_admin = p_campus;
+END //
+DELIMITER ;
+
+-- Obtener administrador por email
+DROP PROCEDURE IF EXISTS sp_get_admin_by_email;
+DELIMITER //
+CREATE PROCEDURE sp_get_admin_by_email(IN p_email VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_admins_essential WHERE email_admin = p_email;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 3. PROCEDURES DE TALLERES
+-- =============================================================================
+
+-- Obtener talleres para preview (listas)
+DROP PROCEDURE IF EXISTS sp_get_workshops_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshops_preview()
+BEGIN
+    SELECT * FROM vw_workshops_preview;
+END //
+DELIMITER ;
+
+-- Obtener talleres completos
+DROP PROCEDURE IF EXISTS sp_get_workshops_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshops_complete()
+BEGIN
+    SELECT * FROM vw_workshops_complete;
+END //
+DELIMITER ;
+
+-- Obtener taller por ID
+DROP PROCEDURE IF EXISTS sp_get_workshop_by_id;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_by_id(IN p_id INT)
+BEGIN
+    SELECT * FROM vw_workshops_complete WHERE id_workshop = p_id;
+END //
+DELIMITER ;
+
+-- Obtener talleres por estado
+DROP PROCEDURE IF EXISTS sp_get_workshops_by_state;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshops_by_state(IN p_state_id INT)
+BEGIN
+    SELECT * FROM vw_workshops_complete WHERE id_workshop_state = p_state_id;
+END //
+DELIMITER ;
+
+-- Obtener talleres por profesor
+DROP PROCEDURE IF EXISTS sp_get_workshops_by_professor;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshops_by_professor(IN p_professor VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_workshops_complete WHERE professor_name LIKE CONCAT('%', p_professor, '%');
+END //
+DELIMITER ;
+
+-- Buscar talleres
+DROP PROCEDURE IF EXISTS sp_search_workshops;
+DELIMITER //
+CREATE PROCEDURE sp_search_workshops(IN p_search VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_workshops_complete 
+    WHERE workshop_name LIKE CONCAT('%', p_search, '%')
+    OR professor_name LIKE CONCAT('%', p_search, '%')
+    OR description LIKE CONCAT('%', p_search, '%');
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 4. PROCEDURES DE INSCRIPCIONES
+-- =============================================================================
+
+-- Obtener inscripciones para preview
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_preview()
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_preview;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones completas
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_complete()
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete;
+END //
+DELIMITER ;
+
+-- Obtener inscripción por ID
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscription_by_id;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscription_by_id(IN p_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE id_inscription = p_id;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por taller
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_workshop;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_workshop(IN p_workshop_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE id_workshop = p_workshop_id;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por estudiante
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_student;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_student(IN p_student_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE id_student = p_student_id;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por RUT de estudiante
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_student_rut;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_student_rut(IN p_rut VARCHAR(20))
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE rut_student = p_rut;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por nombre de estudiante
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_student_name;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_student_name(IN p_name VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE student_name LIKE CONCAT('%', p_name, '%');
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por rol de estudiante
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_student_rol;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_student_rol(IN p_rol VARCHAR(50))
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE rol_student = p_rol;
+END //
+DELIMITER ;
+
+-- Obtener inscripciones por curso curricular
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_curriculum_course;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_inscriptions_by_curriculum_course(IN p_curriculum_course_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_inscriptions_complete WHERE id_curriculum_course = p_curriculum_course_id;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 5. PROCEDURES DE CALIFICACIONES
+-- =============================================================================
+
+-- Obtener calificaciones para preview
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_grades_preview()
+BEGIN
+    SELECT * FROM vw_workshop_grades_preview;
+END //
+DELIMITER ;
+
+-- Obtener calificaciones completas
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_grades_complete()
+BEGIN
+    SELECT * FROM vw_workshop_grades_complete;
+END //
+DELIMITER ;
+
+-- Obtener calificación por ID
+DROP PROCEDURE IF EXISTS sp_get_workshop_grade_by_id;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_grade_by_id(IN p_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_grades_complete WHERE id_grade = p_id;
+END //
+DELIMITER ;
+
+-- Obtener calificaciones por taller
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_by_workshop;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_grades_by_workshop(IN p_workshop_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_grades_complete WHERE id_workshop = p_workshop_id;
+END //
+DELIMITER ;
+
+-- Obtener calificaciones por estudiante
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_by_student;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_grades_by_student(IN p_student_id INT)
+BEGIN
+    SELECT * FROM vw_workshop_grades_complete WHERE id_student = p_student_id;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 6. PROCEDURES DE CONVALIDACIONES
+-- =============================================================================
+
+-- Obtener convalidaciones para preview
+DROP PROCEDURE IF EXISTS sp_get_convalidations_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_preview()
+BEGIN
+    SELECT * FROM vw_convalidations_preview;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones completas
+DROP PROCEDURE IF EXISTS sp_get_convalidations_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_complete()
+BEGIN
+    SELECT * FROM vw_convalidations_complete;
+END //
+DELIMITER ;
+
+-- Obtener convalidación por ID
+DROP PROCEDURE IF EXISTS sp_get_convalidation_by_id;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidation_by_id(IN p_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_convalidation = p_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones pendientes
+DROP PROCEDURE IF EXISTS sp_get_convalidations_pending;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_pending()
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_convalidation_state = 1;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por estudiante
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_student;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_student(IN p_student_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_student = p_student_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por RUT de estudiante
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_student_rut;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_student_rut(IN p_rut VARCHAR(20))
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE rut_student = p_rut;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por rol de estudiante
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_student_rol;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_student_rol(IN p_rol VARCHAR(50))
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE rol_student = p_rol;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por nombre de estudiante
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_student_name;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_student_name(IN p_name VARCHAR(100))
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE student_name LIKE CONCAT('%', p_name, '%');
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por revisor
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_reviewed_by;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_reviewed_by(IN p_reviewer_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE reviewer_id = p_reviewer_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por curso curricular
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_curriculum_course;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_curriculum_course(IN p_curriculum_course_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_curriculum_course = p_curriculum_course_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por taller
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_workshop;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_workshop(IN p_workshop_id INT)
+BEGIN
+    SELECT * FROM vw_convalidation_workshops WHERE id_workshop = p_workshop_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por actividad
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_activity;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_activity(IN p_activity_id INT)
+BEGIN
+    SELECT * FROM vw_convalidation_external_activities WHERE id_convalidation = p_activity_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por tipo
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_type;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_type(IN p_type_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_convalidation_type = p_type_id;
+END //
+DELIMITER ;
+
+-- Obtener convalidaciones por estado
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_state;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidations_by_state(IN p_state_id INT)
+BEGIN
+    SELECT * FROM vw_convalidations_complete WHERE id_convalidation_state = p_state_id;
+END //
+DELIMITER ;
+
+-- Filtrar convalidaciones
+DROP PROCEDURE IF EXISTS sp_filter_convalidations;
+DELIMITER //
+CREATE PROCEDURE sp_filter_convalidations(
+    IN p_student_name VARCHAR(100),
+    IN p_convalidation_type INT,
+    IN p_convalidation_state INT,
+    IN p_curriculum_course INT
+)
+BEGIN
+    SELECT * FROM vw_convalidations_complete 
+    WHERE (p_student_name IS NULL OR student_name LIKE CONCAT('%', p_student_name, '%'))
+    AND (p_convalidation_type IS NULL OR id_convalidation_type = p_convalidation_type)
+    AND (p_convalidation_state IS NULL OR id_convalidation_state = p_convalidation_state)
+    AND (p_curriculum_course IS NULL OR id_curriculum_course = p_curriculum_course);
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 7. PROCEDURES DE NOTIFICACIONES
+-- =============================================================================
+
+-- Obtener notificaciones para preview
+DROP PROCEDURE IF EXISTS sp_get_notifications_preview;
+DELIMITER //
+CREATE PROCEDURE sp_get_notifications_preview()
+BEGIN
+    SELECT * FROM vw_notifications_preview;
+END //
+DELIMITER ;
+
+-- Obtener notificaciones completas
+DROP PROCEDURE IF EXISTS sp_get_notifications_complete;
+DELIMITER //
+CREATE PROCEDURE sp_get_notifications_complete()
+BEGIN
+    SELECT * FROM vw_notifications_complete;
+END //
+DELIMITER ;
+
+-- Obtener notificaciones por usuario
+DROP PROCEDURE IF EXISTS sp_get_notifications_by_user;
+DELIMITER //
+CREATE PROCEDURE sp_get_notifications_by_user(IN p_user_id INT)
+BEGIN
+    SELECT * FROM vw_notifications_complete WHERE id_user = p_user_id;
+END //
+DELIMITER ;
+
+-- Obtener notificaciones no leídas por usuario
+DROP PROCEDURE IF EXISTS sp_get_notifications_not_read_by_user;
+DELIMITER //
+CREATE PROCEDURE sp_get_notifications_not_read_by_user(IN p_user_id INT)
+BEGIN
+    SELECT * FROM vw_notifications_complete WHERE id_user = p_user_id AND is_read = FALSE;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 8. PROCEDURES DE CATÁLOGOS
+-- =============================================================================
+
+-- Obtener departamentos
+DROP PROCEDURE IF EXISTS sp_get_departments;
+DELIMITER //
+CREATE PROCEDURE sp_get_departments()
+BEGIN
+    SELECT * FROM vw_departments;
+END //
+DELIMITER ;
+
+-- Obtener asignaturas
+DROP PROCEDURE IF EXISTS sp_get_subjects;
+DELIMITER //
+CREATE PROCEDURE sp_get_subjects()
+BEGIN
+    SELECT * FROM vw_subjects;
+END //
+DELIMITER ;
+
+-- Obtener asignaturas por departamento
+DROP PROCEDURE IF EXISTS sp_get_subjects_by_department;
+DELIMITER //
+CREATE PROCEDURE sp_get_subjects_by_department(IN p_department_id INT)
+BEGIN
+    SELECT * FROM vw_subjects WHERE id_department = p_department_id;
+END //
+DELIMITER ;
+
+-- Obtener cursos curriculares
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses;
+DELIMITER //
+CREATE PROCEDURE sp_get_curriculum_courses()
+BEGIN
+    SELECT * FROM vw_curriculum_courses;
+END //
+DELIMITER ;
+
+-- Obtener cursos curriculares por tipo
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_by_type;
+DELIMITER //
+CREATE PROCEDURE sp_get_curriculum_courses_by_type(IN p_type_id INT)
+BEGIN
+    SELECT * FROM vw_curriculum_courses WHERE id_curriculum_course_type = p_type_id;
+END //
+DELIMITER ;
+
+-- Obtener cursos curriculares no convalidados por estudiante
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_not_convalidated_by_student;
+DELIMITER //
+CREATE PROCEDURE sp_get_curriculum_courses_not_convalidated_by_student(IN p_student_id INT)
+BEGIN
+    SELECT * FROM vw_curriculum_courses 
+    WHERE id NOT IN (
+        SELECT id_curriculum_course FROM vw_convalidations_complete 
+        WHERE id_student = p_student_id
+    );
+END //
+DELIMITER ;
+
+-- Obtener tipos de convalidación
+DROP PROCEDURE IF EXISTS sp_get_convalidation_types;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidation_types()
+BEGIN
+    SELECT * FROM vw_convalidation_types;
+END //
+DELIMITER ;
+
+-- Obtener estados de convalidación
+DROP PROCEDURE IF EXISTS sp_get_convalidation_states;
+DELIMITER //
+CREATE PROCEDURE sp_get_convalidation_states()
+BEGIN
+    SELECT * FROM vw_convalidation_states;
+END //
+DELIMITER ;
+
+-- Obtener estados de talleres
+DROP PROCEDURE IF EXISTS sp_get_workshop_states;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_states()
+BEGIN
+    SELECT * FROM vw_workshop_states;
+END //
+DELIMITER ;
+
+-- Obtener tipos de cursos curriculares
+DROP PROCEDURE IF EXISTS sp_get_curriculum_course_types;
+DELIMITER //
+CREATE PROCEDURE sp_get_curriculum_course_types()
+BEGIN
+    SELECT * FROM vw_curriculum_course_types;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 9. PROCEDURES DE ESTADÍSTICAS
+-- =============================================================================
+
+-- Obtener estadísticas generales
+DROP PROCEDURE IF EXISTS sp_get_stats_general;
+DELIMITER //
+CREATE PROCEDURE sp_get_stats_general()
+BEGIN
+    SELECT * FROM vw_stats_general;
+END //
+DELIMITER ;
+
+-- Obtener estadísticas de talleres
+DROP PROCEDURE IF EXISTS sp_get_stats_workshops;
+DELIMITER //
+CREATE PROCEDURE sp_get_stats_workshops()
+BEGIN
+    SELECT * FROM vw_stats_workshops;
+END //
+DELIMITER ;
+
+-- Obtener estadísticas de convalidaciones
+DROP PROCEDURE IF EXISTS sp_get_stats_convalidations;
+DELIMITER //
+CREATE PROCEDURE sp_get_stats_convalidations()
+BEGIN
+    SELECT * FROM vw_stats_convalidations;
+END //
+DELIMITER ;
+
+-- =============================================================================
+-- 10. PROCEDURES DE NUEVAS FUNCIONALIDADES
+-- =============================================================================
+
+-- Obtener tokens activos
+DROP PROCEDURE IF EXISTS sp_get_workshop_tokens_active;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_tokens_active()
+BEGIN
+    SELECT * FROM vw_workshop_tokens_active;
+END //
+DELIMITER ;
+
+-- Obtener profesores activos
+DROP PROCEDURE IF EXISTS sp_get_professors_active;
+DELIMITER //
+CREATE PROCEDURE sp_get_professors_active()
+BEGIN
+    SELECT * FROM vw_professors_active;
+END //
+DELIMITER ;
+
+-- Obtener tokens expirados
+DROP PROCEDURE IF EXISTS sp_get_workshop_tokens_expired;
+DELIMITER //
+CREATE PROCEDURE sp_get_workshop_tokens_expired()
+BEGIN
+    SELECT * FROM vw_workshop_tokens_expired;
+END //
+DELIMITER ;
+
+SELECT "Procedures específicos completos creados correctamente" AS mensaje;

@@ -13,6 +13,7 @@
   ],
   "compilerOptions": {
     "composite": false, // Permite usar proyectos referenciados (útil para monorepos)
+    "jsx": "preserve", // Procesa los templates de Vue correctamente
     "tsBuildInfoFile": "node_modules/.tmp/tsconfig.app.tsbuildinfo", // Archivo temporal para builds incrementales
     "baseUrl": "", // Base para los paths relativos
     "paths": {

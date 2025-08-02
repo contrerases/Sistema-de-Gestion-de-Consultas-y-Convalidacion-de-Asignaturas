@@ -1,31 +1,47 @@
 <template>
   <button
-    :type="type"
-    :disabled="loading || disabled"
     :class="[
-      'inline-flex items-center justify-center px-4 py-2 rounded font-medium transition',
-      loading ? 'opacity-70 cursor-not-allowed' : '',
-      variant === 'primary' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : '',
-      variant === 'secondary' ? 'bg-secondary text-secondary-foreground hover:bg-secondary/90' : '',
-      variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive-hover' : '',
-      'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
+      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+      variants[variant],
+      sizes[size],
+      className
     ]"
-    v-bind="attrs"
+    :disabled="disabled"
+    @click="$emit('click')"
   >
-    <Spinner v-if="loading" class="mr-2 h-4 w-4" />
-    <slot />
+    <slot></slot>
   </button>
 </template>
 
 <script setup lang="ts">
-import { defineProps, useAttrs } from 'vue'
-import Spinner from '@/modules/shared/components/ui/feedback/Spinner.vue'
+import { defineProps, defineEmits, withDefaults } from 'vue'
 
-const props = defineProps<{
-  type?: 'button' | 'submit' | 'reset'
-  loading?: boolean
+interface ButtonProps {
+  variant?: 'default' | 'destructive' | 'outline'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  className?: string
   disabled?: boolean
-  variant?: 'primary' | 'secondary' | 'destructive'
-}>()
-const attrs = useAttrs()
-</script> 
+}
+
+const props = withDefaults(defineProps<ButtonProps>(), {
+  variant: 'default',
+  size: 'default',
+  className: '',
+  disabled: false
+})
+
+const variants = {
+  default: 'bg-primary text-primary-foreground hover:bg-primary-hover',
+  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+  outline: 'border border-input hover:bg-accent hover:text-accent-foreground'
+}
+
+const sizes = {
+  default: 'h-10 py-2 px-4',
+  sm: 'h-9 px-3 rounded-md',
+  lg: 'h-11 px-8 rounded-md',
+  icon: 'h-10 w-10'
+}
+
+defineEmits(['click'])
+</script>

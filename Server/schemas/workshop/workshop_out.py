@@ -4,17 +4,24 @@ from datetime import datetime
 
 class WorkshopOut(BaseModel):
     id_workshop: int
-    workshop: str = Field(..., max_length=MAX_LENGTH_NAME)
+    workshop_name: str = Field(..., max_length=MAX_LENGTH_NAME)
     semester: str
     year: int = Field(..., ge=MIN_YEAR, le=MAX_YEAR)
-    professor: str = Field(..., max_length=MAX_LENGTH_NAME)
     description: str = Field(..., max_length=MAX_LENGTH_DESCRIPTION)
     inscription_start_date: datetime
     inscription_end_date: datetime
     course_start_date: datetime
     course_end_date: datetime
-    available: bool
+    inscriptions_number: int
     limit_inscriptions: int
+    syllabus_data: str | None
+    id_professor: int
+    professor_name: str = Field(..., max_length=MAX_LENGTH_NAME)
+    professor_email: str
     id_workshop_state: int
     workshop_state: str = Field(..., max_length=MAX_LENGTH_NAME)
-    inscriptions_count: int 
+    state_description: str | None
+    available_slots: int
+    is_inscription_open: bool
+    is_course_active: bool
+    is_full: bool 

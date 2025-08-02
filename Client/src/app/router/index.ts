@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { adminRoutes } from '@/app/router/admin.routes'
-import { studentRoutes } from '@/app/router/student.routes'
-import { publicRoutes } from '@/app/router/public.routes'
-import { authGuard } from './guards'
+import adminRoutes from '@/app/router/admin.routes'
+import  studentRoutes  from '@/app/router/student.routes'
+import publicRoutes  from '@/app/router/public.routes'
+import  authGuard  from '@/app/router/guards'
 
 const routes = [
   adminRoutes,
@@ -16,6 +16,6 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(authGuard)
+// router.beforeEach(authGuard)
 
 export default router 

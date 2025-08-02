@@ -91,6 +91,7 @@ ADD CONSTRAINT chk_workshop_inscription_before_course CHECK (inscription_end_dat
 ALTER TABLE WORKSHOPS
 ADD CONSTRAINT chk_workshop_year CHECK (year >= 2000 AND year <= 2100);
 
+-- Relación con profesores
 
 
 
@@ -245,7 +246,100 @@ ADD CONSTRAINT uk_auth_email UNIQUE (email);
 ALTER TABLE AUTH_USERS
 ADD CONSTRAINT chk_auth_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
 
+-- =============================================================================
+-- PROFESSORS
+-- =============================================================================
 
+-- Email único
+ALTER TABLE PROFESSORS
+ADD CONSTRAINT uk_professor_email UNIQUE (email);
+
+-- Nombre no vacío
+ALTER TABLE PROFESSORS
+ADD CONSTRAINT chk_professor_name CHECK (LENGTH(TRIM(name)) > 0);
+
+-- Formato de email
+ALTER TABLE PROFESSORS
+ADD CONSTRAINT chk_professor_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+
+-- =============================================================================
+-- WORKSHOPS_TOKENS
+-- =============================================================================
+
+-- Token único
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT uk_token_unique UNIQUE (token);
+
+-- Token no vacío
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT chk_token_not_empty CHECK (LENGTH(TRIM(token)) > 0);
+
+-- Fecha de expiración posterior a creación
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT chk_token_expiration CHECK (expiration_at > created_at);
+
+-- Fecha de uso posterior a creación
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT chk_token_used_at CHECK (used_at IS NULL OR used_at >= created_at);
+
+-- =============================================================================
+-- CONSTRAINTS ADICIONALES PARA OPTIMIZACIÓN
+-- =============================================================================
+
+-- WORKSHOPS: Límite de inscripciones positivo
+ALTER TABLE WORKSHOPS
+ADD CONSTRAINT chk_workshop_inscriptions_limit CHECK (limit_inscriptions >= 0);
+
+-- WORKSHOPS: Número de inscripciones no negativo
+ALTER TABLE WORKSHOPS
+ADD CONSTRAINT chk_workshop_inscriptions_number CHECK (inscriptions_number >= 0);
+
+-- WORKSHOPS: Número de inscripciones no puede exceder el límite
+ALTER TABLE WORKSHOPS
+ADD CONSTRAINT chk_workshop_inscriptions_vs_limit CHECK (inscriptions_number <= limit_inscriptions);
+
+-- WORKSHOPS_TOKENS: Expiración debe ser en el futuro
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT chk_token_expiration_future CHECK (expiration_at > created_at);
+
+-- WORKSHOPS_TOKENS: Token debe tener al menos 10 caracteres
+ALTER TABLE WORKSHOPS_TOKENS
+ADD CONSTRAINT chk_token_length CHECK (LENGTH(token) >= 10);
+
+-- PROFESSORS: Email debe ser válido
+ALTER TABLE PROFESSORS
+ADD CONSTRAINT chk_professor_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
+
+-- PROFESSORS: Nombre debe tener al menos 2 caracteres
+ALTER TABLE PROFESSORS
+ADD CONSTRAINT chk_professor_name_length CHECK (LENGTH(TRIM(name)) >= 2);
+
+-- WORKSHOPS_GRADES: Calificación debe estar en rango válido
+ALTER TABLE WORKSHOPS_GRADES
+ADD CONSTRAINT chk_grade_range CHECK (grade >= 0 AND grade <= 100);
+
+-- WORKSHOPS_GRADES: Calificación única por estudiante y taller
+ALTER TABLE WORKSHOPS_GRADES
+ADD CONSTRAINT uk_grade_student_workshop UNIQUE (id_student, id_workshop);
+
+-- WORKSHOPS_INSCRIPTIONS: Inscripción única por estudiante y taller
+ALTER TABLE WORKSHOPS_INSCRIPTIONS
+ADD CONSTRAINT uk_inscription_student_workshop UNIQUE (id_student, id_workshop);
+
+-- =============================================================================
+-- CONSTRAINTS DE INTEGRIDAD DE DATOS
+-- =============================================================================
+
+-- WORKSHOPS: Fechas de inscripción deben ser coherentes
+ALTER TABLE WORKSHOPS
+ADD CONSTRAINT chk_workshop_inscription_dates_coherent CHECK (
+    inscription_start_date < inscription_end_date AND
+    inscription_end_date <= course_start_date AND
+    course_start_date < course_end_date
+);
+
+-- WORKSHOPS_TOKENS: Solo un token activo por taller
+-- (Se maneja a nivel de aplicación para mayor flexibilidad)
 
 -- =============================================================================
 -- CONFIGURACIÓN FINAL
