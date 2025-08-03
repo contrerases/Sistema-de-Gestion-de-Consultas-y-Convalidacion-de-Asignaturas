@@ -1,32 +1,63 @@
 from fastapi import HTTPException
 import mariadb
-from crud.notification import create_notification, get_notifications, mark_notification_read
+from crud.notification import (
+    get_notifications,
+    get_notifications_by_user,
+    get_notifications_not_read_by_user,
+    get_notification_by_id,
+    create_notification,
+    mark_notification_read
+)
 from schemas.notification.notification_in import NotificationIn
 from schemas.notification.notification_out import NotificationOut
 from typing import Optional
 
-def create_notification_service(notification: NotificationIn):
-    try:
-        return create_notification(notification.user_type, notification.notification_type, notification.message)
-    except mariadb.Error as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# =============================================================================
+# SERVICIOS DE NOTIFICACIONES
+# =============================================================================
 
-def get_notifications_service(id_user: Optional[int] = None, notification_type: Optional[str] = None, is_read: Optional[int] = None, is_sent: Optional[int] = None, user_type: Optional[str] = None, limit: Optional[int] = None):
+def get_all_notifications_service():
+    """Obtiene lista de notificaciones con datos mínimos para preview"""
     try:
-        rows = get_notifications(id_user, notification_type, is_read, is_sent, user_type, limit)
+        rows = get_notifications()
         return [NotificationOut(**row) for row in rows]
     except mariadb.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def mark_notification_read_service(id_notification: int, id_user: int):
+def get_notifications_by_user_service(id_user: int):
+    """Obtiene notificaciones de un usuario con datos mínimos"""
     try:
-        return mark_notification_read(id_notification, id_user)
+        rows = get_notifications_by_user(id_user)
+        return [NotificationOut(**row) for row in rows]
+    except mariadb.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_notifications_not_read_by_user_service(id_user: int):
+    """Obtiene notificaciones no leídas de un usuario con datos mínimos"""
+    try:
+        rows = get_notifications_not_read_by_user(id_user)
+        return [NotificationOut(**row) for row in rows]
+    except mariadb.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def get_notification_by_id_service(id_notification: int):
+    """Obtiene una notificación específica con datos completos"""
+    try:
+        result = get_notification_by_id(id_notification)
+        return NotificationOut(**result) if result else None
+    except mariadb.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def create_notification_service(notification: NotificationIn):
+    """Crea una nueva notificación"""
+    try:
+        return create_notification(notification.id_user, notification.notification_type, notification.message)
     except mariadb.Error as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-def get_notifications_not_read_by_id_user_service(id_user: int, limit: Optional[int] = None):
+def mark_notification_read_service(id_notification: int):
+    """Marca una notificación como leída"""
     try:
-        rows = get_notifications(id_user=id_user, is_read=0, limit=limit)
-        return [NotificationOut(**row) for row in rows]
+        return mark_notification_read(id_notification)
     except mariadb.Error as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=400, detail=str(e)) 

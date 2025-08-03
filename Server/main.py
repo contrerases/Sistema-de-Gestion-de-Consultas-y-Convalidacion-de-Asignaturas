@@ -16,6 +16,10 @@ from api.v1.endpoints.workshop_grades import router as workshop_grades_router
 from api.v1.endpoints.workshop import router as workshop_router
 from api.v1.endpoints.notifications import router as notifications_router
 from api.v1.endpoints.curriculum_course import router as curriculum_course_router
+from api.v1.endpoints.requests import router as requests_router
+from api.v1.endpoints.professors import router as professors_router
+from api.v1.endpoints.workshop_tokens import router as workshop_tokens_router
+from api.v1.endpoints.catalogs import router as catalogs_router
 
 
 # Crear la aplicación
@@ -49,3 +53,7 @@ app.include_router(workshop_grades_router, prefix=f"{API_PREFIX}")
 app.include_router(workshop_router, prefix=f"{API_PREFIX}")
 app.include_router(notifications_router, prefix=f"{API_PREFIX}")
 app.include_router(curriculum_course_router, prefix=f"{API_PREFIX}")
+app.include_router(requests_router, prefix=f"{API_PREFIX}")
+app.include_router(professors_router, prefix=f"{API_PREFIX}")
+app.include_router(workshop_tokens_router, prefix=f"{API_PREFIX}")
+app.include_router(catalogs_router, prefix=f"{API_PREFIX}")

@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 
-import StudentLayout from '@/layouts/StudentLayout.vue'
+import StudentLayout from '@/shared/components/layout/pages/StudentLayout.vue'
 import AboutView from '@/views/AboutView.vue'
 import ProfileView from '@/modules/students/components/ProfileView.vue'
 

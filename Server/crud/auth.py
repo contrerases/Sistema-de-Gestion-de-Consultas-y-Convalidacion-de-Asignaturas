@@ -1,43 +1,40 @@
-from typing import Optional
 from database.connection import get_db_connection
 from utils.constants import PROCEDURES
+from typing import Optional, List
 
-# LOGIN
-
-def login(email: str, password_hash: str) -> Optional[dict]:
+def login(email: str, password: str) -> Optional[dict]:
+    """Autentica un usuario"""
     with get_db_connection() as conn:
         with conn.cursor(dictionary=True) as cursor:
-            cursor.callproc(PROCEDURES['login'], [email, password_hash])
-            row = cursor.fetchone()
-            return row if row else None
+            cursor.callproc(PROCEDURES['login'], [email, password])
+            result = cursor.fetchall()
+            return result[0] if result else None
 
-# LOGOUT (opcional, solo registra evento)
 def logout(user_id: int) -> bool:
+    """Cierra la sesión de un usuario"""
     with get_db_connection() as conn:
-        with conn.cursor(dictionary=True) as cursor:
+        with conn.cursor() as cursor:
             cursor.callproc(PROCEDURES['logout'], [user_id])
             return True
 
-# CHANGE PASSWORD
-def change_password(user_id: int, current_password_hash: str, new_password_hash: str) -> bool:
+def change_password(user_id: int, old_password: str, new_password: str) -> bool:
+    """Cambia la contraseña de un usuario"""
     with get_db_connection() as conn:
-        with conn.cursor(dictionary=True) as cursor:
-            cursor.callproc(PROCEDURES['change_password'], [user_id, current_password_hash, new_password_hash])
-            return cursor.rowcount > 0
+        with conn.cursor() as cursor:
+            cursor.callproc(PROCEDURES['change_password'], [user_id, old_password, new_password])
+            return True
 
-# GET USER BY EMAIL
+def reset_password(email: str, new_password: str) -> bool:
+    """Resetea la contraseña de un usuario"""
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.callproc(PROCEDURES['reset_password'], [email, new_password])
+            return True
+
 def get_user_by_email(email: str) -> Optional[dict]:
+    """Obtiene un usuario por email"""
     with get_db_connection() as conn:
         with conn.cursor(dictionary=True) as cursor:
             cursor.callproc(PROCEDURES['get_user_by_email'], [email])
-            row = cursor.fetchone()
-            return row if row else None
-
-# GET USER BY ID
-
-def get_user_by_id(user_id: int) -> Optional[dict]:
-    with get_db_connection() as conn:
-        with conn.cursor(dictionary=True) as cursor:
-            cursor.execute("SELECT * FROM vw_auth_users WHERE id_auth_user = %s", (user_id,))
-            row = cursor.fetchone()
-            return row if row else None 
+            result = cursor.fetchall()
+            return result[0] if result else None 
