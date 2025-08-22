@@ -10,7 +10,6 @@
         "ms-python.python",              // Soporte completo para Python
         "ms-python.black-formatter",     // Formateo automático con Black
         "usernamehw.errorlens",          // Muestra errores y warnings directamente en el código
-        "anysphere.cursorpyright",       // IntelliSense avanzado y verificación de tipos
         "ms-python.isort",               // Organización automática de imports
         "ms-python.flake8"               // Linting estándar de Python
       ],
@@ -27,8 +26,7 @@
         // ========================================
         // CONFIGURACIÓN DE FORMATEO
         // ========================================
-        "editor.formatOnSave": true,                                 // Formatea automáticamente al guardar
-        "editor.defaultFormatter": "ms-python.black-formatter",     // Black como formateador por defecto
+        "editor.formatOnSave": true,                                 // Formatea automáticamente al guardar    // Black como formateador por defecto
         "editor.codeActionsOnSave": {
           "source.organizeImports": "explicit"                       // Organiza imports automáticamente al guardar
         },
@@ -72,6 +70,7 @@
       }
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt",            // Instala dependencias al crear el contenedor
+  "postCreateCommand": "pip install -r requirements.txt && pip install -r requirements-dev.txt",
+            // Instala dependencias al crear el contenedor
   "remoteUser": "root"                                               // Usa el usuario root en el contenedor
 }

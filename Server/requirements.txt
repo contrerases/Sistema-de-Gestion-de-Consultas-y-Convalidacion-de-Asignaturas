@@ -1,11 +1,47 @@
-fastapi
-uvicorn
-mariadb
-bcrypt
-python-dotenv
-pydantic
-email-validator
-pydantic-settings
-autopep8
-PyJWT
-python-multipart
+# Framework Web
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Base de Datos
+mariadb==1.1.8              # Driver nativo MariaDB
+
+# Autenticación y Seguridad
+bcrypt==4.1.2
+PyJWT==2.8.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Validación y Configuración
+pydantic==2.5.0
+email-validator==2.1.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+
+# Utilidades
+python-multipart==0.0.6     # Para file uploads
+
+# HTTP Client (para servicios externos)
+httpx==0.25.2
+
+# Validación Avanzada
+validators==0.22.0          # URLs, emails, etc.
+
+# Fechas y Tiempo
+python-dateutil==2.8.2      # Manejo avanzado de fechas
+pytz==2023.3                # Zonas horarias
+
+# Logging Estructurado
+structlog==23.2.0           # Logs estructurados
+
+# Rate Limiting
+slowapi==0.1.9              # Rate limiting para FastAPI
+
+# CORS y Seguridad
+python-cors==1.7.0          # CORS avanzado
+
+# Archivos y Documentos
+Pillow==10.1.0              # Procesamiento de imágenes
+
+# Notificaciones
+smtplib                     # Email (built-in)
+

@@ -1,1 +1,0 @@
-# Middlewares personalizados para FastAPI (logging, manejo de errores, CORS, etc). 

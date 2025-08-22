@@ -2,10 +2,6 @@
 ---------------------------------- TRIGGERS DE LA BASE DE DATOS ----------------------------------------
 --------------------------------------------------------------------------------------------------------
 
-
-SET @STUDENT_TYPE = 'STUDENT';
-SET @ADMIN_TYPE = 'ADMINISTRATOR';
-
 -- =============================================================================
 -- TRIGGERS DE NOTIFICACIONES AUTOMÁTICAS
 -- =============================================================================
@@ -15,27 +11,24 @@ DROP TRIGGER IF EXISTS tr_workshops_notifications_insert;
 DROP TRIGGER IF EXISTS tr_workshops_notifications_update;
 DROP TRIGGER IF EXISTS tr_workshops_notifications_delete;
 
+DELIMITER $$
+
 CREATE TRIGGER tr_workshops_notifications_insert
 AFTER INSERT ON WORKSHOPS
 FOR EACH ROW
 BEGIN
-    SET @tipo_notif_est := 'NUEVO_TALLER';
-    SET @msg_est := CONCAT('Se ha creado un nuevo taller: ', NEW.name, '. Inscripciones habilitadas hasta: ', NEW.inscription_end_date);
-    SET @tipo_notif_admin := 'TALLER_CREADO';
-    SET @msg_admin := CONCAT('El taller "', NEW.name, '" ha sido creado correctamente');
-    -- Notificación a todos los estudiantes
-    CALL sp_create_notification(
-        @STUDENT_TYPE,
-        @tipo_notif_est,
-        @msg_est
+    -- Notificación a estudiantes sobre nuevo taller
+    CALL sp_create_notification_students(
+        'TALLER_CREADO',
+        CONCAT('Nuevo taller disponible: ', NEW.name)
     );
-    -- Notificación a administradores
-    CALL sp_create_notification(
-        @ADMIN_TYPE,
-        @tipo_notif_admin,
-        @msg_admin
+
+    -- Notificación a administradores sobre nuevo taller
+    CALL sp_create_notification_administrators(
+        'TALLER_CREADO',
+        CONCAT('El taller "', NEW.name, '" ha sido creado correctamente')
     );
-END//
+END $$
 
 CREATE TRIGGER tr_workshops_notifications_update
 AFTER UPDATE ON WORKSHOPS
@@ -49,126 +42,117 @@ BEGIN
     IF OLD.id_workshop_state != NEW.id_workshop_state THEN
         -- Notificaciones según el nuevo estado
         CASE NEW.id_workshop_state
-            WHEN 2 THEN -- CERRADO
-                SET @tipo_notif := 'TALLER_CERRADO';
-                SET @msg := CONCAT('El taller "', NEW.name, '" ha sido cerrado');
-                CALL sp_create_notification(
-                    @STUDENT_TYPE,
-                    @tipo_notif,
-                    @msg
+            WHEN 2 THEN -- EN_CURSO
+                CALL sp_create_notification_students(
+                    'TALLER_INICIADO',
+                    CONCAT('El taller "', NEW.name, '" ha iniciado')
                 );
-            WHEN 3 THEN -- EN_CURSO
-                SET @tipo_notif := 'TALLER_INICIADO';
-                SET @msg := CONCAT('El taller "', NEW.name, '" ha iniciado');
-                CALL sp_create_notification(
-                    @STUDENT_TYPE,
-                    @tipo_notif,
-                    @msg
+                CALL sp_create_notification_administrators(
+                    'TALLER_INICIADO',
+                    CONCAT('El taller "', NEW.name, '" ha iniciado')
                 );
-            WHEN 4 THEN -- FINALIZADO
-                SET @tipo_notif := 'TALLER_FINALIZADO';
-                SET @msg := CONCAT('El taller "', NEW.name, '" ha finalizado');
-                CALL sp_create_notification(
-                    @STUDENT_TYPE,
-                    @tipo_notif,
-                    @msg
+            WHEN 3 THEN -- FINALIZADO
+                CALL sp_create_notification_students(
+                    'TALLER_FINALIZADO',
+                    CONCAT('El taller "', NEW.name, '" ha finalizado')
+                );
+                CALL sp_create_notification_administrators(
+                    'TALLER_FINALIZADO',
+                    CONCAT('El taller "', NEW.name, '" ha finalizado')
+                );
+            WHEN 4 THEN -- CERRADO
+                CALL sp_create_notification_students(
+                    'TALLER_CERRADO',
+                    CONCAT('El taller "', NEW.name, '" ha sido cerrado')
+                );
+                CALL sp_create_notification_administrators(
+                    'TALLER_CERRADO',
+                    CONCAT('El taller "', NEW.name, '" ha sido cerrado')
                 );
         END CASE;
     END IF;
 
     -- Verificar si se alcanzó el límite de inscripciones
     IF v_current_inscriptions >= NEW.limit_inscriptions THEN
-        SET @tipo_notif := 'TALLER_LIMITE_ALCANZADO';
-        SET @msg := CONCAT('El taller "', NEW.name, '" ha alcanzado su límite de inscripciones');
-        CALL sp_create_notification(
-            @ADMIN_TYPE,
-            @tipo_notif,
-            @msg
+        CALL sp_create_notification_administrators(
+            'TALLER_LIMITE_ALCANZADO',
+            CONCAT('El taller "', NEW.name, '" ha alcanzado su límite de inscripciones')
         );
     END IF;
-END//
+END $$
 
 CREATE TRIGGER tr_workshops_notifications_delete
 BEFORE DELETE ON WORKSHOPS
 FOR EACH ROW
 BEGIN
-    SET @tipo_notif := 'TALLER_ELIMINADO';
-    SET @msg := CONCAT('El taller "', OLD.name, '" ha sido eliminado');
-    CALL sp_create_notification(
-        @STUDENT_TYPE,
-        @tipo_notif,
-        @msg
+    CALL sp_create_notification_students(
+        'TALLER_ELIMINADO',
+        CONCAT('El taller "', OLD.name, '" ha sido eliminado')
     );
-END//
+END $$
+
+-- Trigger para notificaciones de REQUESTS (solicitudes de convalidación)
+DROP TRIGGER IF EXISTS tr_requests_notifications_insert $$
+DROP TRIGGER IF EXISTS tr_requests_notifications_update $$
+DROP TRIGGER IF EXISTS tr_requests_notifications_delete $$
 
 
-
-
--- Trigger para notificaciones de CONVALIDATIONS
-DROP TRIGGER IF EXISTS tr_convalidations_notifications_insert;
-DROP TRIGGER IF EXISTS tr_convalidations_notifications_update;
-
-CREATE TRIGGER tr_convalidations_notifications_insert
-AFTER INSERT ON CONVALIDATIONS
+CREATE TRIGGER tr_requests_notifications_insert
+AFTER INSERT ON REQUESTS
 FOR EACH ROW
 BEGIN
-    DECLARE v_id_student INT;
-    SELECT id_student INTO v_id_student FROM REQUESTS WHERE id = NEW.id_request;
-    SET @tipo_notif := 'CONVALIDACION_ENVIADA';
-    SET @msg := 'Su solicitud de convalidación ha sido enviada correctamente';
+    -- Notificación al estudiante específico
     CALL sp_create_notification(
-        v_id_student,
-        @tipo_notif,
-        @msg
+        NEW.id_student,
+        'SOLICITUD_ENVIADA',
+        'Su solicitud de convalidación ha sido enviada correctamente'
     );
 
-    SET @tipo_notif := 'NUEVA_CONVALIDACION';
-    SET @msg := 'Nueva solicitud de convalidación';
-    CALL sp_create_notification(
-        @ADMIN_TYPE,
-        @tipo_notif,
-        @msg
+    -- Notificación a administradores
+    CALL sp_create_notification_administrators(
+        'NUEVA_SOLICITUD',
+        'Nueva solicitud de convalidación recibida'
     );
-END//
+END $$
 
-CREATE TRIGGER tr_convalidations_notifications_update
-AFTER UPDATE ON CONVALIDATIONS
+CREATE TRIGGER tr_requests_notifications_update
+AFTER UPDATE ON REQUESTS
 FOR EACH ROW
 BEGIN
-    DECLARE v_id_student INT;
-    SELECT id_student INTO v_id_student FROM REQUESTS WHERE id = NEW.id_request;
-    IF OLD.id_convalidation_state != NEW.id_convalidation_state THEN
-        SET @tipo_notif := 'CONVALIDACION_REVISADA';
-        SET @msg := 'Su solicitud de convalidación ha sido revisada';
+    -- Si se revisó la solicitud (cambió id_reviewed_by o reviewed_at)
+    IF (OLD.id_reviewed_by IS NULL AND NEW.id_reviewed_by IS NOT NULL) OR 
+       (OLD.reviewed_at IS NULL AND NEW.reviewed_at IS NOT NULL) THEN
+        
+        -- Notificación al estudiante específico
         CALL sp_create_notification(
-            v_id_student,
-            @tipo_notif,
-            @msg
+            NEW.id_student,
+            'SOLICITUD_REVISADA',
+            'Su solicitud de convalidación ha sido revisada'
         );
     END IF;
-END//
+END $$
 
 -- =============================================================================
 -- TRIGGER PARA NOTIFICACIONES DE INSCRIPCIONES FINALIZADAS
 -- =============================================================================
 
 -- Trigger para notificar cuando las inscripciones finalizan
-DROP TRIGGER IF EXISTS tr_workshop_inscriptions_finalized;
+DROP TRIGGER IF EXISTS tr_workshop_inscriptions_finalized $$
 
 CREATE TRIGGER tr_workshop_inscriptions_finalized
 AFTER UPDATE ON WORKSHOPS
 FOR EACH ROW
 BEGIN
-    -- Verificar si las inscripciones han finalizado (cambio de estado a CERRADO)
-    IF OLD.id_workshop_state = 1 AND NEW.id_workshop_state = 2 THEN -- De INSCRIPCIONES_HABILITADAS a EN_CURSO
-        SET @tipo_notif := 'INSCRIPCIONES_FINALIZADAS';
-        SET @msg := CONCAT('Las inscripciones para el taller "', NEW.name, '" han finalizado');
-        CALL sp_create_notification(
-            @STUDENT_TYPE,
-            @tipo_notif,
-            @msg
+    -- Verificar si las inscripciones han finalizado (cambio de estado de INSCRIPCION a EN_CURSO)
+    IF OLD.id_workshop_state = 1 AND NEW.id_workshop_state = 2 THEN -- De INSCRIPCION a EN_CURSO
+        CALL sp_create_notification_students(
+            'INSCRIPCIONES_FINALIZADAS',
+            CONCAT('Las inscripciones para el taller "', NEW.name, '" han finalizado')
         );
     END IF;
-END//
+END $$
 
-SELECT "Triggers de notificaciones automáticas simplificados creados correctamente" AS mensaje;
+DELIMITER ;
+
+
+SELECT "Triggers de notificaciones automáticas actualizados correctamente" AS mensaje;

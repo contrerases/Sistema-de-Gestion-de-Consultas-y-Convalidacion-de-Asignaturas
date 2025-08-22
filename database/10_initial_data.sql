@@ -1,24 +1,19 @@
--- DATOS INICIALES DEL SISTEMA SGSCT
--- del Sistema de Gestión de Solicitudes de Convalidaciones y Talleres
+-- =============================================================================
+-- SCRIPT DE DATOS INICIALES
+-- Sistema de Gestión de Solicitudes de Convalidación y Talleres DI
+-- =============================================================================
 
--- Borra todos los datos de la base de datos
+
+
 SET FOREIGN_KEY_CHECKS = 0;
 
-DELETE FROM CONVALIDATION_STATES;
-DELETE FROM CONVALIDATION_TYPES;
-DELETE FROM CURRICULUM_COURSES_TYPES;
-DELETE FROM WORKSHOP_STATES;
-DELETE FROM DEPARTMENTS;
-DELETE FROM AUTH_USERS;
-DELETE FROM USERS;
-DELETE FROM ADMINISTRATORS;
-DELETE FROM STUDENTS;
-DELETE FROM CURRICULUM_COURSES;
-DELETE FROM SUBJECTS;
-DELETE FROM CONVALIDATIONS;
-DELETE FROM CONVALIDATIONS_SUBJECTS;
-DELETE FROM CONVALIDATIONS_WORKSHOPS;
-DELETE FROM CONVALIDATIONS_EXTERNAL_ACTIVITIES;
+DELETE FROM CONVALIDATION_STATES WHERE 1 = 1;
+DELETE FROM CONVALIDATION_TYPES WHERE 1 = 1;
+DELETE FROM CURRICULUM_COURSES_TYPES WHERE 1 = 1;
+DELETE FROM WORKSHOP_STATES WHERE 1 = 1;
+DELETE FROM DEPARTMENTS WHERE 1 = 1;
+DELETE FROM CURRICULUM_COURSES WHERE 1 = 1;
+DELETE FROM SUBJECTS WHERE 1 = 1;
 
 -- Reiniciar las secuencias
 ALTER TABLE CONVALIDATION_STATES AUTO_INCREMENT = 1;
@@ -26,32 +21,15 @@ ALTER TABLE CONVALIDATION_TYPES AUTO_INCREMENT = 1;
 ALTER TABLE CURRICULUM_COURSES_TYPES AUTO_INCREMENT = 1;
 ALTER TABLE WORKSHOP_STATES AUTO_INCREMENT = 1;
 ALTER TABLE DEPARTMENTS AUTO_INCREMENT = 1;
-ALTER TABLE AUTH_USERS AUTO_INCREMENT = 1;
-ALTER TABLE USERS AUTO_INCREMENT = 1;
-ALTER TABLE ADMINISTRATORS AUTO_INCREMENT = 1;
-ALTER TABLE STUDENTS AUTO_INCREMENT = 1;
 ALTER TABLE CURRICULUM_COURSES AUTO_INCREMENT = 1;
 ALTER TABLE SUBJECTS AUTO_INCREMENT = 1;
-ALTER TABLE CONVALIDATIONS AUTO_INCREMENT = 1;
-ALTER TABLE CONVALIDATIONS_SUBJECTS AUTO_INCREMENT = 1;
-ALTER TABLE CONVALIDATIONS_WORKSHOPS AUTO_INCREMENT = 1;
-ALTER TABLE CONVALIDATIONS_EXTERNAL_ACTIVITIES AUTO_INCREMENT = 1;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- =============================================================================
--- CONFIGURACIÓN INICIAL
--- =============================================================================
-
-  -- Desactiva las restricciones de clave foránea temporalmente
-SET FOREIGN_KEY_CHECKS = 0;
-
--- =============================================================================
--- DATOS DE CATÁLOGOS (PRIMERO)
+-- DATOS DE CONFIGURACIÓN DEL SISTEMA
 -- =============================================================================
 
 -- Estados de talleres
-INSERT INTO WORKSHOP_STATES (name, description) VALUES
+INSERT IGNORE INTO WORKSHOP_STATES (name, description) VALUES
 ('INSCRIPCION', 'Período de inscripción abierto'),
 ('EN_CURSO', 'Taller en desarrollo'),
 ('FINALIZADO', 'Taller finalizado'),
@@ -59,13 +37,13 @@ INSERT INTO WORKSHOP_STATES (name, description) VALUES
 ('CANCELADO', 'Taller cancelado');
 
 -- Estados de convalidaciones
-INSERT INTO CONVALIDATION_STATES (name, description) VALUES
-('ENVIADA', 'Convalidación enviada para revisión'),
-('RECHAZADA_DI', 'Rechazada por Dirección de Investigación'),
-('APROBADA_DI', 'Aprobada por Dirección de Investigación'),
-('ENVIADA_DE', 'Enviada a Dirección de Estudios'),
-('RECHAZADA_DE', 'Rechazada por Dirección de Estudios'),
-('APROBADA_DE', 'Aprobada por Dirección de Estudios');
+INSERT INTO CONVALIDATION_STATES (name) VALUES
+('ENVIADA'),
+('RECHAZADA_DI'),
+('APROBADA_DI'),
+('ENVIADA_DE'),
+('RECHAZADA_DE'),
+('APROBADA_DE');
 
 -- Tipos de convalidaciones
 INSERT INTO CONVALIDATION_TYPES (name) VALUES
@@ -75,7 +53,6 @@ INSERT INTO CONVALIDATION_TYPES (name) VALUES
 ('PROYECTO PERSONAL'),
 ('CURSO CERTIFICADO'),
 ('OTRO');
-
 
 -- Tipos de cursos curriculares
 INSERT INTO CURRICULUM_COURSES_TYPES (name) VALUES
@@ -97,91 +74,10 @@ INSERT INTO DEPARTMENTS (name) VALUES
 ('MATEMATICA');
 
 -- =============================================================================
--- DATOS DE AUTENTICACIÓN (TABLA PRINCIPAL)
--- =============================================================================
-
--- Insertar datos de autenticación para todos los usuarios
--- Nota: Las contraseñas están hasheadas con bcrypt para máxima seguridad
-INSERT INTO AUTH_USERS (
-    email,
-    password_hash
-) VALUES (
-    'pgodoy@usm.cl',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8K5QKqG' -- hash de ejemplo para 'pedro123'
-), (
-    'camilocontrerases@gmail.com',
-    '$2b$12$Nx9mK8pQ2rS5tU7vW1yZ3A6B9C0D1E2F3G4H5I6J7K8L9M0N1O2P3Q4R5S6T' -- hash de ejemplo para 'camilo123'
-), (
-    'alvarocarrasco@gmail.com',
-    '$2b$12$Pq8rL5mN2sK9tU3vW7yZ1A4B6C9D2E5F8G1H4I7J0K3L6M9N2O5P8Q1R4S7T' -- hash de ejemplo para 'alvaro123'
-);
-
--- =============================================================================
--- DATOS DE USUARIOS (TABLA HIJA)
--- =============================================================================
-
--- Insertar usuarios principales (datos comunes)
--- Nota: Los IDs corresponden a los generados automáticamente en AUTH_USERS
-INSERT INTO USERS (
-    id,
-    first_names,
-    last_names,
-    campus
-) VALUES (
-    1, -- ID del usuario Pedro Godoy (Administrador)
-    'Pedro Ignacio',
-    'Godoy Barrera',
-    'Casa Central'
-), (
-    2, -- ID del usuario Camilo Contreras (Estudiante)
-    'Camilo Eugenio',
-    'Contreras Espinoza',
-    'Casa Central'
-), (
-    3, -- ID del usuario Alvaro Carrasco (Estudiante)
-    'Alvaro Nicolas',
-    'Carrasco Escobar',
-    'Casa Central'
-);
-
--- =============================================================================
--- DATOS DE ADMINISTRADORES (TABLA HIJA ESPECÍFICA)
--- =============================================================================
-
--- Insertar Administradores (datos específicos)
-INSERT INTO ADMINISTRATORS (
-    id
-) VALUES (
-    1 -- ID del usuario Pedro Godoy (Administrador)
-);
-
--- =============================================================================
--- DATOS DE ESTUDIANTES (TABLA HIJA ESPECÍFICA)
--- =============================================================================
-
--- Insertar Estudiantes (datos específicos)
-INSERT INTO STUDENTS (
-    id,
-    rol_student,
-    rut_student,
-    campus_student
-) VALUES (
-    2, -- ID del usuario Camilo Contreras
-    '2018730637',
-    '20369538k',
-    'Casa Central'
-), (
-    3, -- ID del usuario Alvaro Carrasco
-    '2018730181',
-    '20360672k',
-    'Casa Central'
-);
-
--- =============================================================================
 -- DATOS DE CURSOS CURRICULARES
 -- =============================================================================
 
--- Insertar Cursos Curriculares
+
 INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES
 ('LIBRE 1', 1),
 ('LIBRE 2', 1),
@@ -258,4 +154,6 @@ INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES
 ('EFI116', 'VÓLEIBOL', 4, 2);
 
 
-SELECT "Datos iniciales insertados correctamente" AS mensaje;
+SET FOREIGN_KEY_CHECKS = 1;
+
+SELECT "Datos insertados correctamente"

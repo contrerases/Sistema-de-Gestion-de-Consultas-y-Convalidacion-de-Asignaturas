@@ -1,26 +1,20 @@
 name: sgc-dev
 
 services:
-  # ========================================
-  # FRONTEND - Vue.js + Vite (DESARROLLO)
-  # ========================================
   web:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev  # Dockerfile de desarrollo
+      dockerfile: Dockerfile.dev
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
+      - "5173:5173"
+    env_file:
+      - ./client/.env.dev    
     restart: unless-stopped
     networks:
       - net
     volumes:
-      - ./client:/app  # Hot reload para desarrollo
-      - /app/node_modules  # Excluye node_modules para evitar conflictos
-
+      - ./client:/app
+      - /app/node_modules
 
   # ========================================
   # BACKEND - Python + FastAPI (DESARROLLO)
@@ -28,49 +22,35 @@ services:
   api:
     build:
       context: ./server
-      dockerfile: Dockerfile.dev  # Dockerfile de desarrollo
+      dockerfile: Dockerfile.dev
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      # Database configuration
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_USER_PASSWORD=${DB_USER_PASSWORD}
-      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-
-      # Application settings
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+    env_file:
+      - ./server/.env.dev
     restart: unless-stopped
     networks:
       - net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/docs" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     volumes:
-      - ./server:/app  # Hot reload para desarrollo
-
+      - ./server:/app
 
   # ========================================
-  # DATABASE - MariaDB
+  # BASE DE DATOS - MariaDB (DESARROLLO)
   # ========================================
   db:
     image: mariadb:10.11
-    restart: unless-stopped
+    env_file:
+      - ./server/.env.dev
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=sgc_root_dev_password
+      - MARIADB_DATABASE=sgc_db_dev
+      - MARIADB_USER=sgc_user
+      - MARIADB_PASSWORD=sgc_user_dev_password
+
     ports:
-      - "${DB_PORT}:3306"  # Solo se expone si DB_PORT está definido
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
       - type: bind
@@ -112,21 +92,18 @@ services:
     networks:
       - net
     healthcheck:
-      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "--password=${DB_ROOT_PASSWORD}" ]
-      interval: 10s
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "--password=sgc_root_dev_password" ]
+      interval: 10s  
       timeout: 5s
       retries: 5
+      start_period: 30s 
 
-# ========================================
-# NETWORKS
-# ========================================
 networks:
   net:
     driver: bridge
 
-# ========================================
-# VOLUMES
-# ========================================
 volumes:
   db_data:
     driver: local
+
+

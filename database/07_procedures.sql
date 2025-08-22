@@ -2,50 +2,182 @@
 -- PROCEDIMIENTOS ALMACENADOS PARA LA API REST SGSCT
 -- =============================================================================
 
+
+
 -- =============================================================================
--- CONFIGURACIÓN INICIAL
+-- ELIMINACIÓN DE PROCEDIMIENTOS EXISTENTES (ORDEN ALFABÉTICO)
 -- =============================================================================
 
-DELIMITER $$
+-- Autenticación
+DROP PROCEDURE IF EXISTS sp_change_password;
+DROP PROCEDURE IF EXISTS sp_get_salt;
+DROP PROCEDURE IF EXISTS sp_login;
+
+-- Administradores
+DROP PROCEDURE IF EXISTS sp_create_administrator;
+DROP PROCEDURE IF EXISTS sp_delete_administrator;
+DROP PROCEDURE IF EXISTS sp_get_administrator_by_id;
+DROP PROCEDURE IF EXISTS sp_get_administrators;
+DROP PROCEDURE IF EXISTS sp_update_administrator;
+
+-- Convalidaciones
+DROP PROCEDURE IF EXISTS sp_create_convalidation;
+DROP PROCEDURE IF EXISTS sp_delete_convalidation;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_by_id;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_external_activities;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_subjects;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_workshops;
+DROP PROCEDURE IF EXISTS sp_get_convalidations;
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_student;
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_state;
+DROP PROCEDURE IF EXISTS sp_get_convalidations_by_type;
+DROP PROCEDURE IF EXISTS sp_get_convalidations_reviewed_by_admin;
+DROP PROCEDURE IF EXISTS sp_review_convalidation;
+DROP PROCEDURE IF EXISTS sp_search_convalidations;
+DROP PROCEDURE IF EXISTS sp_update_convalidation;
+
+-- Estados de convalidaciones
+DROP PROCEDURE IF EXISTS sp_create_convalidation_state;
+DROP PROCEDURE IF EXISTS sp_delete_convalidation_state;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_states;
+DROP PROCEDURE IF EXISTS sp_update_convalidation_state;
+
+-- Tipos de convalidaciones
+DROP PROCEDURE IF EXISTS sp_delete_convalidation_type;
+DROP PROCEDURE IF EXISTS sp_update_convalidation_type;
+DROP PROCEDURE IF EXISTS sp_get_convalidation_types;
+DROP PROCEDURE IF EXISTS sp_create_convalidation_type;
+
+-- Cursos curriculares
+DROP PROCEDURE IF EXISTS sp_create_curriculum_course;
+DROP PROCEDURE IF EXISTS sp_delete_curriculum_course;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_course_by_id;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_by_type;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_courses_not_convalidated_by_student;
+DROP PROCEDURE IF EXISTS sp_update_curriculum_course;
+
+-- Tipos de cursos curriculares
+DROP PROCEDURE IF EXISTS sp_create_curriculum_course_type;
+DROP PROCEDURE IF EXISTS sp_delete_curriculum_course_type;
+DROP PROCEDURE IF EXISTS sp_get_curriculum_course_types;
+DROP PROCEDURE IF EXISTS sp_update_curriculum_course_type;
+
+-- Departamentos
+DROP PROCEDURE IF EXISTS sp_create_department;
+DROP PROCEDURE IF EXISTS sp_delete_department;
+DROP PROCEDURE IF EXISTS sp_get_departments;
+DROP PROCEDURE IF EXISTS sp_update_department;
+
+-- Notificaciones
+DROP PROCEDURE IF EXISTS sp_create_notification;
+DROP PROCEDURE IF EXISTS sp_create_notification_administrators;
+DROP PROCEDURE IF EXISTS sp_create_notification_students;
+DROP PROCEDURE IF EXISTS sp_delete_notification;
+DROP PROCEDURE IF EXISTS sp_get_notification_by_id;
+DROP PROCEDURE IF EXISTS sp_get_notifications;
+DROP PROCEDURE IF EXISTS sp_get_notifications_by_user;
+DROP PROCEDURE IF EXISTS sp_get_notifications_unread;
+DROP PROCEDURE IF EXISTS sp_mark_notification_as_read;
+DROP PROCEDURE IF EXISTS sp_mark_notification_as_sent;
+
+-- Profesores
+DROP PROCEDURE IF EXISTS sp_create_professor;
+DROP PROCEDURE IF EXISTS sp_get_professors;
+DROP PROCEDURE IF EXISTS sp_update_professor;
+
+-- Solicitudes
+DROP PROCEDURE IF EXISTS sp_get_request_by_id;
+DROP PROCEDURE IF EXISTS sp_get_request_convalidations;
+DROP PROCEDURE IF EXISTS sp_get_requests_by_student;
+
+-- Asignaturas
+DROP PROCEDURE IF EXISTS sp_create_subject;
+DROP PROCEDURE IF EXISTS sp_delete_subject;
+DROP PROCEDURE IF EXISTS sp_get_subject_by_id;
+DROP PROCEDURE IF EXISTS sp_get_subjects;
+DROP PROCEDURE IF EXISTS sp_get_subjects_by_department;
+DROP PROCEDURE IF EXISTS sp_update_subject;
+
+-- Estudiantes
+DROP PROCEDURE IF EXISTS sp_create_student;
+DROP PROCEDURE IF EXISTS sp_delete_student;
+DROP PROCEDURE IF EXISTS sp_get_student_by_id;
+DROP PROCEDURE IF EXISTS sp_get_student_by_rol;
+DROP PROCEDURE IF EXISTS sp_get_student_by_rut;
+DROP PROCEDURE IF EXISTS sp_get_students;
+DROP PROCEDURE IF EXISTS sp_search_students;
+DROP PROCEDURE IF EXISTS sp_update_student;
+
+-- Tokens
+DROP PROCEDURE IF EXISTS sp_create_workshop_token;
+DROP PROCEDURE IF EXISTS sp_get_workshop_tokens_active;
+DROP PROCEDURE IF EXISTS sp_get_workshop_tokens_expired;
+DROP PROCEDURE IF EXISTS sp_use_workshop_token;
+
+
+DROP PROCEDURE IF EXISTS sp_create_workshop_grade;
+DROP PROCEDURE IF EXISTS sp_delete_workshop_grade;
+DROP PROCEDURE IF EXISTS sp_get_workshop_grade_by_id;
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades;
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_by_student;
+DROP PROCEDURE IF EXISTS sp_get_workshop_grades_by_workshop;
+DROP PROCEDURE IF EXISTS sp_update_workshop_grade;
+
+-- Inscripciones a talleres
+DROP PROCEDURE IF EXISTS sp_create_workshop_inscription;
+DROP PROCEDURE IF EXISTS sp_delete_workshop_inscription;
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscription_by_id;
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions;
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_student;
+DROP PROCEDURE IF EXISTS sp_get_workshop_inscriptions_by_workshop;
+DROP PROCEDURE IF EXISTS sp_update_workshop_inscription;
+
+-- Estados de talleres
+DROP PROCEDURE IF EXISTS sp_create_workshop_state;
+DROP PROCEDURE IF EXISTS sp_delete_workshop_state;
+DROP PROCEDURE IF EXISTS sp_get_workshop_states;
+DROP PROCEDURE IF EXISTS sp_update_workshop_state;
+
+-- Talleres
+DROP PROCEDURE IF EXISTS sp_change_workshop_state;
+DROP PROCEDURE IF EXISTS sp_create_workshop;
+DROP PROCEDURE IF EXISTS sp_delete_workshop;
+DROP PROCEDURE IF EXISTS sp_get_workshop_by_id;
+DROP PROCEDURE IF EXISTS sp_get_workshops;
+DROP PROCEDURE IF EXISTS sp_get_workshops_by_state;
+DROP PROCEDURE IF EXISTS sp_get_workshops_closed;
+DROP PROCEDURE IF EXISTS sp_get_workshops_finished;
+DROP PROCEDURE IF EXISTS sp_get_workshops_in_progress;
+DROP PROCEDURE IF EXISTS sp_get_workshops_to_inscription;
+DROP PROCEDURE IF EXISTS sp_search_workshops;
+DROP PROCEDURE IF EXISTS sp_update_workshop;
 
 -- =============================================================================
 -- 1. PROCEDIMIENTOS DE CATÁLOGOS
 -- =============================================================================
 
--- Obtener todos los tipos de convalidaciones
-CREATE PROCEDURE sp_get_convalidation_types()
+DELIMITER $$
+-- Curriculum Courses Types --
+CREATE PROCEDURE sp_get_curriculum_course_types()
 BEGIN
-    SELECT * FROM vw_convalidation_types;
+    SELECT id, name AS curriculum_course_type FROM CURRICULUM_COURSES_TYPES;
 END$$
-
--- Obtener tipo de convalidación por ID
-CREATE PROCEDURE sp_get_convalidation_type_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_convalidation_types WHERE id_convalidation_type = p_id;
-END$$
-
--- Crear tipo de convalidación
-CREATE PROCEDURE sp_create_convalidation_type(IN p_name VARCHAR(255))
+CREATE PROCEDURE sp_create_curriculum_course_type(IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
         RESIGNAL;
     END;
-    
     START TRANSACTION;
-    
     IF p_name IS NULL OR TRIM(p_name) = '' THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de convalidación es requerido';
     END IF;
-    
     INSERT INTO CONVALIDATION_TYPES (name) VALUES (p_name);
-    
     COMMIT;
 END$$
-
--- Actualizar tipo de convalidación
-CREATE PROCEDURE sp_update_convalidation_type(IN p_id INT, IN p_name VARCHAR(255))
+CREATE PROCEDURE sp_update_curriculum_course_type(IN p_id INT, IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -54,26 +186,23 @@ BEGIN
     END;
     
     START TRANSACTION;
-    
     IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de convalidación es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de curso curricular es requerido';
     END IF;
     
     IF p_name IS NULL OR TRIM(p_name) = '' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de convalidación es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de curso curricular es requerido';
     END IF;
     
-    UPDATE CONVALIDATION_TYPES SET name = p_name WHERE id = p_id;
+    UPDATE CURRICULUM_COURSES_TYPES SET name = p_name WHERE id = p_id;
     
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de convalidación no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de curso curricular no encontrado';
     END IF;
     
     COMMIT;
 END$$
-
--- Eliminar tipo de convalidación
-CREATE PROCEDURE sp_delete_convalidation_type(IN p_id INT)
+CREATE PROCEDURE sp_delete_curriculum_course_type(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
     
@@ -86,38 +215,30 @@ BEGIN
     START TRANSACTION;
     
     IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de convalidación es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de curso curricular es requerido';   
     END IF;
     
-    -- Verificar si está siendo usado
-    SELECT COUNT(*) INTO v_count FROM CONVALIDATIONS WHERE id_convalidation_type = p_id;
+    
+    SELECT COUNT(*) INTO v_count FROM CURRICULUM_COURSES WHERE id_curriculum_course_type = p_id;
     
     IF v_count > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar el tipo de convalidación porque está siendo usado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar el tipo de curso curricular porque está siendo usado';
     END IF;
     
-    DELETE FROM CONVALIDATION_TYPES WHERE id = p_id;
+    DELETE FROM CURRICULUM_COURSES_TYPES WHERE id = p_id;
     
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de convalidación no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de curso curricular no encontrado';
     END IF;
     
     COMMIT;
 END$$
 
--- Obtener todos los estados de convalidaciones
+-- Convalidation States --
 CREATE PROCEDURE sp_get_convalidation_states()
 BEGIN
-    SELECT * FROM vw_convalidation_states;
+    SELECT id, name AS convalidation_state, description FROM CONVALIDATION_STATES;
 END$$
-
--- Obtener estado de convalidación por ID
-CREATE PROCEDURE sp_get_convalidation_state_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_convalidation_states WHERE id_convalidation_state = p_id;
-END$$
-
--- Crear estado de convalidación
 CREATE PROCEDURE sp_create_convalidation_state(IN p_name VARCHAR(255), IN p_description TEXT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -136,8 +257,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar estado de convalidación
 CREATE PROCEDURE sp_update_convalidation_state(IN p_id INT, IN p_name VARCHAR(255), IN p_description TEXT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -164,8 +283,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar estado de convalidación
 CREATE PROCEDURE sp_delete_convalidation_state(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -198,19 +315,11 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener todos los estados de talleres
+-- Workshop States --
 CREATE PROCEDURE sp_get_workshop_states()
 BEGIN
-    SELECT * FROM vw_workshop_states;
+    SELECT id, name AS workshop_state, description FROM WORKSHOP_STATES;
 END$$
-
--- Obtener estado de taller por ID
-CREATE PROCEDURE sp_get_workshop_state_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_workshop_states WHERE id_workshop_state = p_id;
-END$$
-
--- Crear estado de taller
 CREATE PROCEDURE sp_create_workshop_state(IN p_name VARCHAR(255), IN p_description TEXT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -229,8 +338,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar estado de taller
 CREATE PROCEDURE sp_update_workshop_state(IN p_id INT, IN p_name VARCHAR(255), IN p_description TEXT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -257,8 +364,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar estado de taller
 CREATE PROCEDURE sp_delete_workshop_state(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -291,20 +396,12 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener todos los tipos de cursos curriculares
-CREATE PROCEDURE sp_get_curriculum_course_types()
+-- Convalidation Types --
+CREATE PROCEDURE sp_get_convalidation_types()
 BEGIN
-    SELECT * FROM vw_curriculum_course_types;
+    SELECT id, name AS convalidation_type FROM CONVALIDATION_TYPES;
 END$$
-
--- Obtener tipo de curso curricular por ID
-CREATE PROCEDURE sp_get_curriculum_course_type_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_curriculum_course_types WHERE id_curriculum_course_type = p_id;
-END$$
-
--- Crear tipo de curso curricular
-CREATE PROCEDURE sp_create_curriculum_course_type(IN p_name VARCHAR(255))
+CREATE PROCEDURE sp_create_convalidation_type(IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -315,16 +412,14 @@ BEGIN
     START TRANSACTION;
     
     IF p_name IS NULL OR TRIM(p_name) = '' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de curso curricular es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de convalidación es requerido';
     END IF;
     
-    INSERT INTO CURRICULUM_COURSES_TYPES (name) VALUES (p_name);
+    INSERT INTO CONVALIDATION_TYPES (name) VALUES (p_name);
     
     COMMIT;
 END$$
-
--- Actualizar tipo de curso curricular
-CREATE PROCEDURE sp_update_curriculum_course_type(IN p_id INT, IN p_name VARCHAR(255))
+CREATE PROCEDURE sp_update_convalidation_type(IN p_id INT, IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -335,24 +430,22 @@ BEGIN
     START TRANSACTION;
     
     IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de curso curricular es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del tipo de convalidación es requerido';
     END IF;
     
     IF p_name IS NULL OR TRIM(p_name) = '' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de curso curricular es requerido';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El nombre del tipo de convalidación es requerido';
     END IF;
     
-    UPDATE CURRICULUM_COURSES_TYPES SET name = p_name WHERE id = p_id;
+    UPDATE CONVALIDATION_TYPES SET name = p_name WHERE id = p_id;
     
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de curso curricular no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de convalidación no encontrado';
     END IF;
     
     COMMIT;
 END$$
-
--- Eliminar tipo de curso curricular
-CREATE PROCEDURE sp_delete_curriculum_course_type(IN p_id INT)
+CREATE PROCEDURE sp_delete_convalidation_type(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
     
@@ -372,13 +465,13 @@ BEGIN
     SELECT COUNT(*) INTO v_count FROM CURRICULUM_COURSES WHERE id_curriculum_course_type = p_id;
     
     IF v_count > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar el tipo de curso curricular porque está siendo usado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar el tipo de convalidación porque está siendo usado';
     END IF;
     
-    DELETE FROM CURRICULUM_COURSES_TYPES WHERE id = p_id;
+    DELETE FROM CONVALIDATION_TYPES WHERE id = p_id;
     
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de curso curricular no encontrado';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de convalidación no encontrado';
     END IF;
     
     COMMIT;
@@ -388,19 +481,11 @@ END$$
 -- 2. PROCEDIMIENTOS DE TABLAS MAESTRAS
 -- =============================================================================
 
--- Obtener todos los departamentos
+-- Departments --
 CREATE PROCEDURE sp_get_departments()
 BEGIN
-    SELECT * FROM vw_departments;
+    SELECT id, name AS department FROM DEPARTMENTS;
 END$$
-
--- Obtener departamento por ID
-CREATE PROCEDURE sp_get_department_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_departments WHERE id_department = p_id;
-END$$
-
--- Crear departamento
 CREATE PROCEDURE sp_create_department(IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -419,8 +504,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar departamento
 CREATE PROCEDURE sp_update_department(IN p_id INT, IN p_name VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -447,8 +530,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar departamento
 CREATE PROCEDURE sp_delete_department(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -481,25 +562,20 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener todas las asignaturas
+
+-- Subjects --
 CREATE PROCEDURE sp_get_subjects()
 BEGIN
-    SELECT * FROM vw_subjects;
+    SELECT id_subject, subject, acronym, credits, department FROM vw_subjects;
 END$$
-
--- Obtener asignatura por ID
 CREATE PROCEDURE sp_get_subject_by_id(IN p_id INT)
 BEGIN
-    SELECT * FROM vw_subjects WHERE id_subject = p_id;
+    SELECT id_subject, subject, acronym, credits, department FROM vw_subjects WHERE id_subject = p_id;
 END$$
-
--- Obtener asignaturas por departamento
 CREATE PROCEDURE sp_get_subjects_by_department(IN p_id_department INT)
 BEGIN
-    SELECT * FROM vw_subjects WHERE id_department = p_id_department;
+    SELECT id_subject, subject, acronym, credits, department FROM vw_subjects WHERE id_department = p_id_department;
 END$$
-
--- Crear asignatura
 CREATE PROCEDURE sp_create_subject(
     IN p_acronym VARCHAR(255),
     IN p_name VARCHAR(255),
@@ -541,8 +617,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar asignatura
 CREATE PROCEDURE sp_update_subject(
     IN p_id INT,
     IN p_acronym VARCHAR(255),
@@ -584,8 +658,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar asignatura
 CREATE PROCEDURE sp_delete_subject(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -618,25 +690,20 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener todos los cursos curriculares
+
+-- Curriculum Courses --
 CREATE PROCEDURE sp_get_curriculum_courses()
 BEGIN
-    SELECT * FROM vw_curriculum_courses;
+    SELECT id_curriculum_course, name, id_curriculum_course_type, curriculum_course FROM vw_curriculum_courses;
 END$$
-
--- Obtener curso curricular por ID
 CREATE PROCEDURE sp_get_curriculum_course_by_id(IN p_id INT)
 BEGIN
-    SELECT * FROM vw_curriculum_courses WHERE id_curriculum_course = p_id;
+    SELECT id_curriculum_course, name, id_curriculum_course_type, curriculum_course FROM vw_curriculum_courses WHERE id_curriculum_course = p_id;
 END$$
-
--- Obtener cursos curriculares por tipo
 CREATE PROCEDURE sp_get_curriculum_courses_by_type(IN p_id_curriculum_course_type INT)
 BEGIN
-    SELECT * FROM vw_curriculum_courses WHERE id_curriculum_course_type = p_id_curriculum_course_type;
+    SELECT id_curriculum_course, name, id_curriculum_course_type, curriculum_course FROM vw_curriculum_courses WHERE id_curriculum_course_type = p_id_curriculum_course_type;
 END$$
-
--- Obtener cursos curriculares no convalidados por estudiante
 CREATE PROCEDURE sp_get_curriculum_courses_not_convalidated_by_student(IN p_id_student INT)
 BEGIN
     SELECT * FROM vw_curriculum_courses
@@ -646,8 +713,6 @@ BEGIN
         AND CONVALIDATIONS.id_request IN (SELECT REQUESTS.id FROM REQUESTS WHERE REQUESTS.id_student = p_id_student)
     );
 END$$
-
--- Crear curso curricular
 CREATE PROCEDURE sp_create_curriculum_course(
     IN p_name VARCHAR(255),
     IN p_id_curriculum_course_type INT
@@ -679,8 +744,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar curso curricular
 CREATE PROCEDURE sp_update_curriculum_course(
     IN p_id INT,
     IN p_name VARCHAR(255),
@@ -714,8 +777,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar curso curricular
 CREATE PROCEDURE sp_delete_curriculum_course(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -758,48 +819,52 @@ END$$
 -- 3. PROCEDIMIENTOS DE TALLERES
 -- =============================================================================
 
--- Obtener todos los talleres (preview para listas)
 CREATE PROCEDURE sp_get_workshops()
 BEGIN
-    SELECT * FROM vw_workshops_preview;
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops;
 END$$
-
--- Obtener taller por ID (complete para detalles)
 CREATE PROCEDURE sp_get_workshop_by_id(IN p_id INT)
 BEGIN
-    SELECT * FROM vw_workshops WHERE id_workshop = p_id;
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops WHERE id_workshop = p_id;
 END$$
-
--- Obtener talleres por estado
 CREATE PROCEDURE sp_get_workshops_by_state(IN p_id_workshop_state INT)
 BEGIN
-    SELECT * FROM vw_workshops_preview WHERE id_workshop_state = p_id_workshop_state;
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state FROM vw_workshops WHERE id_workshop_state = p_id_workshop_state;
 END$$
-
--- Obtener talleres disponibles para inscripción
-CREATE PROCEDURE sp_get_workshops_available()
+CREATE PROCEDURE sp_get_workshops_to_inscription()
 BEGIN
-    SELECT * FROM vw_workshops_preview 
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops 
     WHERE NOW() BETWEEN inscription_start_date AND inscription_end_date
     AND inscriptions_number < limit_inscriptions;
 END$$
-
--- Buscar talleres
+CREATE PROCEDURE sp_get_workshops_in_progress()
+BEGIN
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops 
+    WHERE NOW() BETWEEN course_start_date AND course_end_date;
+END$$
+CREATE PROCEDURE sp_get_workshops_closed()
+BEGIN
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops 
+    WHERE NOW() > course_end_date;
+END$$
+CREATE PROCEDURE sp_get_workshops_finished()
+BEGIN
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops 
+    WHERE id_workshop_state = 3;
+END$$
 CREATE PROCEDURE sp_search_workshops(
-    IN p_search VARCHAR(255),
+    IN p_name VARCHAR(255),
     IN p_semester ENUM('1', '2'),
     IN p_year INT,
     IN p_id_professor INT
 )
 BEGIN
-    SELECT * FROM vw_workshops_preview 
-    WHERE (p_search IS NULL OR workshop LIKE CONCAT('%', p_search, '%'))
+    SELECT id_workshop, name, semester, year, inscriptions_number, limit_inscriptions, professor, workshop_state, slug FROM vw_workshops
+    WHERE (p_name IS NULL OR workshop LIKE CONCAT('%', p_name, '%'))
     AND (p_semester IS NULL OR semester = p_semester)
     AND (p_year IS NULL OR year = p_year)
     AND (p_id_professor IS NULL OR id_professor = p_id_professor);
 END$$
-
--- Crear taller
 CREATE PROCEDURE sp_create_workshop(
     IN p_name VARCHAR(255),
     IN p_semester ENUM('1', '2'),
@@ -903,8 +968,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar taller
 CREATE PROCEDURE sp_update_workshop(
     IN p_id INT,
     IN p_name VARCHAR(255),
@@ -968,8 +1031,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar taller
 CREATE PROCEDURE sp_delete_workshop(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -1015,8 +1076,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Cambiar estado del taller
 CREATE PROCEDURE sp_change_workshop_state(IN p_id INT, IN p_id_workshop_state INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1053,180 +1112,97 @@ END$$
 -- 4. PROCEDIMIENTOS DE TABLAS DE NEGOCIO
 -- =============================================================================
 
--- Obtener todas las solicitudes (preview para listas)
-CREATE PROCEDURE sp_get_requests()
-BEGIN
-    SELECT * FROM vw_requests_preview;
-END$$
-
--- Obtener solicitud por ID (complete para detalles)
 CREATE PROCEDURE sp_get_request_by_id(IN p_id INT)
 BEGIN
-    SELECT * FROM vw_requests WHERE id_request = p_id;
+    SELECT id_request, id_student, student, administrator, sent_at, reviewed_at, rol_student, rut_student, student_campus FROM vw_requests WHERE id = p_id;
 END$$
-
--- Obtener solicitudes de un estudiante
 CREATE PROCEDURE sp_get_requests_by_student(IN p_id_student INT)
 BEGIN
-    SELECT * FROM vw_requests_preview WHERE id_student = p_id_student;
+    SELECT id_request, id_student, student, administrator, sent_at, reviewed_at, rol_student, rut_student, student_campus FROM vw_requests WHERE id_student = p_id_student;
 END$$
-
--- Crear solicitud
-CREATE PROCEDURE sp_create_request(IN p_id_student INT)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
-    IF p_id_student IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del estudiante es requerido';
-    END IF;
-    
-    -- Verificar que el estudiante existe
-    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_id_student) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El estudiante no existe';
-    END IF;
-    
-    INSERT INTO REQUESTS (id_student) VALUES (p_id_student);
-    
-    COMMIT;
-END$$
-
--- Actualizar solicitud (revisar)
-CREATE PROCEDURE sp_update_request(
-    IN p_id INT,
-    IN p_id_reviewed_by INT,
-    IN p_reviewed_at TIMESTAMP
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
-    IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la solicitud es requerido';
-    END IF;
-    
-    IF p_id_reviewed_by IS NOT NULL AND NOT EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = p_id_reviewed_by) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El administrador no existe';
-    END IF;
-    
-    UPDATE REQUESTS 
-    SET id_reviewed_by = COALESCE(p_id_reviewed_by, id_reviewed_by),
-        reviewed_at = COALESCE(p_reviewed_at, reviewed_at)
-    WHERE id = p_id;
-    
-    IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solicitud no encontrada';
-    END IF;
-    
-    COMMIT;
-END$$
-
--- Eliminar solicitud
-CREATE PROCEDURE sp_delete_request(IN p_id INT)
-BEGIN
-    DECLARE v_count INT;
-    
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
-    IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la solicitud es requerido';
-    END IF;
-    
-    -- Verificar si tiene convalidaciones
-    SELECT COUNT(*) INTO v_count FROM CONVALIDATIONS WHERE id_request = p_id;
-    
-    IF v_count > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar la solicitud porque tiene convalidaciones asociadas';
-    END IF;
-    
-    DELETE FROM REQUESTS WHERE id = p_id;
-    
-    IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solicitud no encontrada';
-    END IF;
-    
-    COMMIT;
-END$$
-
--- Obtener convalidaciones de una solicitud
 CREATE PROCEDURE sp_get_request_convalidations(IN p_id_request INT)
 BEGIN
-    SELECT * FROM vw_convalidations WHERE id_request = p_id_request;
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations WHERE id_request = p_id_request;
 END$$
 
--- Obtener todas las convalidaciones (preview para listas)
 CREATE PROCEDURE sp_get_convalidations()
 BEGIN
-    SELECT * FROM vw_convalidations_preview;
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations;
 END$$
-
--- Obtener convalidación por ID (complete para detalles)
 CREATE PROCEDURE sp_get_convalidation_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_convalidations WHERE id_convalidation = p_id;
 END$$
-
--- Obtener convalidaciones de un estudiante
 CREATE PROCEDURE sp_get_convalidations_by_student(IN p_id_student INT)
 BEGIN
-    SELECT * FROM vw_convalidations_preview 
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations
     WHERE id_student = p_id_student;
 END$$
-
--- Obtener convalidaciones pendientes (estado ENVIADA)
-CREATE PROCEDURE sp_get_convalidations_pending()
-BEGIN
-    SELECT * FROM vw_convalidations_preview 
-    WHERE convalidation_state = 'ENVIADA';
-END$$
-
--- Obtener convalidaciones por estado
 CREATE PROCEDURE sp_get_convalidations_by_state(IN p_id_convalidation_state INT)
 BEGIN
-    SELECT * FROM vw_convalidations_preview 
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations 
     WHERE id_convalidation_state = p_id_convalidation_state;
 END$$
-
--- Obtener convalidaciones por tipo
 CREATE PROCEDURE sp_get_convalidations_by_type(IN p_id_convalidation_type INT)
 BEGIN
-    SELECT * FROM vw_convalidations_preview 
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations 
     WHERE id_convalidation_type = p_id_convalidation_type;
 END$$
-
--- Buscar convalidaciones
+CREATE PROCEDURE sp_get_convalidations_reviewed_by_admin(IN p_id_administrator INT)
+BEGIN
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student FROM vw_convalidations 
+    WHERE id_administrator = p_id_administrator;
+END$$
+CREATE PROCEDURE sp_get_convalidation_subjects(IN p_id_convalidation INT)
+BEGIN
+    SELECT * FROM vw_convalidation_subjects WHERE id_convalidation = p_id_convalidation;
+END$$
+CREATE PROCEDURE sp_get_convalidation_workshops(IN p_id_convalidation INT)
+BEGIN
+    SELECT * FROM vw_convalidation_workshops WHERE id_convalidation = p_id_convalidation;
+END$$
+CREATE PROCEDURE sp_get_convalidation_external_activities(IN p_id_convalidation INT)
+BEGIN
+    SELECT * FROM vw_convalidation_external_activities WHERE id_convalidation = p_id_convalidation;
+END$$
 CREATE PROCEDURE sp_search_convalidations(
-    IN p_search VARCHAR(255),
     IN p_id_convalidation_state INT,
     IN p_id_convalidation_type INT,
-    IN p_id_curriculum_course INT
+    IN p_id_curriculum_course INT,
+    IN p_id_student INT,
+    IN p_id_curriculum_course_type INT,
+    IN p_id_department INT,
+    IN p_id_subject INT,
+    IN p_id_workshop INT,
+    IN p_date_from DATE,
+    IN p_date_to DATE,
+    IN p_review_date_from DATE,
+    IN p_review_date_to DATE,
+    IN p_id_administrator INT,
+    IN p_campus VARCHAR(255),
+    IN p_academic_year INT,
+    IN p_semester ENUM('1', '2')
 )
 BEGIN
-    SELECT * FROM vw_convalidations_preview 
-    WHERE (p_search IS NULL OR student LIKE CONCAT('%', p_search, '%'))
-    AND (p_id_convalidation_state IS NULL OR id_convalidation_state = p_id_convalidation_state)
+    SELECT id_convalidation, id_request, convalidation_type, convalidation_state, curriculum_course, student, rol_student, rut_student  FROM vw_convalidations
+    WHERE (p_id_convalidation_state IS NULL OR id_convalidation_state = p_id_convalidation_state)
     AND (p_id_convalidation_type IS NULL OR id_convalidation_type = p_id_convalidation_type)
-    AND (p_id_curriculum_course IS NULL OR id_curriculum_course = p_id_curriculum_course);
+    AND (p_id_curriculum_course IS NULL OR id_curriculum_course = p_id_curriculum_course)
+    AND (p_id_student IS NULL OR id_student = p_id_student)
+    AND (p_id_curriculum_course_type IS NULL OR id_curriculum_course_type = p_id_curriculum_course_type)
+    AND (p_id_department IS NULL OR id_department = p_id_department)
+    AND (p_id_subject IS NULL OR id_subject = p_id_subject)
+    AND (p_id_workshop IS NULL OR id_workshop = p_id_workshop)
+    AND (p_date_from IS NULL OR DATE(created_at) >= p_date_from)
+    AND (p_date_to IS NULL OR DATE(created_at) <= p_date_to)
+    AND (p_review_date_from IS NULL OR DATE(reviewed_at) >= p_review_date_from)
+    AND (p_review_date_to IS NULL OR DATE(reviewed_at) <= p_review_date_to)
+    AND (p_id_administrator IS NULL OR id_administrator = p_id_administrator)
+    AND (p_campus IS NULL OR campus = p_campus)
+    AND (p_academic_year IS NULL OR academic_year = p_academic_year)
+    AND (p_semester IS NULL OR semester = p_semester);
 END$$
-
--- Crear convalidación completa (con solicitud automática)
-CREATE PROCEDURE sp_create_convalidation_complete(
+CREATE PROCEDURE sp_create_convalidation(
     IN p_id_student INT,
     IN p_id_convalidation_type INT,
     IN p_id_curriculum_course INT,
@@ -1341,9 +1317,6 @@ BEGIN
     
     COMMIT;
 END$$
-
-
--- Revisar convalidación (cambiar estado y agregar comentarios de revisión)
 CREATE PROCEDURE sp_review_convalidation(
     IN p_id INT,
     IN p_id_convalidation_state INT,
@@ -1396,9 +1369,6 @@ BEGIN
 
     COMMIT;
 END$$
-
-
--- Actualizar convalidación solo si está en estado enviada
 CREATE PROCEDURE sp_update_convalidation(
     IN p_id INT,
     IN p_id_convalidation_state INT,
@@ -1445,8 +1415,6 @@ BEGIN
 
     COMMIT;
 END$$
-
--- Eliminar convalidación
 CREATE PROCEDURE sp_delete_convalidation(IN p_id INT)
 BEGIN
     DECLARE v_state INT;
@@ -1479,62 +1447,27 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener convalidaciones revisadas por administrador
-CREATE PROCEDURE sp_get_convalidations_reviewed_by_admin(IN p_id_administrator INT)
-BEGIN
-    SELECT * FROM vw_convalidations 
-    WHERE id_administrator = p_id_administrator;
-END$$
-
--- Obtener convalidaciones de asignaturas
-CREATE PROCEDURE sp_get_convalidation_subjects(IN p_id_convalidation INT)
-BEGIN
-    SELECT * FROM vw_convalidation_subjects WHERE id_convalidation = p_id_convalidation;
-END$$
-
--- Obtener convalidaciones de talleres
-CREATE PROCEDURE sp_get_convalidation_workshops(IN p_id_convalidation INT)
-BEGIN
-    SELECT * FROM vw_convalidation_workshops WHERE id_convalidation = p_id_convalidation;
-END$$
-
--- Obtener convalidaciones de actividades externas
-CREATE PROCEDURE sp_get_convalidation_external_activities(IN p_id_convalidation INT)
-BEGIN
-    SELECT * FROM vw_convalidation_external_activities WHERE id_convalidation = p_id_convalidation;
-END$$
-
-
 
 -- =============================================================================
 -- 5. PROCEDIMIENTOS DE INSCRIPCIONES Y CALIFICACIONES
 -- =============================================================================
 
--- Obtener todas las inscripciones (preview para listas)
 CREATE PROCEDURE sp_get_workshop_inscriptions()
 BEGIN
-    SELECT * FROM vw_workshop_inscriptions_preview;
+    SELECT id_inscription, rut_student, rol_student, student, workshop, is_convalidated, curriculum_course FROM vw_workshop_inscriptions;
 END$$
-
--- Obtener inscripción por ID (complete para detalles)
 CREATE PROCEDURE sp_get_workshop_inscription_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_workshop_inscriptions WHERE id_inscription = p_id;
 END$$
-
--- Obtener inscripciones de un taller
 CREATE PROCEDURE sp_get_workshop_inscriptions_by_workshop(IN p_id_workshop INT)
 BEGIN
-    SELECT * FROM vw_workshop_inscriptions WHERE id_workshop = p_id_workshop;
+    SELECT id_inscription, rut_student, rol_student, student FROM vw_workshop_inscriptions WHERE id_workshop = p_id_workshop;
 END$$
-
--- Obtener inscripciones de un estudiante
 CREATE PROCEDURE sp_get_workshop_inscriptions_by_student(IN p_id_student INT)
 BEGIN
-    SELECT * FROM vw_workshop_inscriptions WHERE id_student = p_id_student;
+    SELECT id_inscription, workshop, is_convalidated, curriculum_course FROM vw_workshop_inscriptions WHERE id_student = p_id_student;
 END$$
-
--- Crear inscripción
 CREATE PROCEDURE sp_create_workshop_inscription(
     IN p_id_student INT,
     IN p_id_workshop INT,
@@ -1618,8 +1551,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar inscripción
 CREATE PROCEDURE sp_update_workshop_inscription(
     IN p_id INT,
     IN p_id_curriculum_course INT,
@@ -1653,11 +1584,10 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar inscripción
 CREATE PROCEDURE sp_delete_workshop_inscription(IN p_id INT)
 BEGIN
     DECLARE v_id_workshop INT;
+    DECLARE v_course_start_date TIMESTAMP;
     
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
@@ -1671,47 +1601,46 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la inscripción es requerido';
     END IF;
     
-    -- Obtener el ID del taller para actualizar el contador
-    SELECT id_workshop INTO v_id_workshop FROM WORKSHOPS_INSCRIPTIONS WHERE id = p_id;
+    
+    SELECT id_workshop, course_start_date INTO v_id_workshop, v_course_start_date 
+    FROM vw_workshop_inscriptions 
+    WHERE id = p_id;
     
     IF v_id_workshop IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Inscripción no encontrada';
     END IF;
     
+    -- Verificar que el taller aún no ha comenzado
+    IF NOW() >= v_course_start_date THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar la inscripción porque el taller ya ha comenzado';
+    END IF;
+    
     -- Eliminar la inscripción
     DELETE FROM WORKSHOPS_INSCRIPTIONS WHERE id = p_id;
     
-    -- Actualizar el contador de inscripciones
+    
     UPDATE WORKSHOPS SET inscriptions_number = inscriptions_number - 1 WHERE id = v_id_workshop;
     
     COMMIT;
 END$$
 
--- Obtener todas las calificaciones (preview para listas)
+
 CREATE PROCEDURE sp_get_workshop_grades()
 BEGIN
-    SELECT * FROM vw_workshop_grades_preview;
+    SELECT id_grade, student, workshop, rol_student, rut_student, grade  FROM vw_workshop_grades;
 END$$
-
--- Obtener calificación por ID (complete para detalles)
 CREATE PROCEDURE sp_get_workshop_grade_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_workshop_grades WHERE id_grade = p_id;
 END$$
-
--- Obtener calificaciones de un taller
 CREATE PROCEDURE sp_get_workshop_grades_by_workshop(IN p_id_workshop INT)
 BEGIN
-    SELECT * FROM vw_workshop_grades WHERE id_workshop = p_id_workshop;
+    SELECT id_grade, student, workshop, rol_student, rut_student, grade FROM vw_workshop_grades WHERE id_workshop = p_id_workshop;
 END$$
-
--- Obtener calificaciones de un estudiante
 CREATE PROCEDURE sp_get_workshop_grades_by_student(IN p_id_student INT)
 BEGIN
-    SELECT * FROM vw_workshop_grades WHERE id_student = p_id_student;
+    SELECT id_grade, student, workshop, rol_student, rut_student, grade FROM vw_workshop_grades WHERE id_student = p_id_student;
 END$$
-
--- Crear calificación
 CREATE PROCEDURE sp_create_workshop_grade(
     IN p_id_student INT,
     IN p_id_workshop INT,
@@ -1778,8 +1707,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar calificación
 CREATE PROCEDURE sp_update_workshop_grade(
     IN p_id INT,
     IN p_grade INT
@@ -1813,8 +1740,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Eliminar calificación
 CREATE PROCEDURE sp_delete_workshop_grade(IN p_id INT)
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1842,15 +1767,7 @@ END$$
 -- 6. PROCEDIMIENTOS DE AUTENTICACIÓN
 -- =============================================================================
 
--- Obtener usuario por email
-CREATE PROCEDURE sp_get_user_by_email(IN p_email VARCHAR(255))
-BEGIN
-    SELECT * FROM vw_users WHERE email = p_email;
-END$$
 
-
-
--- Iniciar sesión (login)
 CREATE PROCEDURE sp_login(
     IN p_email VARCHAR(255),
     IN p_password_hash VARCHAR(255)
@@ -1859,29 +1776,24 @@ BEGIN
     DECLARE v_user_id INT;
     DECLARE v_user_type VARCHAR(20);
 
-    -- Verificar credenciales
-    SELECT id INTO v_user_id FROM AUTH_USERS WHERE email = p_email AND password_hash = p_password_hash;
+    SELECT id, user_type INTO v_user_id, v_user_type FROM AUTH_USERS WHERE email = p_email AND password_hash = p_password_hash;
 
     IF v_user_id IS NULL THEN
         SIGNAL SQLSTATE '45011' SET MESSAGE_TEXT = 'Credenciales inválidas';
     END IF;
 
-    -- Determinar tipo de usuario y retornar información relevante usando las vistas
-    IF EXISTS (SELECT 1 FROM STUDENTS WHERE id = v_user_id) THEN
-        SET v_user_type = 'STUDENT';
+    IF v_user_type = 'STUDENT' THEN
         SELECT * FROM vw_students WHERE id = v_user_id;
-    ELSEIF EXISTS (SELECT 1 FROM ADMINISTRATORS WHERE id = v_user_id) THEN
-        SET v_user_type = 'ADMINISTRATOR';
+    ELSEIF v_user_type = 'ADMINISTRATOR' THEN
         SELECT * FROM vw_administrators WHERE id = v_user_id;
     ELSE
         SIGNAL SQLSTATE '45012' SET MESSAGE_TEXT = 'Usuario sin tipo definido';
     END IF;
 END$$
-
--- Cambiar contraseña
 CREATE PROCEDURE sp_change_password(
     IN p_id INT,
-    IN p_new_password_hash VARCHAR(255)
+    IN p_new_password_hash VARCHAR(255),
+    IN p_repeat_new_password_hash VARCHAR(255)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -1900,6 +1812,14 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La nueva contraseña es requerida';
     END IF;
 
+    IF p_repeat_new_password_hash IS NULL OR TRIM(p_repeat_new_password_hash) = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La repetición de la nueva contraseña es requerida';
+    END IF;
+
+    IF p_new_password_hash != p_repeat_new_password_hash THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Las contraseñas no coinciden';
+    END IF;
+
     UPDATE AUTH_USERS SET password_hash = p_new_password_hash WHERE id = p_id;
 
     IF ROW_COUNT() = 0 THEN
@@ -1908,75 +1828,49 @@ BEGIN
 
     COMMIT;
 END$$
-
-
--- Actualizar contraseña
-CREATE PROCEDURE sp_update_password(
-    IN p_id INT,
-    IN p_password_hash VARCHAR(255)
-)
+CREATE PROCEDURE sp_get_salt(IN p_id INT)
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
-    IF p_id IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del usuario es requerido';
-    END IF;
-    
-    IF p_password_hash IS NULL OR TRIM(p_password_hash) = '' THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La contraseña es requerida';
-    END IF;
-    
-    UPDATE AUTH_USERS SET password_hash = p_password_hash WHERE id = p_id;
-    
-    IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuario no encontrado';
-    END IF;
-    
-    COMMIT;
+    SELECT salt FROM AUTH_USERS WHERE id = p_id;
 END$$
 
 -- =============================================================================
 -- 7. PROCEDIMIENTOS DE USUARIOS
 -- =============================================================================
 
--- Obtener todos los estudiantes (preview para listas)
+
 CREATE PROCEDURE sp_get_students()
 BEGIN
-    SELECT * FROM vw_students_preview;
+    SELECT id_student, rut_student, student FROM vw_students;
 END$$
-
--- Obtener estudiante por ID (complete para detalles)
 CREATE PROCEDURE sp_get_student_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_students WHERE id_student = p_id;
 END$$
-
--- Obtener estudiante por RUT
 CREATE PROCEDURE sp_get_student_by_rut(IN p_rut VARCHAR(12))
 BEGIN
     SELECT * FROM vw_students WHERE rut_student = p_rut;
 END$$
-
--- Obtener estudiante por ROL
 CREATE PROCEDURE sp_get_student_by_rol(IN p_rol VARCHAR(11))
 BEGIN
     SELECT * FROM vw_students WHERE rol_student = p_rol;
 END$$
-
--- Buscar estudiantes por nombre
-CREATE PROCEDURE sp_search_students_by_name(IN p_name VARCHAR(255))
+CREATE PROCEDURE sp_search_students(
+    IN p_student VARCHAR(255),
+    IN p_id_student INT,
+    IN p_rut VARCHAR(12),
+    IN p_rol VARCHAR(11),
+    IN p_campus VARCHAR(255),
+    IN p_email VARCHAR(255)
+    )
 BEGIN
-    SELECT * FROM vw_students_preview 
-    WHERE student LIKE CONCAT('%', p_name, '%');
-END$$
-
--- Crear estudiante
+    SELECT * FROM vw_students
+    WHERE (p_student IS NULL OR student LIKE CONCAT('%', p_student, '%'))
+    AND (p_id_student IS NULL OR id_student = p_id_student)
+    AND (p_rut IS NULL OR rut_student = p_rut)
+    AND (p_rol IS NULL OR rol_student = p_rol)
+    AND (p_campus IS NULL OR campus = p_campus)
+    AND (p_email IS NULL OR email = p_email);
+END $$
 CREATE PROCEDURE sp_create_student(
     IN p_full_name VARCHAR(255),
     IN p_campus VARCHAR(255),
@@ -1984,7 +1878,8 @@ CREATE PROCEDURE sp_create_student(
     IN p_password_hash VARCHAR(255),
     IN p_rol_student VARCHAR(11),
     IN p_rut_student VARCHAR(12),
-    IN p_campus_student VARCHAR(255)
+    IN p_campus_student VARCHAR(255),
+    IN p_salt VARCHAR(255)
 )
 BEGIN
     DECLARE v_user_id INT;
@@ -2023,30 +1918,22 @@ BEGIN
     END IF;
     
     -- Verificar que el ROL no esté registrado
-    IF EXISTS (SELECT 1 FROM STUDENTS WHERE rol_student = p_rol_student) THEN
+    IF EXISTS (SELECT 1 FROM USERS WHERE rol_student = p_rol_student) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ROL ya está registrado';
     END IF;
     
     -- Verificar que el RUT no esté registrado
-    IF EXISTS (SELECT 1 FROM STUDENTS WHERE rut_student = p_rut_student) THEN
+    IF EXISTS (SELECT 1 FROM USERS WHERE rut_student = p_rut_student) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El RUT ya está registrado';
     END IF;
     
-    -- Crear usuario de autenticación
-    INSERT INTO AUTH_USERS (email, password_hash) VALUES (p_email, p_password_hash);
+    INSERT INTO AUTH_USERS (email, password_hash, salt) VALUES (p_email, p_password_hash, p_salt);
     SET v_user_id = LAST_INSERT_ID();
     
-    -- Crear usuario principal
-    INSERT INTO USERS (id, full_name, campus) VALUES (v_user_id, p_full_name, p_campus);
-    
-    -- Crear estudiante
-    INSERT INTO STUDENTS (id, rol_student, rut_student, campus_student) 
-    VALUES (v_user_id, p_rol_student, p_rut_student, p_campus_student);
-    
+    INSERT INTO USERS (id, full_name, campus, rol_student, user_type, email) 
+    VALUES (v_user_id, p_full_name, p_campus, p_rol_student, 'STUDENT', p_email);
     COMMIT;
 END$$
-
--- Actualizar estudiante
 CREATE PROCEDURE sp_update_student(
     IN p_id INT,
     IN p_full_name VARCHAR(255),
@@ -2054,7 +1941,7 @@ CREATE PROCEDURE sp_update_student(
     IN p_email VARCHAR(255),
     IN p_rol_student VARCHAR(11),
     IN p_rut_student VARCHAR(12),
-    IN p_campus_student VARCHAR(255)
+    IN p_salt VARCHAR(255)
 )
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -2089,28 +1976,15 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El RUT ya está registrado';
     END IF;
     
-    -- Actualizar usuario principal
     UPDATE USERS 
     SET full_name = COALESCE(p_full_name, full_name),
-        campus = COALESCE(p_campus, campus)
+        campus = COALESCE(p_campus, campus),
+        rol_student = COALESCE(p_rol_student, rol_student),
+        rut_student = COALESCE(p_rut_student, rut_student)
     WHERE id = p_id;
-    
-    -- Actualizar autenticación
-    IF p_email IS NOT NULL THEN
-        UPDATE AUTH_USERS SET email = p_email WHERE id = p_id;
-    END IF;
-    
-    -- Actualizar estudiante
-    UPDATE STUDENTS 
-    SET rol_student = COALESCE(p_rol_student, rol_student),
-        rut_student = COALESCE(p_rut_student, rut_student),
-        campus_student = COALESCE(p_campus_student, campus_student)
-    WHERE id = p_id;
-    
+
     COMMIT;
 END$$
-
--- Eliminar estudiante
 CREATE PROCEDURE sp_delete_student(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -2127,8 +2001,8 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del estudiante es requerido';
     END IF;
     
-    -- Verificar que el estudiante existe
-    IF NOT EXISTS (SELECT 1 FROM STUDENTS WHERE id = p_id) THEN
+    
+    IF NOT EXISTS (SELECT 1 FROM USERS WHERE id = p_id) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El estudiante no existe';
     END IF;
     
@@ -2146,30 +2020,25 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede eliminar el estudiante porque tiene inscripciones activas';
     END IF;
     
-    -- Eliminar en cascada (las FK están configuradas para CASCADE)
-    DELETE FROM STUDENTS WHERE id = p_id;
-    
+    DELETE FROM USERS WHERE id = p_id;
     COMMIT;
 END$$
 
--- Obtener todos los administradores (preview para listas)
+
 CREATE PROCEDURE sp_get_administrators()
 BEGIN
     SELECT * FROM vw_admins_preview;
 END$$
-
--- Obtener administrador por ID (complete para detalles)
 CREATE PROCEDURE sp_get_administrator_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_admins WHERE id_administrator = p_id;
 END$$
-
--- Crear administrador
 CREATE PROCEDURE sp_create_administrator(
     IN p_full_name VARCHAR(255),
     IN p_campus VARCHAR(255),
     IN p_email VARCHAR(255),
-    IN p_password_hash VARCHAR(255)
+    IN p_password_hash VARCHAR(255),
+    IN p_salt VARCHAR(255)
 )
 BEGIN
     DECLARE v_user_id INT;
@@ -2200,19 +2069,14 @@ BEGIN
     END IF;
     
     -- Crear usuario de autenticación
-    INSERT INTO AUTH_USERS (email, password_hash) VALUES (p_email, p_password_hash);
+    INSERT INTO AUTH_USERS (email, password_hash, salt) VALUES (p_email, p_password_hash, p_salt);
     SET v_user_id = LAST_INSERT_ID();
     
     -- Crear usuario principal
-    INSERT INTO USERS (id, full_name, campus) VALUES (v_user_id, p_full_name, p_campus);
-    
-    -- Crear administrador
-    INSERT INTO ADMINISTRATORS (id) VALUES (v_user_id);
+    INSERT INTO USERS (id, full_name, campus, user_type) VALUES (v_user_id, p_full_name, p_campus, 'ADMINISTRATOR');
     
     COMMIT;
 END$$
-
--- Actualizar administrador
 CREATE PROCEDURE sp_update_administrator(
     IN p_id INT,
     IN p_full_name VARCHAR(255),
@@ -2242,21 +2106,19 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El email ya está registrado';
     END IF;
     
-    -- Actualizar usuario principal
+    
     UPDATE USERS 
     SET full_name = COALESCE(p_full_name, full_name),
         campus = COALESCE(p_campus, campus)
     WHERE id = p_id;
     
-    -- Actualizar autenticación
+    
     IF p_email IS NOT NULL THEN
         UPDATE AUTH_USERS SET email = p_email WHERE id = p_id;
     END IF;
     
     COMMIT;
 END$$
-
--- Eliminar administrador
 CREATE PROCEDURE sp_delete_administrator(IN p_id INT)
 BEGIN
     DECLARE v_count INT;
@@ -2291,25 +2153,11 @@ BEGIN
     COMMIT;
 END$$
 
--- Obtener todos los profesores
+
 CREATE PROCEDURE sp_get_professors()
 BEGIN
     SELECT * FROM vw_professors;
 END$$
-
--- Obtener profesores activos
-CREATE PROCEDURE sp_get_professors_active()
-BEGIN
-    SELECT * FROM vw_professors;
-END$$
-
--- Obtener profesor por ID
-CREATE PROCEDURE sp_get_professor_by_id(IN p_id INT)
-BEGIN
-    SELECT * FROM vw_professors WHERE id_professor = p_id;
-END$$
-
--- Crear profesor
 CREATE PROCEDURE sp_create_professor(
     IN p_name VARCHAR(255),
     IN p_email VARCHAR(255)
@@ -2340,8 +2188,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Actualizar profesor
 CREATE PROCEDURE sp_update_professor(
     IN p_id INT,
     IN p_name VARCHAR(255),
@@ -2381,45 +2227,31 @@ END$$
 -- 8. PROCEDIMIENTOS DE NOTIFICACIONES
 -- =============================================================================
 
--- Obtener todas las notificaciones (preview para listas)
+
 CREATE PROCEDURE sp_get_notifications()
 BEGIN
     SELECT * FROM vw_notifications;
 END$$
-
--- Obtener notificación por ID (complete para detalles)
 CREATE PROCEDURE sp_get_notification_by_id(IN p_id INT)
 BEGIN
     SELECT * FROM vw_notifications WHERE id_notification = p_id;
 END$$
-
--- Obtener notificaciones de un usuario
 CREATE PROCEDURE sp_get_notifications_by_user(IN p_id_user INT)
 BEGIN
     SELECT * FROM vw_notifications WHERE id_user = p_id_user;
 END$$
-
--- Obtener notificaciones no leídas
 CREATE PROCEDURE sp_get_notifications_unread()
 BEGIN
     SELECT * FROM vw_notifications WHERE is_read = FALSE;
 END$$
 
--- Crear notificación
+
 CREATE PROCEDURE sp_create_notification(
     IN p_id_user INT,
     IN p_notification_type VARCHAR(50),
     IN p_message TEXT
 )
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
     IF p_id_user IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID del usuario es requerido';
     END IF;
@@ -2439,21 +2271,43 @@ BEGIN
     
     INSERT INTO NOTIFICATIONS (id_user, notification_type, message) 
     VALUES (p_id_user, p_notification_type, p_message);
-    
-    COMMIT;
 END$$
-
--- Marcar notificación como leída
+CREATE PROCEDURE sp_create_notification_students(
+    IN p_notification_type VARCHAR(50),
+    IN p_message TEXT
+)
+BEGIN
+    IF p_notification_type IS NULL OR TRIM(p_notification_type) = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El tipo de notificación es requerido';
+    END IF;
+    
+    IF p_message IS NULL OR TRIM(p_message) = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El mensaje es requerido';
+    END IF;
+    
+    INSERT INTO NOTIFICATIONS (id_user, notification_type, message, is_sent)
+    SELECT id, p_notification_type, p_message, 1
+    FROM STUDENTS;
+END$$
+CREATE PROCEDURE sp_create_notification_administrators(
+    IN p_notification_type VARCHAR(50),
+    IN p_message TEXT
+)
+BEGIN
+    IF p_notification_type IS NULL OR TRIM(p_notification_type) = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El tipo de notificación es requerido';
+    END IF;
+    
+    IF p_message IS NULL OR TRIM(p_message) = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El mensaje es requerido';
+    END IF;
+    
+    INSERT INTO NOTIFICATIONS (id_user, notification_type, message, is_sent)
+    SELECT id, p_notification_type, p_message, 1
+    FROM ADMINISTRATORS;
+END$$
 CREATE PROCEDURE sp_mark_notification_as_read(IN p_id INT)
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
     IF p_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la notificación es requerido';
     END IF;
@@ -2465,21 +2319,9 @@ BEGIN
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Notificación no encontrada';
     END IF;
-    
-    COMMIT;
 END$$
-
--- Marcar notificación como enviada
 CREATE PROCEDURE sp_mark_notification_as_sent(IN p_id INT)
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
     IF p_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la notificación es requerido';
     END IF;
@@ -2491,21 +2333,9 @@ BEGIN
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Notificación no encontrada';
     END IF;
-    
-    COMMIT;
 END$$
-
--- Eliminar notificación
 CREATE PROCEDURE sp_delete_notification(IN p_id INT)
 BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-        RESIGNAL;
-    END;
-    
-    START TRANSACTION;
-    
     IF p_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El ID de la notificación es requerido';
     END IF;
@@ -2515,29 +2345,22 @@ BEGIN
     IF ROW_COUNT() = 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Notificación no encontrada';
     END IF;
-    
-    COMMIT;
 END$$
 
 -- =============================================================================
 -- 9. PROCEDIMIENTOS DE TOKENS Y UTILIDADES
 -- =============================================================================
 
--- Obtener tokens activos
 CREATE PROCEDURE sp_get_workshop_tokens_active()
 BEGIN
     SELECT * FROM vw_workshop_tokens 
     WHERE expiration_at > NOW() AND is_used = FALSE;
 END$$
-
--- Obtener tokens expirados
 CREATE PROCEDURE sp_get_workshop_tokens_expired()
 BEGIN
     SELECT * FROM vw_workshop_tokens 
     WHERE expiration_at <= NOW() OR is_used = TRUE;
 END$$
-
--- Crear token de taller
 CREATE PROCEDURE sp_create_workshop_token(
     IN p_id_workshop INT,
     IN p_id_professor INT,
@@ -2607,8 +2430,6 @@ BEGIN
     
     COMMIT;
 END$$
-
--- Usar token
 CREATE PROCEDURE sp_use_workshop_token(IN p_token VARCHAR(255))
 BEGIN
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -2645,107 +2466,4 @@ END$$
 -- 10. PROCEDIMIENTOS DE ESTADÍSTICAS
 -- =============================================================================
 
--- Obtener estadísticas generales
-CREATE PROCEDURE sp_get_stats_general()
-BEGIN
-    SELECT * FROM vw_stats_general;
-END$$
-
--- Obtener estadísticas de talleres
-CREATE PROCEDURE sp_get_stats_workshops()
-BEGIN
-    SELECT * FROM vw_stats_workshops;
-END$$
-
--- Obtener estadísticas de convalidaciones
-CREATE PROCEDURE sp_get_stats_convalidations()
-BEGIN
-    SELECT * FROM vw_stats_convalidations;
-END$$
-
--- Obtener estadísticas de estudiantes
-CREATE PROCEDURE sp_get_stats_students()
-BEGIN
-    SELECT 
-        COUNT(*) AS total_students,
-        COUNT(DISTINCT campus_student) AS total_campuses,
-        COUNT(CASE WHEN id IN (SELECT DISTINCT id_student FROM REQUESTS) THEN 1 END) AS students_with_requests,
-        COUNT(CASE WHEN id IN (SELECT DISTINCT id_student FROM WORKSHOPS_INSCRIPTIONS) THEN 1 END) AS students_with_inscriptions
-    FROM STUDENTS;
-END$$
-
--- Obtener actividad reciente
-CREATE PROCEDURE sp_get_stats_activity()
-BEGIN
-    SELECT 
-        'requests' AS activity_type,
-        COUNT(*) AS count,
-        MAX(sent_at) AS last_activity
-    FROM REQUESTS
-    WHERE sent_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    UNION ALL
-    SELECT 
-        'inscriptions' AS activity_type,
-        COUNT(*) AS count,
-        MAX(created_at) AS last_activity
-    FROM WORKSHOPS_INSCRIPTIONS
-    WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    UNION ALL
-    SELECT 
-        'grades' AS activity_type,
-        COUNT(*) AS count,
-        MAX(evaluated_at) AS last_activity
-    FROM WORKSHOPS_GRADES
-    WHERE evaluated_at >= DATE_SUB(NOW(), INTERVAL 30 DAY);
-END$$
-
--- Obtener dashboard completo
-CREATE PROCEDURE sp_get_stats_dashboard()
-BEGIN
-    -- Estadísticas generales
-    SELECT 'general' AS section, 
-           (SELECT COUNT(*) FROM STUDENTS) AS total_students,
-           (SELECT COUNT(*) FROM ADMINISTRATORS) AS total_administrators,
-           (SELECT COUNT(*) FROM WORKSHOPS) AS total_workshops,
-           (SELECT COUNT(*) FROM CONVALIDATIONS) AS total_convalidations,
-           (SELECT COUNT(*) FROM WORKSHOPS_INSCRIPTIONS) AS total_inscriptions,
-           (SELECT COUNT(*) FROM NOTIFICATIONS WHERE is_read = FALSE) AS unread_notifications;
-    
-    -- Estadísticas de talleres por estado
-    SELECT 'workshops_by_state' AS section, 
-           WORKSHOP_STATES.name AS workshop_state,
-           COUNT(WORKSHOPS.id) AS count
-    FROM WORKSHOPS
-    JOIN WORKSHOP_STATES ON WORKSHOPS.id_workshop_state = WORKSHOP_STATES.id
-    GROUP BY WORKSHOP_STATES.id, WORKSHOP_STATES.name;
-    
-    -- Estadísticas de convalidaciones por estado
-    SELECT 'convalidations_by_state' AS section,
-           CONVALIDATION_STATES.name AS convalidation_state,
-           COUNT(CONVALIDATIONS.id) AS count
-    FROM CONVALIDATIONS
-    JOIN CONVALIDATION_STATES ON CONVALIDATIONS.id_convalidation_state = CONVALIDATION_STATES.id
-    GROUP BY CONVALIDATION_STATES.id, CONVALIDATION_STATES.name;
-END$$
-
-
-
--- Obtener convalidaciones por revisar (estado ENVIADA)
-CREATE PROCEDURE sp_get_convalidations_to_review()
-BEGIN
-    SELECT * FROM vw_convalidations_preview 
-    WHERE convalidation_state = 'ENVIADA'
-    ORDER BY created_at ASC;
-END$$
-
--- Obtener convalidaciones aprobadas
-CREATE PROCEDURE sp_get_convalidations_approved()
-BEGIN
-    SELECT * FROM vw_convalidations_preview 
-    WHERE convalidation_state IN ('APROBADA_DI', 'APROBADA_DE')
-    ORDER BY reviewed_at DESC;
-END$$
-
-
-
-DELIMITER ;
+SELECT "Procedimientos creados correctamente" AS mensaje;

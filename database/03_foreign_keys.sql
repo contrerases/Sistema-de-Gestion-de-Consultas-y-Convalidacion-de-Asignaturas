@@ -38,7 +38,7 @@ REFERENCES WORKSHOP_STATES (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
--- Relación con profesores
+
 ALTER TABLE WORKSHOPS
 ADD CONSTRAINT fk_workshop_professor
 FOREIGN KEY (id_professor)
@@ -50,19 +50,18 @@ ON UPDATE CASCADE;
 -- REQUESTS
 -- =============================================================================
 
--- Relación con estudiantes
 ALTER TABLE REQUESTS
 ADD CONSTRAINT fk_request_student
 FOREIGN KEY (id_student)
-REFERENCES STUDENTS (id)
+REFERENCES USERS (id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
--- Relación con administradores (revisor)
+
 ALTER TABLE REQUESTS
 ADD CONSTRAINT fk_request_reviewed_by
 FOREIGN KEY (id_reviewed_by)
-REFERENCES ADMINISTRATORS (id)
+REFERENCES USERS (id)
 ON DELETE SET NULL
 ON UPDATE CASCADE;
 
@@ -162,7 +161,7 @@ ON UPDATE CASCADE;
 ALTER TABLE WORKSHOPS_INSCRIPTIONS
 ADD CONSTRAINT fk_inscription_student
 FOREIGN KEY (id_student)
-REFERENCES STUDENTS (id)
+REFERENCES USERS (id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -190,7 +189,7 @@ ON UPDATE CASCADE;
 ALTER TABLE WORKSHOPS_GRADES
 ADD CONSTRAINT fk_grade_student
 FOREIGN KEY (id_student)
-REFERENCES STUDENTS (id)
+REFERENCES USERS (id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -226,27 +225,14 @@ FOREIGN KEY (id_user) REFERENCES USERS(id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
--- =============================================================================
--- STUDENTS
--- =============================================================================
-ALTER TABLE STUDENTS
-ADD CONSTRAINT fk_students_user
-FOREIGN KEY (id) REFERENCES USERS(id)
-ON DELETE CASCADE ON UPDATE CASCADE;
 
--- =============================================================================
--- ADMINISTRATORS
--- =============================================================================
-ALTER TABLE ADMINISTRATORS
-ADD CONSTRAINT fk_administrators_user
-FOREIGN KEY (id) REFERENCES USERS(id)
-ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 -- =============================================================================
 -- WORKSHOPS_TOKENS
 -- =============================================================================
 
--- Relación con talleres
+
 ALTER TABLE WORKSHOPS_TOKENS
 ADD CONSTRAINT fk_token_workshop
 FOREIGN KEY (id_workshop)
@@ -262,11 +248,11 @@ REFERENCES PROFESSORS (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
--- Relación con administradores (quien creó el token)
+
 ALTER TABLE WORKSHOPS_TOKENS
 ADD CONSTRAINT fk_token_created_by
 FOREIGN KEY (created_by)
-REFERENCES ADMINISTRATORS (id)
+REFERENCES USERS (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 

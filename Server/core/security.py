@@ -1,1 +1,0 @@
-# Funciones de autenticación, autorización y manejo de contraseñas/JWT. 
