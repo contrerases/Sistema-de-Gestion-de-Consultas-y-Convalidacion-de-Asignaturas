@@ -1,21 +1,19 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
-import adminRoutes from '@/app/router/admin.routes'
-import  studentRoutes  from '@/app/router/student.routes'
-import publicRoutes  from '@/app/router/public.routes'
-import  authGuard  from '@/app/router/guards'
+// import authGuard from '@/app/router/auth.guard';
 
-const routes = [
-  adminRoutes,
-  studentRoutes,
-  publicRoutes
-]
+// import adminRoutes from '@/app/router/admin.routes';
+// import studentRoutes from '@/app/router/student.routes';
+import publicRoutes from '@/app/router/public.routes';
+
+// const routes = [adminRoutes, studentRoutes, publicRoutes];
+const routes = [publicRoutes];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
 // router.beforeEach(authGuard)
 
-export default router 
+export default router;

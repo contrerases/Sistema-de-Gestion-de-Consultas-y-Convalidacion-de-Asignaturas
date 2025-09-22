@@ -3,7 +3,7 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 
 # Base de Datos
-mariadb==1.1.8              # Driver nativo MariaDB
+mariadb==1.1.8              
 
 # Autenticación y Seguridad
 bcrypt==4.1.2
@@ -18,30 +18,17 @@ pydantic-settings==2.1.0
 python-dotenv==1.0.0
 
 # Utilidades
-python-multipart==0.0.6     # Para file uploads
+python-multipart==0.0.6     
 
 # HTTP Client (para servicios externos)
 httpx==0.25.2
 
 # Validación Avanzada
-validators==0.22.0          # URLs, emails, etc.
-
-# Fechas y Tiempo
-python-dateutil==2.8.2      # Manejo avanzado de fechas
-pytz==2023.3                # Zonas horarias
-
+validators==0.22.0         
+             
 # Logging Estructurado
 structlog==23.2.0           # Logs estructurados
-
-# Rate Limiting
-slowapi==0.1.9              # Rate limiting para FastAPI
-
-# CORS y Seguridad
-python-cors==1.7.0          # CORS avanzado
-
-# Archivos y Documentos
-Pillow==10.1.0              # Procesamiento de imágenes
-
+            
 # Notificaciones
-smtplib                     # Email (built-in)
+aiosmtplib                   
 

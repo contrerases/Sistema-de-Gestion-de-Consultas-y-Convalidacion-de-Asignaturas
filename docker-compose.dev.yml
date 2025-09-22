@@ -25,6 +25,8 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
+    environment:
+      - ENVIRONMENT=dev
     depends_on:
       db:
         condition: service_healthy

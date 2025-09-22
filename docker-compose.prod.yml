@@ -25,6 +25,8 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "8000:8000"
+    environment:
+      - ENVIRONMENT=prod
     depends_on:
       db:
         condition: service_healthy
