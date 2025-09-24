@@ -24,7 +24,7 @@
   --card-foreground: rgb(20 20 20);
   --popover: rgb(255 255 255);
   --popover-foreground: rgb(41 39 27);
-  --primary: rgb(234 88 12);
+  --primary: #ff7b00;
   --primary-foreground: rgb(255 255 255);
   --secondary: rgb(231 228 221);
   --secondary-foreground: rgb(82 80 68);
@@ -33,9 +33,9 @@
   --accent: rgb(231 228 221);
   --accent-foreground: rgb(41 39 27);
   --destructive: rgb(241 68 68);
-  --border: rgb(217 216 208);
+  --border: oklch(0.88 0.01 97.36);
   --input: rgb(180 177 163);
-  --ring: rgb(27 126 222);
+  --ring: #ff7b00;
   --chart-1: rgb(178 87 47);
   --chart-2: rgb(156 135 246);
   --chart-3: rgb(222 215 194);
