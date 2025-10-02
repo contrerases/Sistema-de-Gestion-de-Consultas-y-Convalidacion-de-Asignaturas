@@ -34,7 +34,9 @@
   --accent: rgb(231 228 221);
   --accent-foreground: rgb(41 39 27);
   --destructive: rgb(241 68 68);
+  --destructive-foreground: rgb(255 255 255);
   --success: rgb(16 185 129);
+  --success-foreground: rgb(255 255 255);
   --border: oklch(0.88 0.01 97.36);
   --input: rgb(180 177 163);
   --ring: #ff7b00;

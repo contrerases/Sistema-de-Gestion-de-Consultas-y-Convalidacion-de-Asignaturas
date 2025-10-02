@@ -1,208 +1,119 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
-import Input from '@/shared/components/ui/Input.vue';
+import ToogleTheme from '@/shared/components/ui/ToogleTheme.vue';
+import Button from '@/shared/components/ui/Button.vue';
 
-// Mostrar la demo solo en desarrollo
-const isDev = import.meta.env.DEV;
+const clickCount = ref(0);
 
-// Estado para ejemplos
-const textVal = ref('');
-const textConLimites = ref('');
-const passVal = ref('');
-const emailVal = ref('');
-const numberVal = ref<string | number>('');
-const telVal = ref('');
-const urlVal = ref('');
-const dateVal = ref('');
-const timeVal = ref('');
-const textareaVal = ref('');
-
-function onSubmit(e: Event) {
-  const form = e.target as HTMLFormElement;
-  // Dispara validaciones nativas para ver mensajes del componente
-  if (!form.checkValidity()) {
-    e.preventDefault();
-    return;
-  }
-  e.preventDefault();
-  // eslint-disable-next-line no-console
-  console.log({
-    textVal: textVal.value,
-    textConLimites: textConLimites.value,
-    passVal: passVal.value,
-    emailVal: emailVal.value,
-    numberVal: numberVal.value,
-    telVal: telVal.value,
-    urlVal: urlVal.value,
-    dateVal: dateVal.value,
-    timeVal: timeVal.value,
-    textareaVal: textareaVal.value,
-  });
-}
-
-function resetDemo() {
-  textVal.value = '';
-  textConLimites.value = '';
-  passVal.value = '';
-  emailVal.value = '';
-  numberVal.value = '';
-  telVal.value = '';
-  urlVal.value = '';
-  dateVal.value = '';
-  timeVal.value = '';
-  textareaVal.value = '';
-}
+const handleClick = () => {
+    clickCount.value++;
+};
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
-    <!-- Cabecera mínima -->
-    <header class="border-b bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-        <h1 class="text-base font-semibold">Public Layout</h1>
-        <nav class="text-sm text-muted-foreground">Rutas públicas</nav>
-      </div>
-    </header>
+    <div class="min-h-screen bg-background text-foreground p-8">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Variantes de Button</h1>
+                <ToogleTheme />
+            </div>
 
-    <!-- Demo de Input.vue solo en desarrollo -->
-    <section v-if="isDev" class="container mx-auto px-4 py-6">
-      <div class="rounded-lg border p-4">
-        <h2 class="text-lg font-semibold mb-2">Demo: Input.vue (solo DEV)</h2>
-        <p class="text-sm text-muted-foreground mb-4">
-          Ejemplos de tipos y validaciones soportadas por el componente. Usa el
-          botón "Probar validaciones" o haz blur en cada campo para ver
-          mensajes.
-        </p>
+            <!-- Contador de clicks -->
+            <div class="p-4 bg-card rounded-lg border border-border">
+                <p class="text-sm text-muted-foreground">Clicks totales: <span class="font-bold text-foreground">{{
+                        clickCount }}</span></p>
+            </div>
 
-        <form @submit="onSubmit" class="grid gap-6 md:grid-cols-2">
-          <!-- TEXT básico requerido con label, help, prefix/suffix -->
-          <div class="space-y-1">
-            <Input v-model="textVal" type="text" placeholder="Tu nombre" required :maxLength="30">
-            <template #label> Nombre completo </template>
-            <template #prefix>
-              👤
-            </template>
-            <template #suffix>
-              <span aria-hidden>✎</span>
-            </template>
-            <template #help>
-              Ingresa tu nombre como aparece en documentos oficiales.
-            </template>
-            </Input>
-          </div>
+            <!-- Variante: Default -->
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold">Default</h2>
+                <div class="flex gap-3 flex-wrap">
+                    <Button variant="default" @click="handleClick">Click me</Button>
+                    <Button variant="default" :disabled="true">Disabled</Button>
+                    <Button variant="default" @click="handleClick">
+                        <template #left>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                        </template>
+                        Con ícono izquierdo
+                    </Button>
+                    <Button variant="default" @click="handleClick">
+                        Con ícono derecho
+                        <template #right>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </template>
+                    </Button>
+                    
 
-          <!-- TEXT con minLength/maxLength y pattern -->
-          <div class="space-y-1">
-            <Input v-model="textConLimites" type="text" placeholder="Usuario (solo letras y números)" required
-              :minLength="4" :maxLength="16" pattern="^[A-Za-z0-9_]+$">
-            <template #label> Usuario (4-16, sin espacios) </template>
-            <template #help>
-              A-Z, a-z, 0-9 y guión bajo. Sin espacios ni símbolos.
-            </template>
-            </Input>
-          </div>
+                </div>
+            </div>
 
-          <!-- PASSWORD con minLength y pattern de seguridad -->
-          <div class="space-y-1">
-            <Input v-model="passVal" type="password" placeholder="Contraseña segura" required :minLength="8"
-              :maxLength="64" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$">
-            <template #label> Contraseña </template>
-            <template #prefix>
-              <span aria-hidden>🔒</span>
-            </template>
-            <template #help>
-              Mínimo 8 caracteres, 1 mayúscula y 1 número.
-            </template>
-            </Input>
-          </div>
+            <!-- Variante: Destructive -->
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold">Destructive</h2>
+                <div class="flex gap-3 flex-wrap">
+                    <Button variant="destructive" @click="handleClick">Delete</Button>
+                    <Button variant="destructive" :disabled="true">Disabled</Button>
+                    <Button variant="destructive" @click="handleClick">
+                        <template #left>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </template>
+                        Eliminar
+                    </Button>
+                </div>
+            </div>
 
-          <!-- EMAIL requerido con maxlength -->
-          <div class="space-y-1">
-            <Input v-model="emailVal" type="email" placeholder="usuario@dominio.com" required :maxLength="50">
-            <template #label> Correo electrónico </template>
-            <template #suffix>
-              <span aria-hidden>@</span>
-            </template>
-            </Input>
-          </div>
+            <!-- Variante: Outlined -->
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold">Outlined</h2>
+                <div class="flex gap-3 flex-wrap">
+                    <Button variant="outlined" @click="handleClick">Outlined</Button>
+                    <Button variant="outlined" :disabled="true">Disabled</Button>
+                    <Button variant="outlined" @click="handleClick">
+                        <template #left>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                        </template>
+                        Compartir
+                    </Button>
+                </div>
+            </div>
 
-          <!-- NUMBER con min/max -->
-          <div class="space-y-1">
-            <Input v-model="numberVal" type="number" placeholder="Edad" required :min="18" :max="99">
-            <template #label> Edad (18-99) </template>
-            </Input>
-          </div>
-
-          <!-- TEL con patrón internacional simple -->
-          <div class="space-y-1">
-            <Input v-model="telVal" type="tel" placeholder="+51987654321" :minLength="9" :maxLength="15"
-              pattern="^\+?\d{9,15}$" required>
-            <template #label> Teléfono (9-15 dígitos) </template>
-            <template #prefix>
-              <span aria-hidden>📞</span>
-            </template>
-            </Input>
-          </div>
-
-          <!-- URL requerida -->
-          <div class="space-y-1">
-            <Input v-model="urlVal" type="url" placeholder="https://sitio.com" required :maxLength="120">
-            <template #label> Sitio web </template>
-            </Input>
-          </div>
-
-          <!-- DATE con min/max -->
-          <div class="space-y-1">
-            <Input v-model="dateVal" type="date" :min="'2025-01-01'" :max="'2025-12-31'" required>
-            <template #label> Fecha (año 2025) </template>
-            </Input>
-          </div>
-
-          <!-- TIME con min/max -->
-          <div class="space-y-1">
-            <Input v-model="timeVal" type="time" :min="'09:00'" :max="'18:00'" required>
-            <template #label> Hora de atención (09:00 - 18:00) </template>
-            </Input>
-          </div>
-
-          <!-- TEXTAREA con minLength/maxLength y help -->
-          <div class="space-y-1 md:col-span-2">
-            <Input v-model="textareaVal" type="textarea" placeholder="Cuéntanos brevemente tu consulta" :rows="4"
-              :minLength="10" :maxLength="140" required>
-            <template #label> Mensaje (10-140) </template>
-            <template #help>
-              Sé claro y conciso. El contador muestra los caracteres usados.
-            </template>
-            </Input>
-          </div>
-
-          <div class="md:col-span-2 flex gap-3">
-            <button type="submit" class="px-3 py-2 rounded-md border bg-primary text-primary-foreground text-sm">
-              Probar validaciones
-            </button>
-            <button type="button" class="px-3 py-2 rounded-md border text-sm" @click="resetDemo()">
-              Limpiar
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Contenido de rutas hijas -->
-    <main class="flex-1">
-      <router-view />
-    </main>
-
-    <footer class="border-t text-xs text-muted-foreground">
-      <div class="container mx-auto px-4 py-3">
-        © {{ new Date().getFullYear() }} — Área Pública
-      </div>
-    </footer>
-  </div>
+            <!-- Variante: Ghost -->
+            <div class="space-y-2">
+                <h2 class="text-xl font-semibold">Ghost</h2>
+                <div class="flex gap-3 flex-wrap">
+                    <Button variant="ghost" @click="handleClick">Ghost</Button>
+                    <Button variant="ghost" :disabled="true">Disabled</Button>
+                    <Button variant="ghost" @click="handleClick">
+                        <template #left>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </template>
+                        Configuración
+                    </Button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
-
-<style scoped>
-.container {
-  max-width: 1024px;
-}
-</style>

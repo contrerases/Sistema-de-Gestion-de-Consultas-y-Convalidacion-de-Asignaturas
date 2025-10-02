@@ -4,6 +4,6 @@
 
 <template>
   <div>
-    <!-- TODO: Implement Switch -->
+
   </div>
 </template>
