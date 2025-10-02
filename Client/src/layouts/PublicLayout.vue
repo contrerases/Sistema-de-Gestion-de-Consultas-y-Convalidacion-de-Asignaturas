@@ -1,177 +1,208 @@
-<template>
-    <div class="max-w-2xl mx-auto my-8 p-6 bg-card rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-6 border-b pb-2">Ejemplos de tipos de Input</h1>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Input tipo text -->
-            <div>
-                <Input v-model="textInput" type="text" placeholder="Escribe algo">
-                <template #label>Input de texto</template>
-                <template #help>Texto estándar</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo password -->
-            <div>
-                <Input v-model="passwordInput" type="password" placeholder="Contraseña">
-                <template #label>Password</template>
-                <template #help>Oculta los caracteres</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo email con validación -->
-            <div>
-                <Input v-model="emailInput" type="email" placeholder="ejemplo@dominio.com" required ref="emailInputRef">
-                <template #label>Email <span class="text-destructive">*</span></template>
-                <template #help>Formato de correo electrónico (obligatorio)</template>
-                <template #error="{ errorMessage, hasError }">
-                    <div v-if="hasError" class="flex items-center">
-                        <span class="mr-1 text-destructive">⚠️</span>
-                        <span>{{ errorMessage }}</span>
-                    </div>
-                </template>
-                </Input>
-            </div>
-
-            <!-- Input tipo number -->
-            <div>
-                <Input v-model="numberInput" type="number" placeholder="123" :min="0" :max="100" :step="1">
-                <template #label>Número</template>
-                <template #help>Entre 0 y 100</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo tel -->
-            <div>
-                <Input v-model="telInput" type="tel" placeholder="+34 123 456 789" pattern="[0-9+\s]{9,}">
-                <template #label>Teléfono</template>
-                <template #help>Formato internacional</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo date -->
-            <div>
-                <Input v-model="dateInput" type="date" :minDate="today">
-                <template #label>Fecha</template>
-                <template #help>Selecciona a partir de hoy</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo time -->
-            <div>
-                <Input v-model="timeInput" type="time">
-                <template #label>Hora</template>
-                <template #help>Formato 24h</template>
-                </Input>
-            </div>
-
-            <!-- Input tipo url con validación -->
-            <div>
-                <Input v-model="urlInput" type="url" placeholder="https://ejemplo.com" ref="urlInputRef">
-                <template #label>URL</template>
-                <template #help>Dirección web (opcional)</template>
-                <template #error="{ errorMessage }">
-                    <div v-if="errorMessage" class="flex items-center gap-1">
-                        <span class="text-destructive">⚠️</span>
-                        {{ errorMessage }}
-                    </div>
-                </template>
-                </Input>
-            </div>
-
-            <!-- Input de solo lectura -->
-            <div>
-                <Input v-model="readOnlyInput" readOnly>
-                <template #label>Solo lectura</template>
-                <template #help>No se puede modificar</template>
-                </Input>
-            </div>
-
-            <!-- Input deshabilitado -->
-            <div>
-                <Input v-model="disabledInput" disabled>
-                <template #label>Deshabilitado</template>
-                <template #help>No interactivo</template>
-                </Input>
-            </div>
-        </div>
-
-        <!-- Controles de validación -->
-        <div class="mt-8 p-4 bg-muted rounded-lg">
-            <h2 class="text-xl font-bold mb-4">Validación de formulario</h2>
-
-            <div class="flex gap-4">
-                <button @click="validateAllFields"
-                    class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
-                    Validar campos
-                </button>
-
-                <button @click="resetAllValidations"
-                    class="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90">
-                    Resetear validación
-                </button>
-            </div>
-
-            <div v-if="validationMessages.summary" class="mt-4 p-3 rounded-md" :class="{
-                'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300': validationMessages.summary.includes('✅'),
-                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300': validationMessages.summary.includes('❌')
-            }">
-                {{ validationMessages.summary }}
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
+import { ref } from 'vue';
 import Input from '@/shared/components/ui/Input.vue';
-import { ref, computed } from 'vue';
 
-// Referencias para acceder a los métodos del componente
-const emailInputRef = ref<InstanceType<typeof Input> | null>(null);
-const urlInputRef = ref<InstanceType<typeof Input> | null>(null);
+// Mostrar la demo solo en desarrollo
+const isDev = import.meta.env.DEV;
 
-// Valores para cada tipo de input
-const textInput = ref('');
-const passwordInput = ref('');
-const emailInput = ref('');
-const numberInput = ref<number | string>('');
-const telInput = ref('');
-const dateInput = ref('');
-const timeInput = ref('');
-const urlInput = ref('');
-const readOnlyInput = ref('Este texto no se puede modificar');
-const disabledInput = ref('Campo deshabilitado');
+// Estado para ejemplos
+const textVal = ref('');
+const textConLimites = ref('');
+const passVal = ref('');
+const emailVal = ref('');
+const numberVal = ref<string | number>('');
+const telVal = ref('');
+const urlVal = ref('');
+const dateVal = ref('');
+const timeVal = ref('');
+const textareaVal = ref('');
 
-// Fecha actual para el mínimo del input date
-const today = computed(() => {
-    const date = new Date();
-    return date.toISOString().split('T')[0];
-});
-
-// Estado de validación manual
-const validationMessages = ref<Record<string, string>>({});
-
-// Funciones para manejar la validación
-function validateAllFields() {
-    const emailValid = emailInputRef.value?.validate() ?? false;
-    const urlValid = urlInputRef.value?.validate() ?? false;
-
-    validationMessages.value = {
-        summary: emailValid && urlValid ?
-            'Todos los campos son válidos ✅' :
-            'Hay campos con errores ❌'
-    };
+function onSubmit(e: Event) {
+  const form = e.target as HTMLFormElement;
+  // Dispara validaciones nativas para ver mensajes del componente
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    return;
+  }
+  e.preventDefault();
+  // eslint-disable-next-line no-console
+  console.log({
+    textVal: textVal.value,
+    textConLimites: textConLimites.value,
+    passVal: passVal.value,
+    emailVal: emailVal.value,
+    numberVal: numberVal.value,
+    telVal: telVal.value,
+    urlVal: urlVal.value,
+    dateVal: dateVal.value,
+    timeVal: timeVal.value,
+    textareaVal: textareaVal.value,
+  });
 }
 
-function resetAllValidations() {
-    emailInputRef.value?.resetValidation();
-    urlInputRef.value?.resetValidation();
-    validationMessages.value = {};
+function resetDemo() {
+  textVal.value = '';
+  textConLimites.value = '';
+  passVal.value = '';
+  emailVal.value = '';
+  numberVal.value = '';
+  telVal.value = '';
+  urlVal.value = '';
+  dateVal.value = '';
+  timeVal.value = '';
+  textareaVal.value = '';
 }
 </script>
 
-<style>
-* {
-    @apply bg-background text-foreground;
+<template>
+  <div class="min-h-screen flex flex-col">
+    <!-- Cabecera mínima -->
+    <header class="border-b bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <h1 class="text-base font-semibold">Public Layout</h1>
+        <nav class="text-sm text-muted-foreground">Rutas públicas</nav>
+      </div>
+    </header>
+
+    <!-- Demo de Input.vue solo en desarrollo -->
+    <section v-if="isDev" class="container mx-auto px-4 py-6">
+      <div class="rounded-lg border p-4">
+        <h2 class="text-lg font-semibold mb-2">Demo: Input.vue (solo DEV)</h2>
+        <p class="text-sm text-muted-foreground mb-4">
+          Ejemplos de tipos y validaciones soportadas por el componente. Usa el
+          botón "Probar validaciones" o haz blur en cada campo para ver
+          mensajes.
+        </p>
+
+        <form @submit="onSubmit" class="grid gap-6 md:grid-cols-2">
+          <!-- TEXT básico requerido con label, help, prefix/suffix -->
+          <div class="space-y-1">
+            <Input v-model="textVal" type="text" placeholder="Tu nombre" required :maxLength="30">
+            <template #label> Nombre completo </template>
+            <template #prefix>
+              👤
+            </template>
+            <template #suffix>
+              <span aria-hidden>✎</span>
+            </template>
+            <template #help>
+              Ingresa tu nombre como aparece en documentos oficiales.
+            </template>
+            </Input>
+          </div>
+
+          <!-- TEXT con minLength/maxLength y pattern -->
+          <div class="space-y-1">
+            <Input v-model="textConLimites" type="text" placeholder="Usuario (solo letras y números)" required
+              :minLength="4" :maxLength="16" pattern="^[A-Za-z0-9_]+$">
+            <template #label> Usuario (4-16, sin espacios) </template>
+            <template #help>
+              A-Z, a-z, 0-9 y guión bajo. Sin espacios ni símbolos.
+            </template>
+            </Input>
+          </div>
+
+          <!-- PASSWORD con minLength y pattern de seguridad -->
+          <div class="space-y-1">
+            <Input v-model="passVal" type="password" placeholder="Contraseña segura" required :minLength="8"
+              :maxLength="64" pattern="^(?=.*[A-Z])(?=.*\d).{8,}$">
+            <template #label> Contraseña </template>
+            <template #prefix>
+              <span aria-hidden>🔒</span>
+            </template>
+            <template #help>
+              Mínimo 8 caracteres, 1 mayúscula y 1 número.
+            </template>
+            </Input>
+          </div>
+
+          <!-- EMAIL requerido con maxlength -->
+          <div class="space-y-1">
+            <Input v-model="emailVal" type="email" placeholder="usuario@dominio.com" required :maxLength="50">
+            <template #label> Correo electrónico </template>
+            <template #suffix>
+              <span aria-hidden>@</span>
+            </template>
+            </Input>
+          </div>
+
+          <!-- NUMBER con min/max -->
+          <div class="space-y-1">
+            <Input v-model="numberVal" type="number" placeholder="Edad" required :min="18" :max="99">
+            <template #label> Edad (18-99) </template>
+            </Input>
+          </div>
+
+          <!-- TEL con patrón internacional simple -->
+          <div class="space-y-1">
+            <Input v-model="telVal" type="tel" placeholder="+51987654321" :minLength="9" :maxLength="15"
+              pattern="^\+?\d{9,15}$" required>
+            <template #label> Teléfono (9-15 dígitos) </template>
+            <template #prefix>
+              <span aria-hidden>📞</span>
+            </template>
+            </Input>
+          </div>
+
+          <!-- URL requerida -->
+          <div class="space-y-1">
+            <Input v-model="urlVal" type="url" placeholder="https://sitio.com" required :maxLength="120">
+            <template #label> Sitio web </template>
+            </Input>
+          </div>
+
+          <!-- DATE con min/max -->
+          <div class="space-y-1">
+            <Input v-model="dateVal" type="date" :min="'2025-01-01'" :max="'2025-12-31'" required>
+            <template #label> Fecha (año 2025) </template>
+            </Input>
+          </div>
+
+          <!-- TIME con min/max -->
+          <div class="space-y-1">
+            <Input v-model="timeVal" type="time" :min="'09:00'" :max="'18:00'" required>
+            <template #label> Hora de atención (09:00 - 18:00) </template>
+            </Input>
+          </div>
+
+          <!-- TEXTAREA con minLength/maxLength y help -->
+          <div class="space-y-1 md:col-span-2">
+            <Input v-model="textareaVal" type="textarea" placeholder="Cuéntanos brevemente tu consulta" :rows="4"
+              :minLength="10" :maxLength="140" required>
+            <template #label> Mensaje (10-140) </template>
+            <template #help>
+              Sé claro y conciso. El contador muestra los caracteres usados.
+            </template>
+            </Input>
+          </div>
+
+          <div class="md:col-span-2 flex gap-3">
+            <button type="submit" class="px-3 py-2 rounded-md border bg-primary text-primary-foreground text-sm">
+              Probar validaciones
+            </button>
+            <button type="button" class="px-3 py-2 rounded-md border text-sm" @click="resetDemo()">
+              Limpiar
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Contenido de rutas hijas -->
+    <main class="flex-1">
+      <router-view />
+    </main>
+
+    <footer class="border-t text-xs text-muted-foreground">
+      <div class="container mx-auto px-4 py-3">
+        © {{ new Date().getFullYear() }} — Área Pública
+      </div>
+    </footer>
+  </div>
+</template>
+
+<style scoped>
+.container {
+  max-width: 1024px;
 }
 </style>

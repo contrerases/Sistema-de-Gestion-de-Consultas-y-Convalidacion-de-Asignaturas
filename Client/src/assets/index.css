@@ -12,7 +12,8 @@
 
 @font-face {
   font-family: 'Geist Mono';
-  src: url('/src/assets/fonts/Geist-Mono.woff2') format('woff2');
+  src: url('/src/assets/fonts/Geist-Mono/GeistMono-VariableFont_wght.ttf')
+    format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -33,6 +34,7 @@
   --accent: rgb(231 228 221);
   --accent-foreground: rgb(41 39 27);
   --destructive: rgb(241 68 68);
+  --success: rgb(16 185 129);
   --border: oklch(0.88 0.01 97.36);
   --input: rgb(180 177 163);
   --ring: #ff7b00;

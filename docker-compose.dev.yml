@@ -42,7 +42,7 @@ services:
   # BASE DE DATOS - MariaDB (DESARROLLO)
   # ========================================
   db:
-    image: mariadb:10.11
+    image: mariadb:latest
     env_file:
       - ./server/.env.dev
     environment:
