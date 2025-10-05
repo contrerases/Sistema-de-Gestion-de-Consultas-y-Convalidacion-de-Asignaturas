@@ -1,0 +1,1 @@
+# WorkshopInscription model

@@ -103,11 +103,11 @@ Este documento describe y explica el sistema de rutas de la aplicación, basado 
       - Hijas:
         - `/admin/management/subjects/new` → SubjectForm
         - `/admin/management/subjects/:id` → SubjectDetail
-    - `/admin/management/curriculum-courses` → CurriculumCourseListView
-      - Lista de cursos curriculares.
+    - `/admin/management/curriculum-course-slots` → CurriculumCourseSlotListView
+      - Lista de casillas curriculares.
       - Hijas:
-        - `/admin/management/curriculum-courses/new` → CurriculumCourseForm
-        - `/admin/management/curriculum-courses/:id` → CurriculumCourseDetail
+        - `/admin/management/curriculum-course-slots/new` → CurriculumCourseSlotForm
+        - `/admin/management/curriculum-course-slots/:id` → CurriculumCourseSlotDetail
 - `/admin/students/:id/profile` → StudentProfileView
   - Perfil detallado de un estudiante.
 - `/admin/notifications` → NotificationListView

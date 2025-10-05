@@ -117,14 +117,14 @@ Cada subcarpeta representa un dominio funcional. Dentro de cada una:
 
 #### curriculum/
 - **components/**
-  - **CurriculumCourseList.vue**: Lista de todos los cursos curriculares (GET /curriculum-courses/).
-  - **CurriculumCourseDetail.vue**: Detalle de curso curricular (GET /curriculum-courses/{id}).
-  - **CurriculumCourseForm.vue**: Formulario de creación/edición.
+  - **CurriculumCourseSlotList.vue**: Lista de todas las casillas curriculares (GET /curriculum-course-slots/).
+  - **CurriculumCourseSlotDetail.vue**: Detalle de casilla curricular (GET /curriculum-course-slots/{id}).
+  - **CurriculumCourseSlotForm.vue**: Formulario de creación/edición.
 - **services/**
-  - **curriculum_course_service.ts**: Lógica de API para cursos curriculares.
+  - **curriculum_course_slot_service.ts**: Lógica de API para casillas curriculares.
 - **types/**
-  - **curriculum_course_out.ts**: Interface de curso curricular (output).
-  - **curriculum_course_in.ts**: Interface de curso curricular (input).
+  - **curriculum_course_slot_out.ts**: Interface de casilla curricular (output).
+  - **curriculum_course_slot_in.ts**: Interface de casilla curricular (input).
 
 #### convalidations/
 - **components/**
@@ -215,7 +215,7 @@ Para cada entidad que tenga un endpoint GET de listado, se debe crear un compone
 - **AdminList.vue**: Lista todos los administradores (`GET /admins/`).
 - **DepartmentList.vue**: Lista todos los departamentos (`GET /departments/`).
 - **SubjectList.vue**: Lista todas las asignaturas (`GET /subjects/`).
-- **CurriculumCourseList.vue**: Lista todos los cursos curriculares (`GET /curriculum-courses/`).
+- **CurriculumCourseSlotList.vue**: Lista todas las casillas curriculares (`GET /curriculum-course-slots/`).
 - **ConvalidationList.vue**: Lista todas las convalidaciones (`GET /convalidations/` y filtros avanzados).
 - **WorkshopList.vue**: Lista todos los talleres (`GET /workshops/`).
 - **WorkshopInscriptionList.vue**: Lista todas las inscripciones a talleres (`POST /workshop-inscriptions/filter`).

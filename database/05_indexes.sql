@@ -28,11 +28,11 @@ CREATE INDEX idx_subjects_acronym ON SUBJECTS(acronym);
 ALTER TABLE SUBJECTS DROP INDEX IF EXISTS idx_subjects_department;
 CREATE INDEX idx_subjects_department ON SUBJECTS(id_department);
 
--- CURRICULUM_COURSES: Búsqueda por nombre y tipo
-ALTER TABLE CURRICULUM_COURSES DROP INDEX IF EXISTS idx_curriculum_courses_name;
-CREATE INDEX idx_curriculum_courses_name ON CURRICULUM_COURSES(name);
-ALTER TABLE CURRICULUM_COURSES DROP INDEX IF EXISTS idx_curriculum_courses_type;
-CREATE INDEX idx_curriculum_courses_type ON CURRICULUM_COURSES(id_curriculum_course_type);
+-- CURRICULUM_COURSE_SLOTS: Búsqueda por nombre y tipo
+ALTER TABLE CURRICULUM_COURSE_SLOTS DROP INDEX IF EXISTS idx_curriculum_course_slots_name;
+CREATE INDEX idx_curriculum_course_slots_name ON CURRICULUM_COURSE_SLOTS(name);
+ALTER TABLE CURRICULUM_COURSE_SLOTS DROP INDEX IF EXISTS idx_curriculum_course_slots_type;
+CREATE INDEX idx_curriculum_course_slots_type ON CURRICULUM_COURSE_SLOTS(id_curriculum_course_type);
 
 -- WORKSHOPS: Búsqueda por nombre, año, semestre y estado
 ALTER TABLE WORKSHOPS DROP INDEX IF EXISTS idx_workshops_name;

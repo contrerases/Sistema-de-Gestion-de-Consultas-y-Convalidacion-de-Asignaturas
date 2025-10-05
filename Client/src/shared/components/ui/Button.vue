@@ -51,7 +51,7 @@ const handleClick = (event: MouseEvent) => {
 .btn {
   @apply inline-flex shadow-lg items-center justify-center gap-2 rounded-lg px-4 py-2;
   @apply font-medium transition-all duration-200;
-  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  @apply focus:outline-none;
   @apply disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none;
 }
 
@@ -60,19 +60,19 @@ const handleClick = (event: MouseEvent) => {
 }
 
 .btn-default {
-  @apply bg-primary text-primary-foreground border border-primary hover:opacity-90;
+  @apply bg-primary text-primary-foreground border border-primary hover:opacity-80;
 }
 
 .btn-destructive {
-  @apply bg-destructive text-destructive-foreground border border-destructive hover:opacity-90;
+  @apply bg-destructive text-destructive-foreground border border-destructive hover:opacity-80;
 }
 
 .btn-cancel {
-  @apply bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 hover:opacity-90;
+  @apply bg-gray-200 text-gray-800 border border-gray-300 hover:opacity-90;
 }
 
 .btn-outlined {
-  @apply bg-transparent text-primary border border-primary hover:bg-primary hover:opacity-90;
+  @apply bg-transparent text-primary border border-primary hover:bg-primary hover:text-primary-foreground hover:opacity-80;
 }
 
 .btn-ghost {

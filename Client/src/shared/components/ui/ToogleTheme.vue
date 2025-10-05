@@ -1,34 +1,49 @@
-<template>
-    <button @click="toggleTheme" class="theme-toggle" :aria-label="ariaLabel">
-        <div class="switch-track">
-            <div class="switch-thumb"></div>
-        </div>
-    </button>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useColorMode } from '@vueuse/core';
 
+/**
+ * Tipo de modo de color
+ */
+export type ThemeMode = 'light' | 'dark';
+
+/**
+ * Props del componente ToogleTheme
+ */
+export interface ToogleThemeProps {
+  storageKey?: string;
+}
+
+const props = withDefaults(defineProps<ToogleThemeProps>(), {
+  storageKey: 'theme',
+});
+
 const mode = useColorMode({
-    selector: 'html',
-    attribute: 'class',
-    storageKey: 'theme',
-    modes: {
-        light: 'light',
-        dark: 'dark',
-    },
+  selector: 'html',
+  attribute: 'class',
+  storageKey: props.storageKey,
+  modes: {
+    light: 'light',
+    dark: 'dark',
+  },
 });
 
 const ariaLabel = computed(() =>
-    mode.value === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
+  mode.value === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
 );
 
-
-const toggleTheme = () => {
-    mode.value = mode.value === 'dark' ? 'light' : 'dark';
+const toggleTheme = (): void => {
+  mode.value = mode.value === 'dark' ? 'light' : 'dark';
 };
 </script>
+
+<template>
+  <button @click="toggleTheme" class="theme-toggle" :aria-label="ariaLabel">
+    <div class="switch-track">
+      <div class="switch-thumb"></div>
+    </div>
+  </button>
+</template>
 
 <style scoped>
 .theme-toggle {

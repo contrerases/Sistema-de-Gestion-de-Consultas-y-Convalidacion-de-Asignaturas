@@ -1,30 +1,41 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
+/**
+ * Interfaz para definir un tab
+ */
 export interface Tab {
   id: string;
   label: string;
 }
 
-interface Props {
+/**
+ * Props del componente Tabs
+ */
+export interface TabsProps {
   tabs: Tab[];
   modelValue?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+/**
+ * Eventos emitidos por el componente Tabs
+ */
+export interface TabsEmits {
+  'update:modelValue': [value: string];
+}
+
+const props = withDefaults(defineProps<TabsProps>(), {
   modelValue: '',
 });
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string];
-}>();
+const emit = defineEmits<TabsEmits>();
 
 const activeTab = computed({
   get: () => props.modelValue || props.tabs[0]?.id || '',
-  set: (value) => emit('update:modelValue', value),
+  set: (value: string) => emit('update:modelValue', value),
 });
 
-const selectTab = (tabId: string) => {
+const selectTab = (tabId: string): void => {
   activeTab.value = tabId;
 };
 </script>

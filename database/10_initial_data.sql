@@ -12,8 +12,10 @@ DELETE FROM CONVALIDATION_TYPES WHERE 1 = 1;
 DELETE FROM CURRICULUM_COURSES_TYPES WHERE 1 = 1;
 DELETE FROM WORKSHOP_STATES WHERE 1 = 1;
 DELETE FROM DEPARTMENTS WHERE 1 = 1;
-DELETE FROM CURRICULUM_COURSES WHERE 1 = 1;
+DELETE FROM CURRICULUM_COURSE_SLOTS WHERE 1 = 1;
 DELETE FROM SUBJECTS WHERE 1 = 1;
+DELETE FROM CAMPUS WHERE 1 = 1;
+DELETE FROM USER_TYPES WHERE 1 = 1;
 
 -- Reiniciar las secuencias
 ALTER TABLE CONVALIDATION_STATES AUTO_INCREMENT = 1;
@@ -21,12 +23,25 @@ ALTER TABLE CONVALIDATION_TYPES AUTO_INCREMENT = 1;
 ALTER TABLE CURRICULUM_COURSES_TYPES AUTO_INCREMENT = 1;
 ALTER TABLE WORKSHOP_STATES AUTO_INCREMENT = 1;
 ALTER TABLE DEPARTMENTS AUTO_INCREMENT = 1;
-ALTER TABLE CURRICULUM_COURSES AUTO_INCREMENT = 1;
+ALTER TABLE CURRICULUM_COURSE_SLOTS AUTO_INCREMENT = 1;
 ALTER TABLE SUBJECTS AUTO_INCREMENT = 1;
+ALTER TABLE CAMPUS AUTO_INCREMENT = 1;
+ALTER TABLE USER_TYPES AUTO_INCREMENT = 1;
 
 -- =============================================================================
 -- DATOS DE CONFIGURACIÓN DEL SISTEMA
 -- =============================================================================
+
+-- Campus universitarios
+INSERT INTO CAMPUS (acronym, name, location) VALUES
+('CC', 'CASA CENTRAL', 'VALPARAISO'),
+('SJ', 'SAN JOAQUIN', 'SANTIAGO'),
+('VSM', 'VITACURA', 'SANTIAGO');
+
+-- Tipos de usuarios
+INSERT INTO USER_TYPES (user_type) VALUES
+('STUDENT'),
+('ADMINISTRATOR');
 
 -- Estados de talleres
 INSERT IGNORE INTO WORKSHOP_STATES (name, description) VALUES
@@ -74,11 +89,11 @@ INSERT INTO DEPARTMENTS (name) VALUES
 ('MATEMATICA');
 
 -- =============================================================================
--- DATOS DE CURSOS CURRICULARES
+-- DATOS DE CURRICULUM COURSE SLOTS (Casillas Curriculares)
 -- =============================================================================
 
 
-INSERT INTO CURRICULUM_COURSES (name, id_curriculum_course_type) VALUES
+INSERT INTO CURRICULUM_COURSE_SLOTS (name, id_curriculum_course_type) VALUES
 ('LIBRE 1', 1),
 ('LIBRE 2', 1),
 ('LIBRE 3', 1),
@@ -152,6 +167,25 @@ INSERT INTO SUBJECTS (acronym, name, id_department, credits) VALUES
 ('EFI113', 'TENIS', 4, 2),
 ('EFI114', 'TENIS DE MESA', 4, 2),
 ('EFI116', 'VÓLEIBOL', 4, 2);
+
+-- =============================================================================
+-- TRANSICIONES VÁLIDAS DE ESTADOS
+-- =============================================================================
+
+-- Transiciones válidas para talleres
+INSERT INTO WORKSHOP_STATE_TRANSITIONS (id_from_state, id_to_state) VALUES
+(1, 2),  -- INSCRIPCION → EN_CURSO
+(1, 5),  -- INSCRIPCION → CANCELADO
+(2, 3),  -- EN_CURSO → FINALIZADO
+(3, 4);  -- FINALIZADO → CERRADO
+
+-- Transiciones válidas para convalidaciones
+INSERT INTO CONVALIDATION_STATE_TRANSITIONS (id_from_state, id_to_state) VALUES
+(1, 2),  -- ENVIADA → RECHAZADA_DI
+(1, 3),  -- ENVIADA → APROBADA_DI
+(1, 4),  -- ENVIADA → ENVIADA_A_DE
+(4, 5),  -- ENVIADA_A_DE → RECHAZADA_DE
+(4, 6);  -- ENVIADA_A_DE → APROBADA_DE
 
 
 SET FOREIGN_KEY_CHECKS = 1;

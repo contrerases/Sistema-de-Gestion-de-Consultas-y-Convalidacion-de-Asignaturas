@@ -1,0 +1,3 @@
+"""
+Schemas Pydantic para SUBJECTS
+"""

@@ -29,11 +29,11 @@ export const API_ENDPOINTS = {
     byId: (id: number) => `${API_BASE}/subjects/${id}`,
     byDepartment: (departmentId: number) => `${API_BASE}/subjects/department/${departmentId}`,
   },
-  curriculumCourses: {
-    base: `${API_BASE}/curriculum-courses/`,
-    byId: (id: number) => `${API_BASE}/curriculum-courses/${id}`,
-    byType: (typeId: number) => `${API_BASE}/curriculum-courses/type/${typeId}`,
-    notConvalidatedByStudent: (studentId: number) => `${API_BASE}/curriculum-courses/not-convalidated-by-student/${studentId}`,
+  curriculumCourseSlots: {
+    base: `${API_BASE}/curriculum-course-slots/`,
+    byId: (id: number) => `${API_BASE}/curriculum-course-slots/${id}`,
+    byType: (typeId: number) => `${API_BASE}/curriculum-course-slots/type/${typeId}`,
+    notConvalidatedByStudent: (studentId: number) => `${API_BASE}/curriculum-course-slots/not-convalidated-by-student/${studentId}`,
   },
   workshops: {
     base: `${API_BASE}/workshops/`,
@@ -51,7 +51,7 @@ export const API_ENDPOINTS = {
     byStudentRut: (studentRut: string) => `${API_BASE}/workshop-inscriptions/student-rut/${studentRut}`,
     byStudentName: (studentName: string) => `${API_BASE}/workshop-inscriptions/student-name/${studentName}`,
     byStudentRol: (studentRol: string) => `${API_BASE}/workshop-inscriptions/student-rol/${studentRol}`,
-    byCurriculumCourse: (curriculumCourseId: number) => `${API_BASE}/workshop-inscriptions/curriculum-course/${curriculumCourseId}`,
+    byCurriculumCourseSlot: (curriculumCourseSlotId: number) => `${API_BASE}/workshop-inscriptions/curriculum-course-slot/${curriculumCourseSlotId}`,
     cancelInscription: (id: number) => `${API_BASE}/workshop-inscriptions/cancel-inscription/${id}`,
   },
   workshopGrades: {
@@ -70,7 +70,7 @@ export const API_ENDPOINTS = {
     byStudentRol: (studentRol: string) => `${API_BASE}/convalidations/student-rol/${studentRol}`,
     byStudentName: (studentName: string) => `${API_BASE}/convalidations/student-name/${studentName}`,
     byReviewedBy: (reviewedById: number) => `${API_BASE}/convalidations/reviewed-by/${reviewedById}`,
-    byCurriculumCourse: (curriculumCourseId: number) => `${API_BASE}/convalidations/curriculum-course/${curriculumCourseId}`,
+    byCurriculumCourseSlot: (curriculumCourseSlotId: number) => `${API_BASE}/convalidations/curriculum-course-slot/${curriculumCourseSlotId}`,
     byWorkshop: (workshopId: number) => `${API_BASE}/convalidations/workshop/${workshopId}`,
     byActivity: (activityId: number) => `${API_BASE}/convalidations/activity/${activityId}`,
     byType: (typeId: number) => `${API_BASE}/convalidations/type/${typeId}`,
@@ -87,11 +87,11 @@ export const API_ENDPOINTS = {
   catalogs: {
     departments: `${API_BASE}/departments/`,
     subjects: `${API_BASE}/subjects/`,
-    curriculumCourses: `${API_BASE}/curriculum-courses/`,
+    curriculumCourseSlots: `${API_BASE}/curriculum-course-slots/`,
     convalidationTypes: `${API_BASE}/convalidation-types/`,
     workshopStates: `${API_BASE}/workshop-states/`,
     convalidationStates: `${API_BASE}/convalidation-states/`,
-    curriculumCourseTypes: `${API_BASE}/curriculum-courses-types/`,
+    curriculumCourseSlotTypes: `${API_BASE}/curriculum-course-slot-types/`,
   },
   stats: {
     general: `${API_BASE}/stats/general-stats/`,

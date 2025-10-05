@@ -27,6 +27,7 @@ module.exports = {
         ring: "var(--ring)",
         background: "var(--background)",
         foreground: "var(--foreground)",
+        overlay: "var(--overlay)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",

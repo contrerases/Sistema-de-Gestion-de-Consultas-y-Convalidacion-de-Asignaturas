@@ -1,0 +1,1 @@
+# Workshop repositories: WorkshopRepository, InscriptionRepository

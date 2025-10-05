@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import { watch, onMounted, onUnmounted } from 'vue';
+import { watch, onMounted, onUnmounted, useSlots, computed } from 'vue';
 
-interface Props {
+/**
+ * Props del componente Dialog
+ */
+export interface DialogProps {
   open?: boolean;
   title?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+/**
+ * Eventos emitidos por el componente Dialog
+ */
+export interface DialogEmits {
+  'update:open': [value: boolean];
+  close: [];
+}
+
+const props = withDefaults(defineProps<DialogProps>(), {
   open: false,
   title: '',
 });
 
-const emit = defineEmits<{
-  'update:open': [value: boolean];
-  close: [];
-}>();
+const emit = defineEmits<DialogEmits>();
+const slots = useSlots();
 
-const closeDialog = () => {
+const hasHeader = computed(() => !!props.title || !!slots.header);
+const hasFooter = computed(() => !!slots.footer);
+
+const closeDialog = (): void => {
   emit('update:open', false);
   emit('close');
 };
 
-const handleEscape = (event: KeyboardEvent) => {
+const handleEscape = (event: KeyboardEvent): void => {
   if (event.key === 'Escape' && props.open) {
     closeDialog();
   }
 };
 
-watch(() => props.open, (isOpen) => {
+watch(() => props.open, (isOpen: boolean) => {
   if (isOpen) {
     document.body.style.overflow = 'hidden';
   } else {
@@ -52,7 +64,7 @@ onUnmounted(() => {
         <Transition name="dialog-slide">
           <div v-if="open" class="dialog-container" @click.stop>
             <!-- Header -->
-            <div v-if="title || $slots.header" class="dialog-header">
+            <div v-if="hasHeader" class="dialog-header">
               <slot name="header">
                 <h2 class="dialog-title">{{ title }}</h2>
               </slot>
@@ -70,7 +82,7 @@ onUnmounted(() => {
             </div>
 
             <!-- Footer -->
-            <div v-if="$slots.footer" class="dialog-footer">
+            <div v-if="hasFooter" class="dialog-footer">
               <slot name="footer" />
             </div>
           </div>
@@ -82,11 +94,13 @@ onUnmounted(() => {
 
 <style scoped>
 .dialog-overlay {
-  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm;
+  @apply fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md;
+  background-color: var(--overlay);
 }
 
 .dialog-container {
   @apply relative bg-card text-card-foreground rounded-xl shadow-2xl max-w-lg w-full mx-4 border border-border;
+  background-color: var(--card);
 }
 
 .dialog-header {

@@ -1,19 +1,43 @@
 <script setup lang="ts">
-import { computed, ref, watch, nextTick } from 'vue';
+import { computed, ref, watch, nextTick, useSlots } from 'vue';
 import Input from './Input.vue';
 
-interface DateTimePickerProps {
+/**
+ * Interfaz para un día del calendario
+ */
+export interface CalendarDay {
+  day: number;
+  month: number;
+  year: number;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+}
+
+/**
+ * Props del componente DatePicker
+ */
+export interface DatePickerProps {
   modelValue?: string;
   placeholder?: string;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
+  minDate?: string;
+  maxDate?: string;
   pastDays?: boolean;
   showDate?: boolean;
   showTime?: boolean;
 }
 
-const props = withDefaults(defineProps<DateTimePickerProps>(), {
+/**
+ * Eventos emitidos por el componente DatePicker
+ */
+export interface DatePickerEmits {
+  'update:modelValue': [value: string];
+}
+
+const props = withDefaults(defineProps<DatePickerProps>(), {
   modelValue: '',
   placeholder: 'Seleccione fecha y hora',
   disabled: false,
@@ -22,10 +46,11 @@ const props = withDefaults(defineProps<DateTimePickerProps>(), {
   minDate: undefined,
   maxDate: undefined,
   showDate: true,
-  showTime: true
+  showTime: true,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<DatePickerEmits>();
+const slots = useSlots();
 
 // Referencias para manejo de calendario y selectores
 const datePickerRef = ref<HTMLElement | null>(null);
@@ -42,7 +67,7 @@ const timeInputMinutes = ref('');
 
 
 // Parsear el valor inicial si existe
-function parseModelValue() {
+function parseModelValue(): void {
   if (!props.modelValue) {
     selectedDate.value = '';
     selectedTime.value = '';
@@ -231,7 +256,7 @@ const currentMonthYear = computed(() => {
 });
 
 // Navegación entre meses
-function prevMonth() {
+function prevMonth(): void {
   const date = selectedDate.value
     ? new Date(selectedDate.value)
     : new Date();
@@ -246,7 +271,7 @@ function prevMonth() {
   }
 }
 
-function nextMonth() {
+function nextMonth(): void {
   const date = selectedDate.value
     ? new Date(selectedDate.value)
     : new Date();
@@ -265,7 +290,7 @@ function nextMonth() {
 const tempDate = ref(new Date().toISOString().split('T')[0]);
 
 // Seleccionar día
-function selectDay(day: { year: number; month: number; day: number }) {
+function selectDay(day: CalendarDay): void {
   // Creamos la fecha con el ajuste de UTC para evitar problemas de zona horaria
   const date = new Date(Date.UTC(day.year, day.month, day.day));
   selectedDate.value = date.toISOString().split('T')[0];
@@ -291,12 +316,12 @@ function selectDay(day: { year: number; month: number; day: number }) {
 }
 
 // Cerrar el calendario
-function closeDatePicker() {
+function closeDatePicker(): void {
   showDatePicker.value = false;
 }
 
 // Abrir/cerrar selectores
-function toggleDatePicker() {
+function toggleDatePicker(): void {
   if (props.disabled || props.readOnly) return;
   showDatePicker.value = !showDatePicker.value;
   if (showDatePicker.value) {
@@ -305,7 +330,7 @@ function toggleDatePicker() {
 }
 
 // Funciones para manejar la entrada manual del tiempo
-function handleTimeInput(value: string | number) {
+function handleTimeInput(value: string | number): void {
   // Convertir el valor a string si es número
   const stringValue = String(value);
 
@@ -355,7 +380,7 @@ function handleTimeInput(value: string | number) {
 }
 
 // Función para gestionar el foco en la entrada de tiempo
-function focusTimeInput() {
+function focusTimeInput(): void {
   if (props.disabled || props.readOnly) return;
 
   // Si no hay tiempo seleccionado, establecemos valores por defecto
@@ -368,7 +393,7 @@ function focusTimeInput() {
 }
 
 // Cerrar al hacer clic fuera
-function onClickOutside(e: MouseEvent) {
+function onClickOutside(e: MouseEvent): void {
   if (datePickerRef.value && !datePickerRef.value.contains(e.target as Node)) {
     showDatePicker.value = false;
   }
@@ -383,7 +408,7 @@ watch([selectedDate, selectedTime], () => {
 });
 
 // Reaccionar a cambios en modelValue
-watch(() => props.modelValue, (newValue) => {
+watch(() => props.modelValue, (newValue: string | undefined) => {
   if (newValue) {
     parseModelValue();
   } else {
@@ -393,7 +418,7 @@ watch(() => props.modelValue, (newValue) => {
 });
 
 // Configurar listeners para cerrar al hacer clic fuera
-watch([showDatePicker, showTimePicker], ([showDate, showTime]) => {
+watch([showDatePicker, showTimePicker], ([showDate, showTime]: [boolean, boolean]) => {
   if (showDate || showTime) {
     setTimeout(() => {
       document.addEventListener('click', onClickOutside);

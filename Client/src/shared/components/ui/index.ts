@@ -14,6 +14,5 @@ export { default as Select } from './Select.vue';
 export { default as Skeleton } from './Skeleton.vue';
 export { default as Switch } from './Switch.vue';
 export { default as Tabs } from './Tabs.vue';
-export { default as Textarea } from './Textarea.vue';
 export { default as Tooltip } from './Tooltip.vue';
 export * from './Toast';

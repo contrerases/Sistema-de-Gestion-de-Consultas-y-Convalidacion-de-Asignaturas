@@ -65,17 +65,17 @@ DELETE /api/subjects/{id}               # Eliminar asignatura
 POST   /api/subjects/bulk               # Crear asignaturas masivamente
 ```
 
-## 🎯 CURSOS CURRICULARES
+## 🎯 CASILLAS CURRICULARES (CURRICULUM COURSE SLOTS)
 
 ```http
-GET    /api/curriculum-courses          # Listar cursos curriculares
-GET    /api/curriculum-courses/{id}     # Obtener curso por ID
-GET    /api/curriculum-courses/types/{type} # Cursos por tipo
-GET    /api/curriculum-courses/available/{studentId} # Cursos no convalidados por estudiante
-POST   /api/curriculum-courses          # Crear curso curricular
-PUT    /api/curriculum-courses/{id}     # Actualizar curso curricular
-DELETE /api/curriculum-courses/{id}     # Eliminar curso curricular
-POST   /api/curriculum-courses/bulk     # Crear cursos masivamente
+GET    /api/curriculum-course-slots          # Listar casillas curriculares
+GET    /api/curriculum-course-slots/{id}     # Obtener casilla por ID
+GET    /api/curriculum-course-slots/types/{type} # Casillas por tipo
+GET    /api/curriculum-course-slots/available/{studentId} # Casillas no convalidadas por estudiante
+POST   /api/curriculum-course-slots          # Crear casilla curricular
+PUT    /api/curriculum-course-slots/{id}     # Actualizar casilla curricular
+DELETE /api/curriculum-course-slots/{id}     # Eliminar casilla curricular
+POST   /api/curriculum-course-slots/bulk     # Crear casillas masivamente
 ```
 
 ## 🎨 TALLERES

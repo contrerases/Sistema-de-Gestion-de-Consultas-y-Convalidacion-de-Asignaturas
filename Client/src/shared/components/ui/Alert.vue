@@ -1,24 +1,41 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
-type Variant = 'default' | 'success' | 'warning' | 'destructive' | 'info';
+/**
+ * Variantes del componente Alert
+ */
+export type AlertVariant = 'default' | 'success' | 'warning' | 'destructive' | 'info';
 
-interface Props {
-  variant?: Variant;
+/**
+ * Props del componente Alert
+ */
+export interface AlertProps {
+  variant?: AlertVariant;
   dismissible?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+/**
+ * Eventos emitidos por el componente Alert
+ */
+export interface AlertEmits {
+  dismiss: [];
+}
+
+const props = withDefaults(defineProps<AlertProps>(), {
   variant: 'default',
   dismissible: false,
 });
 
-const emit = defineEmits<{
-  dismiss: [];
-}>();
+const emit = defineEmits<AlertEmits>();
+const slots = useSlots();
+
+const hasIcon = computed(() => !!slots.icon);
+const hasTitle = computed(() => !!slots.title);
+const hasDescription = computed(() => !!slots.description);
+const hasFooter = computed(() => !!slots.footer);
 
 const variantClasses = computed(() => {
-  const variants: Record<Variant, string> = {
+  const variants: Record<AlertVariant, string> = {
     default: 'alert-default',
     success: 'alert-success',
     warning: 'alert-warning',
@@ -28,7 +45,7 @@ const variantClasses = computed(() => {
   return variants[props.variant];
 });
 
-const handleDismiss = () => {
+const handleDismiss = (): void => {
   emit('dismiss');
 };
 </script>
@@ -36,19 +53,19 @@ const handleDismiss = () => {
 <template>
   <div :class="['alert', variantClasses]">
     <!-- Icon -->
-    <div v-if="$slots.icon" class="alert-icon">
+    <div v-if="hasIcon" class="alert-icon">
       <slot name="icon" />
     </div>
 
     <!-- Content -->
     <div class="alert-content">
-      <div v-if="$slots.title" class="alert-title">
+      <div v-if="hasTitle" class="alert-title">
         <slot name="title" />
       </div>
-      <div v-if="$slots.description" class="alert-description">
+      <div v-if="hasDescription" class="alert-description">
         <slot name="description" />
       </div>
-      <div v-if="$slots.footer" class="alert-footer">
+      <div v-if="hasFooter" class="alert-footer">
         <slot name="footer" />
       </div>
     </div>
@@ -88,7 +105,7 @@ const handleDismiss = () => {
 }
 
 .alert-dismiss {
-  @apply flex-shrink-0 p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors;
+  @apply flex-shrink-0 p-1 rounded-md hover:bg-black hover:opacity-5 dark:hover:bg-white dark:hover:opacity-5 transition-colors;
 }
 
 .alert-default {
@@ -102,7 +119,7 @@ const handleDismiss = () => {
 }
 
 .alert-warning {
-  @apply bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20;
+  @apply bg-yellow-500 bg-opacity-10 text-yellow-700 dark:text-yellow-400 border-yellow-500 border-opacity-20;
 }
 
 .alert-destructive {
@@ -112,6 +129,6 @@ const handleDismiss = () => {
 }
 
 .alert-info {
-  @apply bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20;
+  @apply bg-blue-500 bg-opacity-10 text-blue-700 dark:text-blue-400 border-blue-500 border-opacity-20;
 }
 </style>

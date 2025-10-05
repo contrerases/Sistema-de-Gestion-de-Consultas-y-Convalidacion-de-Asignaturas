@@ -19,10 +19,12 @@ DROP TABLE IF EXISTS CONVALIDATIONS_SUBJECTS;
 DROP TABLE IF EXISTS CONVALIDATIONS;
 DROP TABLE IF EXISTS REQUESTS;
 DROP TABLE IF EXISTS WORKSHOPS;
-DROP TABLE IF EXISTS CURRICULUM_COURSES;
+DROP TABLE IF EXISTS CURRICULUM_COURSE_SLOTS;
 DROP TABLE IF EXISTS SUBJECTS;
 DROP TABLE IF EXISTS ADMINISTRATORS;
 DROP TABLE IF EXISTS DEPARTMENTS;
+DROP TABLE IF EXISTS WORKSHOP_STATE_TRANSITIONS;
+DROP TABLE IF EXISTS CONVALIDATION_STATE_TRANSITIONS;
 DROP TABLE IF EXISTS CONVALIDATION_STATES;
 DROP TABLE IF EXISTS WORKSHOP_STATES;
 DROP TABLE IF EXISTS CURRICULUM_COURSES_TYPES;
@@ -31,6 +33,8 @@ DROP TABLE IF EXISTS USERS;
 DROP TABLE IF EXISTS AUTH_USERS;
 DROP TABLE IF EXISTS PROFESSORS;
 DROP TABLE IF EXISTS WORKSHOPS_TOKENS;
+DROP TABLE IF EXISTS USER_TYPES;
+DROP TABLE IF EXISTS CAMPUS;
 
 
 
@@ -39,6 +43,22 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- =============================================================================
 -- TABLAS DE CATÁLOGOS
 -- =============================================================================
+
+-- Campus universitarios
+CREATE TABLE IF NOT EXISTS CAMPUS (
+    id INT AUTO_INCREMENT NOT NULL,
+    acronym VARCHAR(10) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- Tipos de usuarios del sistema
+CREATE TABLE IF NOT EXISTS USER_TYPES (
+    id INT AUTO_INCREMENT NOT NULL,
+    user_type VARCHAR(50) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+);
 
 -- Tipos de convalidaciones disponibles
 
@@ -71,6 +91,20 @@ CREATE TABLE IF NOT EXISTS CONVALIDATION_STATES (
     PRIMARY KEY (id)
 );
 
+-- Transiciones válidas de estados de talleres
+CREATE TABLE IF NOT EXISTS WORKSHOP_STATE_TRANSITIONS (
+    id_from_state INT NOT NULL,
+    id_to_state INT NOT NULL,
+    PRIMARY KEY (id_from_state, id_to_state)
+);
+
+-- Transiciones válidas de estados de convalidaciones
+CREATE TABLE IF NOT EXISTS CONVALIDATION_STATE_TRANSITIONS (
+    id_from_state INT NOT NULL,
+    id_to_state INT NOT NULL,
+    PRIMARY KEY (id_from_state, id_to_state)
+);
+
 
 -- =============================================================================
 -- TABLAS MAESTRAS
@@ -93,8 +127,8 @@ CREATE TABLE IF NOT EXISTS SUBJECTS (
     PRIMARY KEY (id)
 );
 
--- Cursos del currículum
-CREATE TABLE IF NOT EXISTS CURRICULUM_COURSES (
+-- Curriculum course slots (casillas curriculares)
+CREATE TABLE IF NOT EXISTS CURRICULUM_COURSE_SLOTS (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     id_curriculum_course_type INT NOT NULL,
@@ -113,11 +147,11 @@ CREATE TABLE IF NOT EXISTS WORKSHOPS (
     inscription_end_date TIMESTAMP NOT NULL,
     course_start_date TIMESTAMP NOT NULL,
     course_end_date TIMESTAMP NOT NULL,
-    syllabus_data LONGBLOB DEFAULT NULL,
+    syllabus_path VARCHAR(500) DEFAULT NULL,
     id_workshop_state INT NOT NULL,
     inscriptions_number INT NOT NULL DEFAULT 0,
     limit_inscriptions INT NOT NULL DEFAULT 0,
-    slug  VARCHAR(255) UNIQUE DEFAULT CONCAT(LOWER(REPLACE(name, ' ', '-')), '-', semester, '-', year),
+    slug VARCHAR(255) AS (CONCAT(LOWER(REPLACE(name, ' ', '-')), '-', semester, '-', year)) STORED UNIQUE,
     PRIMARY KEY (id)
 );
 
@@ -168,8 +202,7 @@ CREATE TABLE IF NOT EXISTS CONVALIDATIONS_EXTERNAL_ACTIVITIES (
     id_convalidation INT NOT NULL,
     activity_name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NULL,
-    file_name VARCHAR(255) NULL,
-    file_data LONGBLOB NULL,
+    file_path VARCHAR(500) NULL,
     PRIMARY KEY (id_convalidation)
 );
 
@@ -225,15 +258,18 @@ CREATE TABLE IF NOT EXISTS AUTH_USERS (
 -- TABLAS DE USUARIO
 -- =============================================================================
 
-
+-- Usuarios del sistema (estudiantes y administradores)
 CREATE TABLE IF NOT EXISTS USERS (
-    id INT AUTO_INCREMENT NOT NULL,
+    id INT NOT NULL,
     full_name VARCHAR(255) NOT NULL,
-    campus VARCHAR(255) NOT NULL,
-    user_type ENUM('STUDENT', 'ADMINISTRATOR') NOT NULL,
+    id_campus INT NOT NULL,
+    id_user_type INT NOT NULL,
     rol_student VARCHAR(11) NULL,
     rut_student VARCHAR(12) NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT fk_user_auth FOREIGN KEY (id) REFERENCES AUTH_USERS(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_user_campus FOREIGN KEY (id_campus) REFERENCES CAMPUS(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT fk_user_type FOREIGN KEY (id_user_type) REFERENCES USER_TYPES(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 

@@ -3,12 +3,52 @@
 --------------------------------------------------------------------------------------------------------
 
 -- =============================================================================
--- CURRICULUM_COURSES
+-- WORKSHOP_STATE_TRANSITIONS
+-- =============================================================================
+
+-- Relación con estado origen
+ALTER TABLE WORKSHOP_STATE_TRANSITIONS
+ADD CONSTRAINT fk_workshop_transition_from_state
+FOREIGN KEY (id_from_state)
+REFERENCES WORKSHOP_STATES(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+-- Relación con estado destino
+ALTER TABLE WORKSHOP_STATE_TRANSITIONS
+ADD CONSTRAINT fk_workshop_transition_to_state
+FOREIGN KEY (id_to_state)
+REFERENCES WORKSHOP_STATES(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+-- =============================================================================
+-- CONVALIDATION_STATE_TRANSITIONS
+-- =============================================================================
+
+-- Relación con estado origen
+ALTER TABLE CONVALIDATION_STATE_TRANSITIONS
+ADD CONSTRAINT fk_convalidation_transition_from_state
+FOREIGN KEY (id_from_state)
+REFERENCES CONVALIDATION_STATES(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+-- Relación con estado destino
+ALTER TABLE CONVALIDATION_STATE_TRANSITIONS
+ADD CONSTRAINT fk_convalidation_transition_to_state
+FOREIGN KEY (id_to_state)
+REFERENCES CONVALIDATION_STATES(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+-- =============================================================================
+-- CURRICULUM_COURSE_SLOTS
 -- =============================================================================
 
 -- Relación con tipos de cursos curriculares
-ALTER TABLE CURRICULUM_COURSES
-ADD CONSTRAINT fk_curriculum_course_type
+ALTER TABLE CURRICULUM_COURSE_SLOTS
+ADD CONSTRAINT fk_curriculum_course_slot_type
 FOREIGN KEY (id_curriculum_course_type)
 REFERENCES CURRICULUM_COURSES_TYPES (id)
 ON DELETE RESTRICT
@@ -93,11 +133,11 @@ REFERENCES CONVALIDATION_STATES (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
--- Relación con cursos curriculares
+-- Relación con curriculum course slots
 ALTER TABLE CONVALIDATIONS
-ADD CONSTRAINT fk_convalidation_curriculum
+ADD CONSTRAINT fk_convalidation_curriculum_course_slot
 FOREIGN KEY (id_curriculum_course)
-REFERENCES CURRICULUM_COURSES (id)
+REFERENCES CURRICULUM_COURSE_SLOTS (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
@@ -173,11 +213,11 @@ REFERENCES WORKSHOPS (id)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
--- Relación con cursos curriculares (opcional)
+-- Relación con curriculum course slots (opcional)
 ALTER TABLE WORKSHOPS_INSCRIPTIONS
-ADD CONSTRAINT fk_inscription_curriculum
+ADD CONSTRAINT fk_inscription_curriculum_course_slot
 FOREIGN KEY (id_curriculum_course)
-REFERENCES CURRICULUM_COURSES (id)
+REFERENCES CURRICULUM_COURSE_SLOTS (id)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
@@ -205,13 +245,8 @@ ON UPDATE CASCADE;
 -- USERS
 -- =============================================================================
 
--- Relación de usuarios con autenticación (tabla principal)
-ALTER TABLE USERS
-ADD CONSTRAINT fk_user_auth
-FOREIGN KEY (id)
-REFERENCES AUTH_USERS(id)
-ON DELETE CASCADE
-ON UPDATE CASCADE;
+-- La FK de USERS a AUTH_USERS ya está definida en 02_structure.sql
+-- No es necesario agregarla nuevamente aquí
 
 -- =============================================================================
 -- NOTIFICATIONS

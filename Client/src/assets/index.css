@@ -40,6 +40,7 @@
   --border: oklch(0.88 0.01 97.36);
   --input: rgb(180 177 163);
   --ring: #ff7b00;
+  --overlay: rgb(0 0 0 / 0.7);
   --chart-1: rgb(178 87 47);
   --chart-2: rgb(156 135 246);
   --chart-3: rgb(222 215 194);
@@ -97,6 +98,7 @@
   --border: rgb(62 62 56);
   --input: rgb(81 80 74);
   --ring: rgb(234 88 12);
+  --overlay: rgb(0 0 0 / 0.7);
   --chart-1: rgb(178 87 47);
   --chart-2: rgb(156 135 246);
   --chart-3: rgb(26 24 19);
@@ -140,6 +142,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
