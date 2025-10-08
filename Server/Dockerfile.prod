@@ -5,12 +5,22 @@ WORKDIR /app
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
+    build-essential \
     default-libmysqlclient-dev \
     pkg-config \
+    python3-dev \
+    libssl-dev \
+    libffi-dev \
+    cargo \
+    rustc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar requirements
-COPY requirements.txt .
+# Copiar requirements (desde Server/ si Railway no usa Root Directory)
+COPY ./requirements.txt .
+
+# Actualizar pip, setuptools y wheel
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
 # Instalar dependencias Python (solo producción)
 RUN pip install --no-cache-dir -r requirements.txt
