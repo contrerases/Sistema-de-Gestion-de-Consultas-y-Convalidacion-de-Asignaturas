@@ -3,7 +3,7 @@ Endpoints de salud y monitoreo del sistema
 """
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from src.database.connection import get_db
+from src.database.sessions import get_db
 
 router = APIRouter(prefix="/health", tags=["health"])
 

@@ -37,6 +37,7 @@ services:
       - net
     volumes:
       - ./server:/app
+      - file_uploads:/app/file_uploads
 
   # ========================================
   # BASE DE DATOS - MariaDB (DESARROLLO)
@@ -106,6 +107,8 @@ networks:
 
 volumes:
   db_data:
+    driver: local
+  file_uploads:
     driver: local
 
 

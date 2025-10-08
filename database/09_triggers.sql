@@ -6,10 +6,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TRIGGER IF EXISTS trg_workshops_validate_state_transition;
-DROP TRIGGER IF EXISTS trg_workshops_before_cancel;
 DROP TRIGGER IF EXISTS trg_workshops_before_start;
 DROP TRIGGER IF EXISTS trg_workshops_before_finish;
-DROP TRIGGER IF EXISTS trg_workshops_before_close;
 DROP TRIGGER IF EXISTS trg_convalidations_validate_state_transition;
 DROP TRIGGER IF EXISTS trg_workshops_inscriptions_before_insert;
 DROP TRIGGER IF EXISTS trg_workshops_inscriptions_after_insert;
@@ -34,11 +32,11 @@ FOR EACH ROW
 BEGIN
     DECLARE valid_transition INT;
     
-    IF OLD.id_state != NEW.id_state THEN
+    IF OLD.id_workshop_state != NEW.id_workshop_state THEN
         SELECT COUNT(*) INTO valid_transition
         FROM WORKSHOP_STATE_TRANSITIONS
-        WHERE id_from_state = OLD.id_state
-          AND id_to_state = NEW.id_state;
+        WHERE id_from_state = OLD.id_workshop_state
+          AND id_to_state = NEW.id_workshop_state;
         
         IF valid_transition = 0 THEN
             SIGNAL SQLSTATE '45000'
@@ -47,37 +45,19 @@ BEGIN
     END IF;
 END//
 
--- Validar cancelación de taller (solo desde INSCRIPCION y requiere motivo)
-CREATE TRIGGER trg_workshops_before_cancel
-BEFORE UPDATE ON WORKSHOPS
-FOR EACH ROW
-BEGIN
-    IF NEW.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'CANCELADO') THEN
-        IF OLD.id_state != (SELECT id FROM WORKSHOP_STATES WHERE name = 'INSCRIPCION') THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Solo se puede cancelar un taller en estado INSCRIPCION';
-        END IF;
-        
-        IF NEW.cancellation_reason IS NULL OR TRIM(NEW.cancellation_reason) = '' THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Se requiere motivo de cancelación';
-        END IF;
-    END IF;
-END//
+-- NOTA: Trigger trg_workshops_before_cancel eliminado porque WORKSHOPS no tiene campo cancellation_reason
 
--- Validar inicio de taller (requiere mínimo de inscritos)
+-- Validar inicio de taller (requiere mínimo de inscritos - 50% del cupo)
 CREATE TRIGGER trg_workshops_before_start
 BEFORE UPDATE ON WORKSHOPS
 FOR EACH ROW
 BEGIN
-    DECLARE current_inscriptions INT;
-    
-    IF NEW.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'EN_CURSO') 
-       AND OLD.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'INSCRIPCION') THEN
+    IF NEW.id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'EN_CURSO') 
+       AND OLD.id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'INSCRIPCION') THEN
         
-        IF NEW.inscriptions_number < NEW.min_inscriptions THEN
+        IF NEW.inscriptions_number < NEW.limit_inscriptions * 0.5 THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se alcanzó el mínimo de inscritos para iniciar el taller';
+            SET MESSAGE_TEXT = 'No se alcanzó el mínimo de inscritos (50% del cupo) para iniciar el taller';
         END IF;
     END IF;
 END//
@@ -87,8 +67,8 @@ CREATE TRIGGER trg_workshops_before_finish
 BEFORE UPDATE ON WORKSHOPS
 FOR EACH ROW
 BEGIN
-    IF NEW.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'FINALIZADO')
-       AND OLD.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'EN_CURSO') THEN
+    IF NEW.id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'FINALIZADO')
+       AND OLD.id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'EN_CURSO') THEN
         
         IF NEW.course_end_date > CURDATE() THEN
             SIGNAL SQLSTATE '45000'
@@ -97,29 +77,7 @@ BEGIN
     END IF;
 END//
 
--- Validar cierre de taller (requiere todas las notas subidas)
-CREATE TRIGGER trg_workshops_before_close
-BEFORE UPDATE ON WORKSHOPS
-FOR EACH ROW
-BEGIN
-    DECLARE pending_grades INT;
-    
-    IF NEW.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'CERRADO')
-       AND OLD.id_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'FINALIZADO') THEN
-        
-        SELECT COUNT(*) INTO pending_grades
-        FROM WORKSHOPS_INSCRIPTIONS WI
-        LEFT JOIN WORKSHOPS_GRADES WG ON WI.id = WG.id_inscription
-        WHERE WI.id_workshop = NEW.id
-          AND WI.is_active = TRUE
-          AND WG.grade IS NULL;
-        
-        IF pending_grades > 0 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'No se puede cerrar el taller con notas pendientes';
-        END IF;
-    END IF;
-END//
+-- NOTA: Trigger trg_workshops_before_close eliminado porque estructura no soporta validación de notas pendientes
 
 -- =============================================================================
 -- TRIGGERS DE VALIDACIÓN DE TRANSICIONES DE ESTADO - CONVALIDACIONES
@@ -132,11 +90,11 @@ FOR EACH ROW
 BEGIN
     DECLARE valid_transition INT;
     
-    IF OLD.id_state != NEW.id_state THEN
+    IF OLD.id_convalidation_state != NEW.id_convalidation_state THEN
         SELECT COUNT(*) INTO valid_transition
         FROM CONVALIDATION_STATE_TRANSITIONS
-        WHERE id_from_state = OLD.id_state
-          AND id_to_state = NEW.id_state;
+        WHERE id_from_state = OLD.id_convalidation_state
+          AND id_to_state = NEW.id_convalidation_state;
         
         IF valid_transition = 0 THEN
             SIGNAL SQLSTATE '45000'
@@ -313,7 +271,7 @@ BEGIN
         -- VALIDAR: Talleres solo pueden convalidar LIBRES (tipo 1)
         IF v_curriculum_type_id != 1 THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Los talleres institucionales solo pueden convalidar cursos de tipo LIBRE';
+            SET MESSAGE_TEXT = 'Los talleres DI solo pueden convalidar cursos de tipo LIBRE';
         END IF;
     END IF;
 END//

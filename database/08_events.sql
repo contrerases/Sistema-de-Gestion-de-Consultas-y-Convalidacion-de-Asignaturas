@@ -25,6 +25,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- cuando se alcanza la fecha de inicio del curso
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_auto_start_workshops
 ON SCHEDULE EVERY 1 HOUR
 STARTS CURRENT_TIMESTAMP
@@ -35,7 +36,8 @@ BEGIN
     WHERE id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'INSCRIPCION')
       AND course_start_date <= NOW()
       AND inscriptions_number >= limit_inscriptions * 0.5;  -- Mínimo 50% del cupo
-END;
+END$$
+DELIMITER ;
 
 -- =============================================================================
 -- EVENT 2: AUTO FINALIZACIÓN DE TALLERES
@@ -44,6 +46,7 @@ END;
 -- cuando se alcanza la fecha de fin del curso
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_auto_finish_workshops
 ON SCHEDULE EVERY 1 HOUR
 STARTS CURRENT_TIMESTAMP
@@ -53,7 +56,8 @@ BEGIN
     SET id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'FINALIZADO')
     WHERE id_workshop_state = (SELECT id FROM WORKSHOP_STATES WHERE name = 'EN_CURSO')
       AND course_end_date <= NOW();
-END;
+END$$
+DELIMITER ;
 
 -- =============================================================================
 -- EVENT 3: EXPIRACIÓN DE TOKENS
@@ -61,6 +65,7 @@ END;
 -- Marca tokens de talleres como usados cuando expiran
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_expire_workshop_tokens
 ON SCHEDULE EVERY 1 HOUR
 STARTS CURRENT_TIMESTAMP
@@ -70,7 +75,8 @@ BEGIN
     SET is_used = TRUE
     WHERE is_used = FALSE
       AND expiration_at <= NOW();
-END;
+END$$
+DELIMITER ;
 
 -- =============================================================================
 -- EVENT 4: LIMPIEZA DE NOTIFICACIONES ANTIGUAS
@@ -78,6 +84,7 @@ END;
 -- Elimina notificaciones leídas con más de 90 días de antigüedad
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_cleanup_old_notifications
 ON SCHEDULE EVERY 1 DAY
 STARTS CURRENT_TIMESTAMP + INTERVAL 1 DAY
@@ -86,7 +93,8 @@ BEGIN
     DELETE FROM NOTIFICATIONS
     WHERE is_read = TRUE
       AND read_at < NOW() - INTERVAL 90 DAY;
-END;
+END$$
+DELIMITER ;
 
 -- =============================================================================
 -- EVENT 5: RECORDATORIO DE CONVALIDACIONES PENDIENTES
@@ -95,6 +103,7 @@ END;
 -- sin revisar por más de 7 días
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_remind_pending_convalidations
 ON SCHEDULE EVERY 1 DAY
 STARTS (CURRENT_TIMESTAMP + INTERVAL 1 DAY) + INTERVAL 9 HOUR
@@ -148,7 +157,8 @@ BEGIN
     END LOOP;
     
     CLOSE cur;
-END;
+END$$
+DELIMITER ;
 
 -- =============================================================================
 -- EVENT 6: CANCELACIÓN AUTOMÁTICA DE TALLERES SIN CUPO MÍNIMO
@@ -157,6 +167,7 @@ END;
 -- al cerrar el período de inscripciones
 -- =============================================================================
 
+DELIMITER $$
 CREATE EVENT evt_close_inscription_workshops
 ON SCHEDULE EVERY 1 HOUR
 STARTS CURRENT_TIMESTAMP
@@ -204,7 +215,8 @@ BEGIN
     END LOOP;
     
     CLOSE cur;
-END;
+END$$
+DELIMITER ;
 
 SET FOREIGN_KEY_CHECKS = 1;
 

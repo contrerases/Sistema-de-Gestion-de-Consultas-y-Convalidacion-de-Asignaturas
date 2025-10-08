@@ -12,7 +12,7 @@ CREATE INDEX idx_auth_users_email ON AUTH_USERS(email);
 ALTER TABLE USERS DROP INDEX IF EXISTS idx_users_full_name;
 CREATE INDEX idx_users_full_name ON USERS(full_name);
 ALTER TABLE USERS DROP INDEX IF EXISTS idx_users_campus;
-CREATE INDEX idx_users_campus ON USERS(campus);
+CREATE INDEX idx_users_campus ON USERS(id_campus);
 
 -- USERS: Búsqueda por RUT y ROL
 ALTER TABLE USERS DROP INDEX IF EXISTS idx_users_rut;
@@ -89,6 +89,10 @@ ALTER TABLE NOTIFICATIONS DROP INDEX IF EXISTS idx_notifications_type;
 CREATE INDEX idx_notifications_type ON NOTIFICATIONS(notification_type);
 ALTER TABLE NOTIFICATIONS DROP INDEX IF EXISTS idx_notifications_is_read;
 CREATE INDEX idx_notifications_is_read ON NOTIFICATIONS(is_read);
+
+-- NOTIFICATION_TYPES: Búsqueda por nombre
+ALTER TABLE NOTIFICATION_TYPES DROP INDEX IF EXISTS idx_notification_types_name;
+CREATE INDEX idx_notification_types_name ON NOTIFICATION_TYPES(name);
 
 -- =============================================================================
 -- ÍNDICES PARA NUEVAS TABLAS

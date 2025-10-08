@@ -35,6 +35,8 @@ services:
     restart: unless-stopped
     networks:
       - net
+    volumes:
+      - file_uploads_prod:/app/file_uploads
 
   # ========================================
   # BASE DE DATOS - MariaDB (PRODUCCIÓN)
@@ -61,6 +63,7 @@ services:
 
 volumes:
   db_data_prod:
+  file_uploads_prod:
 
 networks:
   net:

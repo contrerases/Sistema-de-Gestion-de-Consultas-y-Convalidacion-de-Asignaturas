@@ -1,18 +1,34 @@
-FROM python:3.9
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
+# Copiar requirements
+COPY requirements.txt .
+COPY requirements-dev.txt .
+
+# Instalar dependencias Python
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Copiar código fuente
 COPY . .
 
+# Crear estructura de directorios de archivos
+RUN mkdir -p /app/file_uploads/convalidations/personal_projects && \
+    mkdir -p /app/file_uploads/convalidations/certificated_courses && \
+    mkdir -p /app/file_uploads/workshops/syllabus && \
+    mkdir -p /app/file_uploads/workshops/convalidation_list
 
-RUN adduser --disabled-password --gecos '' appuser && \
-    chown -R appuser:appuser /app
-
-USER appuser
-
-
+# Exponer puerto
 EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Comando de inicio para producción (con workers)
+# Railway provee $PORT automáticamente
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 4

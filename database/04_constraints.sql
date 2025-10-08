@@ -5,13 +5,13 @@
 -- =============================================================================
 -- RESUMEN DE CONSTRAINTS
 -- =============================================================================
--- Total of constraints: 25
--- UNIQUE: 17 | CHECK: 8
+-- Total of constraints: 21
+-- UNIQUE: 10 | CHECK: 11
 -- CONVALIDATION_TYPES: 1 | CURRICULUM_COURSES_TYPES: 1 | DEPARTMENTS: 1
--- SUBJECTS: 3 | CURRICULUM_COURSE_SLOTS: 1 | WORKSHOPS: 5 | AUTH_USERS: 2
--- STUDENTS: 4 | REQUESTS: 1 | CONVALIDATIONS: 1
--- CONVALIDATIONS_SUBJECTS: 1 | CONVALIDATIONS_WORKSHOPS: 1 | CONVALIDATIONS_EXTERNAL_ACTIVITIES: 2
--- WORKSHOPS_INSCRIPTIONS: 1 | WORKSHOPS_GRADES: 2 | NOTIFICATIONS: 1
+-- SUBJECTS: 3 | CURRICULUM_COURSE_SLOTS: 1 | WORKSHOPS: 3 | AUTH_USERS: 1
+-- USERS: 4 | REQUESTS: 1 | CONVALIDATIONS: 1
+-- CONVALIDATIONS_SUBJECTS: 1 | CONVALIDATIONS_WORKSHOPS: 1 | CONVALIDATIONS_EXTERNAL_ACTIVITIES: 1
+-- WORKSHOPS_INSCRIPTIONS: 1 | WORKSHOPS_GRADES: 2 | NOTIFICATIONS: 1 | PROFESSORS: 2 | WORKSHOPS_TOKENS: 3 | NOTIFICATION_TYPES: 1
 
 -- =============================================================================
 -- CONFIGURACIÓN INICIAL
@@ -66,13 +66,13 @@ ALTER TABLE SUBJECTS
 ADD CONSTRAINT chk_subject_credits CHECK (credits >= 1 AND credits <= 10);
 
 -- =============================================================================
--- CURRICULUM_COURSES
+-- CURRICULUM_COURSE_SLOTS
 -- =============================================================================
 
 -- Nombre único
-ALTER TABLE CURRICULUM_COURSES DROP CONSTRAINT IF EXISTS uk_curriculum_course_name;
-ALTER TABLE CURRICULUM_COURSES
-ADD CONSTRAINT uk_curriculum_course_name UNIQUE (name);
+ALTER TABLE CURRICULUM_COURSE_SLOTS DROP CONSTRAINT IF EXISTS uk_curriculum_course_slot_name;
+ALTER TABLE CURRICULUM_COURSE_SLOTS
+ADD CONSTRAINT uk_curriculum_course_slot_name UNIQUE (name);
 
 -- =============================================================================
 -- WORKSHOPS
@@ -93,11 +93,6 @@ ALTER TABLE WORKSHOPS DROP CONSTRAINT IF EXISTS chk_workshop_course_dates;
 ALTER TABLE WORKSHOPS
 ADD CONSTRAINT chk_workshop_course_dates CHECK (course_end_date > course_start_date);
 
--- Relación entre fechas
-ALTER TABLE WORKSHOPS DROP CONSTRAINT IF EXISTS chk_workshop_inscription_before_course;
-ALTER TABLE WORKSHOPS
-ADD CONSTRAINT chk_workshop_inscription_before_course CHECK (inscription_end_date <= course_start_date);
-
 -- Rango de año
 ALTER TABLE WORKSHOPS DROP CONSTRAINT IF EXISTS chk_workshop_year;
 ALTER TABLE WORKSHOPS
@@ -105,6 +100,10 @@ ADD CONSTRAINT chk_workshop_year CHECK (year >= 2000 AND year <= 2100);
 
 -- NOTA: chk_workshop_inscriptions_vs_limit eliminado - se valida con trigger
 -- NOTA: chk_workshop_inscriptions_limit eliminado - se valida con trigger
+
+-- =============================================================================
+-- USERS
+-- =============================================================================
 
 -- ROL único
 ALTER TABLE USERS DROP CONSTRAINT IF EXISTS uk_student_rol;
@@ -212,11 +211,6 @@ ADD CONSTRAINT chk_notification_dates CHECK (
 -- AUTH_USERS
 -- =============================================================================
 
--- Email único
-ALTER TABLE AUTH_USERS DROP CONSTRAINT IF EXISTS uk_auth_email;
-ALTER TABLE AUTH_USERS
-ADD CONSTRAINT uk_auth_email UNIQUE (email);
-
 -- Formato de email
 ALTER TABLE AUTH_USERS DROP CONSTRAINT IF EXISTS chk_auth_email_format;
 ALTER TABLE AUTH_USERS
@@ -225,11 +219,6 @@ ADD CONSTRAINT chk_auth_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-
 -- =============================================================================
 -- PROFESSORS
 -- =============================================================================
-
--- Email único
-ALTER TABLE PROFESSORS DROP CONSTRAINT IF EXISTS uk_professor_email;
-ALTER TABLE PROFESSORS
-ADD CONSTRAINT uk_professor_email UNIQUE (email);
 
 -- Nombre no vacío
 ALTER TABLE PROFESSORS DROP CONSTRAINT IF EXISTS chk_professor_name;
@@ -245,11 +234,6 @@ ADD CONSTRAINT chk_professor_email_format CHECK (email REGEXP '^[a-zA-Z0-9._%+-]
 -- WORKSHOPS_TOKENS
 -- =============================================================================
 
--- Token único
-ALTER TABLE WORKSHOPS_TOKENS DROP CONSTRAINT IF EXISTS uk_token_unique;
-ALTER TABLE WORKSHOPS_TOKENS
-ADD CONSTRAINT uk_token_unique UNIQUE (token);
-
 -- Token no vacío
 ALTER TABLE WORKSHOPS_TOKENS DROP CONSTRAINT IF EXISTS chk_token_not_empty;
 ALTER TABLE WORKSHOPS_TOKENS
@@ -264,6 +248,15 @@ ADD CONSTRAINT chk_token_expiration CHECK (expiration_at > created_at);
 ALTER TABLE WORKSHOPS_TOKENS DROP CONSTRAINT IF EXISTS chk_token_used_at;
 ALTER TABLE WORKSHOPS_TOKENS
 ADD CONSTRAINT chk_token_used_at CHECK (used_at IS NULL OR used_at >= created_at);
+
+-- =============================================================================
+-- NOTIFICATION_TYPES
+-- =============================================================================
+
+-- Nombre único
+ALTER TABLE NOTIFICATION_TYPES DROP CONSTRAINT IF EXISTS uk_notification_type_name;
+ALTER TABLE NOTIFICATION_TYPES
+ADD CONSTRAINT uk_notification_type_name UNIQUE (name);
 
 -- =============================================================================
 -- CONSTRAINTS ADICIONALES PARA OPTIMIZACIÓN

@@ -5,11 +5,6 @@ class UserType(str, Enum):
     STUDENT = "STUDENT"
     ADMINISTRATOR = "ADMINISTRATOR"
 
-class Semester(str, Enum):
-    """Semestres académicos"""
-    FIRST = "1"
-    SECOND = "2"
-
 class WorkshopState(str, Enum):
     """Estados de los talleres"""
     INSCRIPCION = "INSCRIPCION"
@@ -43,25 +38,41 @@ class CurriculumCourseType(str, Enum):
     ELECTIVO = "ELECTIVO"
 
 class NotificationType(str, Enum):
-    """Tipos de notificaciones del sistema"""
-    SUCCESSFUL_REQUEST_CONVALIDATION = "Solicitud de Convalidación enviada con éxito"
-    CONVALIDATION_APPROVED_DI = "Convalidación Aprobada por Departamento de Informática"
-    CONVALIDATION_SEND_TO_DE = "Convalidación Enviada a Dirección de Estudios"
-    CONVALIDATION_REJECTED = "Convalidación Rechazada"
-    NEW_REQUEST_CONVALIDATION = "Nueva Solicitud de Convalidación"
-    NEW_WORKSHOP_INSCRIPTION = "Inscripción a Taller realizada con éxito"
-    SUCCESSFUL_WORKSHOP_INSCRIPTION = "Inscripción a Taller Exitosa"
-    WORKSHOP_INSCRIPTION_OPEN = "Inscripción a Taller Abierta"
-    WORKSHOP_INSCRIPTION_CLOSE = "Inscripción a Taller Cerrada"
-    WORKSHOP_START = "Taller Comenzado"
-    WORKSHOP_END = "Taller Finalizado"
-    WORKSHOP_CLOSED = "Taller Cerrado"
-    UPLOAD_WORKSHOPS_GRADES = "Notas de Talleres Subidas"
-    UPLOAD_WORKSHOP_GRADE = "Nota de Taller Subida"
+    """
+    Tipos de notificaciones del sistema.
+    Los valores deben coincidir con la columna notification_type de la tabla NOTIFICATIONS.
+    """
+    # Talleres
+    WORKSHOP_CREATED = "WORKSHOP_CREATED"
+    WORKSHOP_CANCELLED = "WORKSHOP_CANCELLED"
+    WORKSHOP_STARTED = "WORKSHOP_STARTED"
+    WORKSHOP_FINISHED = "WORKSHOP_FINISHED"
+    WORKSHOP_CLOSED = "WORKSHOP_CLOSED"
+    
+    # Inscripciones
+    INSCRIPTION_CONFIRMED = "INSCRIPTION_CONFIRMED"
+    INSCRIPTION_CANCELLED = "INSCRIPTION_CANCELLED"
+    
+    # Calificaciones
+    GRADE_ASSIGNED = "GRADE_ASSIGNED"
+    GRADE_UPDATED = "GRADE_UPDATED"
+    
+    # Convalidaciones
+    CONVALIDATION_SUBMITTED = "CONVALIDATION_SUBMITTED"
+    CONVALIDATION_APPROVED_DI = "CONVALIDATION_APPROVED_DI"
+    CONVALIDATION_REJECTED_DI = "CONVALIDATION_REJECTED_DI"
+    CONVALIDATION_SENT_DE = "CONVALIDATION_SENT_DE"
+    
+    # Administrativo
+    PENDING_CONVALIDATION = "PENDING_CONVALIDATION"
+    SYSTEM_NOTIFICATION = "SYSTEM_NOTIFICATION"
 
 class Campus(str, Enum):
-    """Campus universitarios"""
-    CASA_CENTRAL = "Casa Central"
-    SAN_JOAQUIN = "San Joaquín"
-    VITACURA = "Vitacura"
+    """
+    Campus universitarios por acrónimo.
+    Los valores deben coincidir con la columna acronym de la tabla CAMPUS.
+    """
+    CC = "CC"  # Casa Central
+    SJ = "SJ"  # San Joaquín
+    
 

@@ -1,92 +1,191 @@
-"""Modelos de respuesta estandarizados para la API SGSCT"""
-
+"""
+Modelos de respuesta estandarizados para la API
+Sistema: SGSCT
+"""
 from typing import Any, Optional, Generic, TypeVar, List
-from datetime import datetime
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 T = TypeVar('T')
 
-class APIResponseData(BaseModel, Generic[T]):
-    """Modelo base para los datos de respuesta"""
-    success: bool = Field(description="Indica si la operación fue exitosa")
-    message: str = Field(description="Mensaje descriptivo de la operación")
-    data: Optional[T] = Field(default=None, description="Datos de respuesta")
-    errors: Optional[List[str]] = Field(default=None, description="Lista de errores")
-    timestamp: datetime = Field(default_factory=datetime.now, description="Timestamp de la respuesta")
+
+# =============================================================================
+# SCHEMAS DE RESPUESTA (para documentación OpenAPI y tipado)
+# =============================================================================
+
+class SuccessResponse(BaseModel, Generic[T]):
+    """Schema para respuestas exitosas"""
+    data: T = Field(description="Datos de la respuesta")
+    message: Optional[str] = Field(default=None, description="Mensaje descriptivo opcional")
     
-    class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "data": {"id": 1, "name": "Ejemplo"},
+                "message": "Operación exitosa"
+            }
         }
+    }
 
-class SuccessResponse(JSONResponse):
-    """Respuesta para operaciones exitosas"""
-    
-    def __init__(self, message: str, data: Optional[Any] = None, status_code: int = 200):
-        content = APIResponseData(
-            success=True,
-            message=message,
-            data=data,
-            errors=None,
-            timestamp=datetime.now()
-        ).model_dump()
-        
-        super().__init__(content=content, status_code=status_code)
 
-class ErrorResponse(JSONResponse):
-    """Respuesta para errores"""
+class ErrorDetail(BaseModel):
+    """Detalle de un error individual"""
+    field: Optional[str] = Field(default=None, description="Campo que causó el error")
+    message: str = Field(description="Mensaje del error")
+    code: Optional[str] = Field(default=None, description="Código de error específico")
     
-    def __init__(self, message: str, errors: Optional[List[str]] = None, status_code: int = 400):
-        content = APIResponseData(
-            success=False,
-            message=message,
-            data=None,
-            errors=errors or [message],
-            timestamp=datetime.now()
-        ).model_dump()
-        
-        super().__init__(content=content, status_code=status_code)
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "field": "email",
+                "message": "El email ya está registrado",
+                "code": "DUPLICATE_EMAIL"
+            }
+        }
+    }
 
-class ValidationErrorResponse(JSONResponse):
-    """Respuesta específica para errores de validación"""
-    
-    def __init__(self, message: str = "Error de validación", errors: Optional[List[str]] = None, 
-                 field_errors: Optional[dict] = None, status_code: int = 422):
-        content = APIResponseData(
-            success=False,
-            message=message,
-            data=None,
-            errors=errors or [message],
-            timestamp=datetime.now()
-        ).model_dump()
-        
-        # Agregar field_errors si existen
-        if field_errors:
-            content["field_errors"] = field_errors
-        
-        super().__init__(content=content, status_code=status_code)
 
-class PaginatedResponse(JSONResponse):
-    """Respuesta para datos paginados"""
+class ErrorResponse(BaseModel):
+    """Schema para respuestas de error"""
+    error: dict = Field(description="Información del error")
     
-    def __init__(self, message: str, data: Any, total: int, page: int, per_page: int, status_code: int = 200):
-        total_pages = (total + per_page - 1) // per_page
-        
-        content = APIResponseData(
-            success=True,
-            message=message,
-            data=data,
-            errors=None,
-            timestamp=datetime.now()
-        ).model_dump()
-        
-        # Agregar información de paginación en un diccionario separado
-        content["pagination"] = {
-            "total": total,
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Datos inválidos",
+                    "details": [
+                        {"field": "email", "message": "Email inválido"}
+                    ]
+                }
+            }
+        }
+    }
+
+
+class PaginationMeta(BaseModel):
+    """Metadata de paginación"""
+    page: int = Field(description="Página actual")
+    page_size: int = Field(description="Elementos por página")
+    total: int = Field(description="Total de elementos")
+    total_pages: int = Field(description="Total de páginas")
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "page": 1,
+                "page_size": 20,
+                "total": 95,
+                "total_pages": 5
+            }
+        }
+    }
+
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    """Schema para respuestas paginadas"""
+    data: List[T] = Field(description="Lista de elementos")
+    meta: PaginationMeta = Field(description="Metadata de paginación")
+    message: Optional[str] = Field(default=None, description="Mensaje opcional")
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "data": [{"id": 1}, {"id": 2}],
+                "meta": {
+                    "page": 1,
+                    "page_size": 20,
+                    "total": 95,
+                    "total_pages": 5
+                }
+            }
+        }
+    }
+
+
+# =============================================================================
+# HELPERS PARA CONSTRUIR RESPUESTAS
+# =============================================================================
+
+def success_response(
+    data: Any,
+    message: Optional[str] = None
+) -> dict:
+    """
+    Construye una respuesta exitosa estandarizada
+    
+    Args:
+        data: Datos a retornar
+        message: Mensaje descriptivo opcional
+    
+    Returns:
+        Diccionario con estructura estandarizada
+    """
+    response = {"data": data}
+    if message:
+        response["message"] = message
+    return response
+
+
+def error_response(
+    code: str,
+    message: str,
+    details: Optional[List[dict]] = None
+) -> dict:
+    """
+    Construye una respuesta de error estandarizada
+    
+    Args:
+        code: Código de error (ej: VALIDATION_ERROR, NOT_FOUND)
+        message: Mensaje legible del error
+        details: Lista de detalles adicionales (campo, mensaje)
+    
+    Returns:
+        Diccionario con estructura de error
+    """
+    error_data = {
+        "code": code,
+        "message": message
+    }
+    if details:
+        error_data["details"] = details
+    
+    return {"error": error_data}
+
+
+def paginated_response(
+    data: List[Any],
+    page: int,
+    page_size: int,
+    total: int,
+    message: Optional[str] = None
+) -> dict:
+    """
+    Construye una respuesta paginada estandarizada
+    
+    Args:
+        data: Lista de elementos
+        page: Página actual (1-indexed)
+        page_size: Elementos por página
+        total: Total de elementos
+        message: Mensaje opcional
+    
+    Returns:
+        Diccionario con estructura paginada
+    """
+    total_pages = (total + page_size - 1) // page_size if page_size > 0 else 0
+    
+    response = {
+        "data": data,
+        "meta": {
             "page": page,
-            "per_page": per_page,
+            "page_size": page_size,
+            "total": total,
             "total_pages": total_pages
         }
-        
-        super().__init__(content=content, status_code=status_code)
+    }
+    
+    if message:
+        response["message"] = message
+    
+    return response

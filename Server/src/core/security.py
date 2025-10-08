@@ -1,185 +1,265 @@
-from datetime import datetime, timedelta
+"""
+Módulo de seguridad: JWT, hashing de contraseñas
+"""
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from core.config import settings
-from core.exceptions import (
-    UnauthorizedException,
-    AuthenticationException,
-    ValidationException
-)
-from schemas.auth_user import AuthUser
+import logging
+from src.app.settings import get_settings
+from src.core.exceptions import SGSCTException
 
-# Configuración para hashing de contraseñas
+logger = logging.getLogger(__name__)
+settings = get_settings()
+
+# Contexto para hashing de contraseñas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
+# =============================================================================
+# PASSWORD HASHING
+# =============================================================================
+
 def hash_password(password: str) -> str:
-    """Hashea una contraseña usando bcrypt"""
-    if not password:
-        raise ValidationException("La contraseña no puede estar vacía")
-    return pwd_context.hash(password + settings.SALT)
+    """
+    Hashea una contraseña usando bcrypt
+    
+    Args:
+        password: Contraseña en texto plano
+        
+    Returns:
+        Hash de la contraseña
+        
+    Raises:
+        ValueError: Si la contraseña está vacía
+    """
+    if not password or not password.strip():
+        raise ValueError("La contraseña no puede estar vacía")
+    
+    return pwd_context.hash(password)
+
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifica si una contraseña coincide con su hash"""
+    """
+    Verifica si una contraseña coincide con su hash
+    
+    Args:
+        plain_password: Contraseña en texto plano
+        hashed_password: Hash almacenado
+        
+    Returns:
+        True si coinciden, False en caso contrario
+    """
     if not plain_password or not hashed_password:
         return False
-    return pwd_context.verify(plain_password + settings.SALT, hashed_password)
+    
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception as e:
+        logger.error(f"Error verificando contraseña: {e}")
+        return False
 
-def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
-    """Crea un token JWT de acceso"""
+
+# =============================================================================
+# JWT TOKENS
+# =============================================================================
+
+def create_access_token(
+    data: Dict[str, Any],
+    expires_delta: Optional[timedelta] = None
+) -> str:
+    """
+    Crea un token JWT de acceso
+    
+    Args:
+        data: Datos a codificar en el token (debe incluir 'sub' con ID de usuario)
+        expires_delta: Tiempo de expiración personalizado
+        
+    Returns:
+        Token JWT codificado
+        
+    Raises:
+        ValueError: Si los datos están vacíos
+    """
     if not data:
-        raise ValidationException("Los datos del token no pueden estar vacíos")
+        raise ValueError("Los datos del token no pueden estar vacíos")
+    
+    if "sub" not in data:
+        raise ValueError("El token debe incluir 'sub' (subject/user_id)")
     
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    to_encode.update({"exp": expire})
+    # Calcular tiempo de expiración
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+    
+    to_encode.update({
+        "exp": expire,
+        "iat": datetime.now(timezone.utc),
+        "type": "access"
+    })
     
     try:
-        encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode,
+            settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM
+        )
+        logger.debug(f"Token creado para user_id: {data.get('sub')}")
         return encoded_jwt
     except Exception as e:
-        raise AuthenticationException(f"Error al crear el token: {str(e)}")
+        logger.error(f"Error creando token: {e}")
+        raise ValueError(f"Error al crear el token: {str(e)}")
 
-def decode_access_token(token: str) -> Dict[str, Any]:
-    """Decodifica un token JWT y retorna el payload"""
-    if not token:
-        raise UnauthorizedException("Token requerido")
-    
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise UnauthorizedException("Token expirado")
-    except jwt.JWTClaimsError:
-        raise UnauthorizedException("Claims del token inválidos")
-    except jwt.JWTError:
-        raise UnauthorizedException("Token inválido")
-    except Exception as e:
-        raise AuthenticationException(f"Error al decodificar token: {str(e)}")
 
-def extract_user_from_token(token: str) -> AuthUser:
-    """Extrae información del usuario desde un token JWT y retorna un modelo AuthUser"""
-    if not token:
-        raise UnauthorizedException("Token requerido")
+def create_refresh_token(user_id: int) -> str:
+    """
+    Crea un token JWT de refresco
     
-    if not validate_token_format(token):
-        raise UnauthorizedException("Formato de token inválido")
+    Args:
+        user_id: ID del usuario
+        
+    Returns:
+        Token JWT de refresco
+    """
+    data = {"sub": str(user_id), "type": "refresh"}
+    expire = datetime.now(timezone.utc) + timedelta(
+        days=settings.REFRESH_TOKEN_EXPIRE_DAYS
+    )
     
-    try:
-        payload = decode_access_token(token)
+    to_encode = data.copy()
+    to_encode.update({
+        "exp": expire,
+        "iat": datetime.now(timezone.utc)
+    })
+    
+    return jwt.encode(
+        to_encode,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+
+
+def decode_token(token: str) -> Dict[str, Any]:
+    """
+    Decodifica un token JWT y retorna el payload
+    
+    Args:
+        token: Token JWT a decodificar
         
-        # Verificar que el token no haya expirado
-        exp = payload.get("exp")
-        if exp is None:
-            raise UnauthorizedException("Token sin fecha de expiración")
+    Returns:
+        Payload decodificado
         
-        if datetime.utcnow().timestamp() > exp:
-            raise UnauthorizedException("Token expirado")
-        
-        # Extraer información del usuario
-        id_user = payload.get("sub")
-        if id_user is None:
-            raise UnauthorizedException("Token inválido: falta información del usuario")
-        
-        email = payload.get("email")
-        if not email:
-            raise UnauthorizedException("Token inválido: falta email del usuario")
-        
-        user_type = payload.get("user_type")
-        if not user_type:
-            raise UnauthorizedException("Token inválido: falta tipo de usuario")
-        
-        campus = payload.get("campus")
-        if not campus:
-            raise UnauthorizedException("Token inválido: falta campus del usuario")
-        
-        # Crear y retornar el modelo AuthUser
-        return AuthUser(
-            id_user=id_user,
-            email=email,
-            rut=payload.get("rut"),
-            rol_student=payload.get("rol_student"),
-            user_type=user_type,
-            name=payload.get("name"),
-            campus=campus,
-            exp=exp
+    Raises:
+        SGSCTException: Si el token es inválido o expirado
+    """
+    if not token or not token.strip():
+        raise SGSCTException(
+            status_code=401,
+            message="Token requerido"
         )
+    
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+        return payload
         
-    except (UnauthorizedException, AuthenticationException):
-        # Re-lanzar excepciones personalizadas
-        raise
+    except jwt.ExpiredSignatureError:
+        raise SGSCTException(
+            status_code=401,
+            message="Token expirado"
+        )
+    except jwt.JWTClaimsError:
+        raise SGSCTException(
+            status_code=401,
+            message="Claims del token inválidos"
+        )
     except JWTError as e:
-        raise UnauthorizedException(f"Error al procesar token: {str(e)}")
+        logger.warning(f"Error JWT: {e}")
+        raise SGSCTException(
+            status_code=401,
+            message="Token inválido"
+        )
     except Exception as e:
-        raise AuthenticationException(f"Error inesperado al extraer usuario: {str(e)}")
+        logger.error(f"Error decodificando token: {e}")
+        raise SGSCTException(
+            status_code=500,
+            message="Error al procesar el token"
+        )
 
-def create_user_token(user_data: Dict[str, Any]) -> str:
-    """Crea un token para un usuario específico"""
-    if not user_data:
-        raise ValidationException("Datos del usuario requeridos")
+
+def verify_token(token: str) -> bool:
+    """
+    Verifica si un token es válido
     
-    required_fields = ["id", "email", "user_type", "campus"]
-    missing_fields = [field for field in required_fields if field not in user_data]
+    Args:
+        token: Token a verificar
+        
+    Returns:
+        True si el token es válido, False en caso contrario
+    """
+    try:
+        decode_token(token)
+        return True
+    except SGSCTException:
+        return False
+
+
+def extract_user_id_from_token(token: str) -> int:
+    """
+    Extrae el ID de usuario desde un token JWT
     
-    if missing_fields:
-        raise ValidationException(f"Campos requeridos faltantes: {', '.join(missing_fields)}")
+    Args:
+        token: Token JWT
+        
+    Returns:
+        ID del usuario
+        
+    Raises:
+        SGSCTException: Si el token es inválido o no contiene user_id
+    """
+    payload = decode_token(token)
     
-    token_data = {
-        "sub": str(user_data["id"]),
-        "email": user_data["email"],
-        "user_type": user_data["user_type"],
-        "campus": user_data["campus"],
-        "name": user_data.get("name", ""),
-        "rut": user_data.get("rut"),
-        "rol_student": user_data.get("rol_student")
-    }
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise SGSCTException(
+            status_code=401,
+            message="Token inválido: falta información del usuario"
+        )
     
-    return create_access_token(token_data)
+    try:
+        return int(user_id)
+    except (ValueError, TypeError):
+        raise SGSCTException(
+            status_code=401,
+            message="Token inválido: ID de usuario inválido"
+        )
+
+
+# =============================================================================
+# HELPERS
+# =============================================================================
 
 def validate_token_format(token: str) -> bool:
-    """Valida el formato básico de un token JWT"""
+    """
+    Valida el formato básico de un token JWT
+    
+    Args:
+        token: Token a validar
+        
+    Returns:
+        True si el formato es válido
+    """
     if not token or not isinstance(token, str):
         return False
     
-    try:
-        parts = token.split(".")
-        return len(parts) == 3 and all(part for part in parts)
-    except Exception:
-        return False
-
-def validate_password_strength(password: str) -> bool:
-    """Valida la fortaleza de una contraseña"""
-    if not password:
-        raise ValidationException("La contraseña es requerida")
-    
-    if len(password) < 8:
-        raise ValidationException("La contraseña debe tener al menos 8 caracteres")
-    
-    if not any(c.isupper() for c in password):
-        raise ValidationException("La contraseña debe contener al menos una letra mayúscula")
-    
-    if not any(c.islower() for c in password):
-        raise ValidationException("La contraseña debe contener al menos una letra minúscula")
-    
-    if not any(c.isdigit() for c in password):
-        raise ValidationException("La contraseña debe contener al menos un número")
-    
-    return True
-
-def extract_token_from_header(authorization_header: str) -> str:
-    """Extrae el token del header de autorización"""
-    if not authorization_header:
-        raise UnauthorizedException("Header de autorización requerido")
-    
-    if not authorization_header.startswith("Bearer "):
-        raise UnauthorizedException("Formato de autorización inválido. Use 'Bearer <token>'")
-    
-    token = authorization_header.replace("Bearer ", "").strip()
-    if not token:
-        raise UnauthorizedException("Token vacío en header de autorización")
-    
-    return token
+    # JWT tiene 3 partes separadas por puntos
+    parts = token.split(".")
+    return len(parts) == 3
