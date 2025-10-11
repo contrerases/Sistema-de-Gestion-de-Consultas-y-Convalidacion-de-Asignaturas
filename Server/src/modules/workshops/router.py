@@ -62,8 +62,9 @@ def close_workshop(
     if not workshop:
         return {"error": f"Taller {workshop_id} no encontrado"}, 404
     
-    # TODO: Cambiar estado del taller a CERRADO
-    # workshop.id_workshop_state = CERRADO_STATE_ID
+    # Cambiar estado del taller a CERRADO (ID = 4)
+    CERRADO_STATE_ID = 4
+    workshop.id_workshop_state = CERRADO_STATE_ID
     
     result = {
         "workshop_id": workshop_id,
@@ -72,14 +73,19 @@ def close_workshop(
     }
     
     # Auto-aprobar convalidaciones si está habilitado
-    if data.auto_approve_convalidations:
-        service = WorkshopConvalidationAutoApprovalService(db)
-        approved_count = service.auto_approve_workshop_convalidations(
-            workshop_id=workshop_id,
-            approved_by=data.approved_by
-        )
-        result["convalidations_approved"] = approved_count
-        logger.info(f"Taller {workshop_id} cerrado. {approved_count} convalidaciones auto-aprobadas")
-    
-    db.commit()
-    return result
+    try:
+        if data.auto_approve_convalidations:
+            service = WorkshopConvalidationAutoApprovalService(db)
+            approved_count = service.auto_approve_workshop_convalidations(
+                workshop_id=workshop_id,
+                approved_by=data.approved_by
+            )
+            result["convalidations_approved"] = approved_count
+            logger.info(f"Taller {workshop_id} cerrado. {approved_count} convalidaciones auto-aprobadas")
+        
+        db.commit()
+        return result
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error al cerrar taller {workshop_id}: {e}")
+        raise

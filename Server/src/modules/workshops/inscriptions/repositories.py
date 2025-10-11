@@ -77,7 +77,7 @@ class InscriptionRepository:
             is_convalidated=False
         )
         self.db.add(inscription)
-        self.db.commit()
+        self.db.flush()  # Flush en lugar de commit
         self.db.refresh(inscription)
         return inscription
     
@@ -86,7 +86,7 @@ class InscriptionRepository:
         inscription = self.get_by_id(inscription_id)
         if inscription:
             self.db.delete(inscription)
-            self.db.commit()
+            self.db.flush()  # Flush en lugar de commit
             return True
         return False
     

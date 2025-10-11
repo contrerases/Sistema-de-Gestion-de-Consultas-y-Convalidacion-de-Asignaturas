@@ -148,5 +148,5 @@ async def optional_user(
     try:
         token = await get_token_from_header(authorization)
         return await get_current_user(token, db)
-    except:
+    except Exception:
         return None

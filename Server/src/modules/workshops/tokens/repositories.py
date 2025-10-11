@@ -53,7 +53,7 @@ class TokenRepository:
             is_active=True
         )
         self.db.add(workshop_token)
-        self.db.commit()
+        self.db.flush()  # Flush en lugar de commit
         self.db.refresh(workshop_token)
         return workshop_token
     
@@ -62,7 +62,7 @@ class TokenRepository:
         token = self.get_by_id(token_id)
         if token:
             token.is_active = False
-            self.db.commit()
+            self.db.flush()  # Flush en lugar de commit
             self.db.refresh(token)
         return token
     
@@ -71,7 +71,7 @@ class TokenRepository:
         token = self.get_by_id(token_id)
         if token:
             self.db.delete(token)
-            self.db.commit()
+            self.db.flush()  # Flush en lugar de commit
             return True
         return False
     
