@@ -1,1 +1,0 @@
-# ConvalidationState and ConvalidationType models

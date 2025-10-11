@@ -13,7 +13,7 @@ from src.modules.academic.subjects.schemas import (
     SubjectResponse
 )
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/subjects", tags=["Asignaturas"])

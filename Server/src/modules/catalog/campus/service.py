@@ -2,14 +2,14 @@
 Servicio de lógica de negocio para CAMPUS
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, Any
 from sqlalchemy.orm import Session
 from src.modules.catalog.campus.repositories import CampusRepository
 from src.modules.catalog.campus.schemas import CampusCreate, CampusUpdate, CampusResponse
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class CampusService:

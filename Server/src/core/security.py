@@ -5,11 +5,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, Any, Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-import logging
 from src.app.settings import get_settings
 from src.core.exceptions import SGSCTException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 settings = get_settings()
 
 # Contexto para hashing de contraseñas

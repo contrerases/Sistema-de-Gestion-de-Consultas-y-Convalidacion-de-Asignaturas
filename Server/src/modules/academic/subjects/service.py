@@ -2,15 +2,15 @@
 Servicio de lógica de negocio para SUBJECTS
 Sistema: SGSCT
 """
-import logging
 from typing import List, Dict, Any
 from sqlalchemy.orm import Session
 from src.modules.academic.subjects.repositories import SubjectRepository
 from src.modules.academic.subjects.schemas import SubjectCreate, SubjectUpdate, SubjectResponse
 from src.modules.academic.departments.repositories import DepartmentRepository
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class SubjectService:

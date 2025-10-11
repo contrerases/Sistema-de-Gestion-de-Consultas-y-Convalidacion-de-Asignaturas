@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11.11-slim-bookworm
 
 WORKDIR /app
 
@@ -21,13 +21,13 @@ RUN pip install --no-cache-dir -r requirements-dev.txt
 COPY . .
 
 # Crear estructura de directorios de archivos
-RUN mkdir -p /app/file_uploads/convalidations/personal_projects && \
-    mkdir -p /app/file_uploads/convalidations/certificated_courses && \
-    mkdir -p /app/file_uploads/workshops/syllabus && \
-    mkdir -p /app/file_uploads/workshops/convalidation_list
+RUN mkdir -p /app/files/convalidations/personal_projects && \
+    mkdir -p /app/files/convalidations/certificated_courses && \
+    mkdir -p /app/files/workshops/syllabus && \
+    mkdir -p /app/files/workshops/convalidation_list
 
 # Exponer puerto
 EXPOSE 8000
 
 # Comando de inicio para desarrollo (con reload)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}  --reload

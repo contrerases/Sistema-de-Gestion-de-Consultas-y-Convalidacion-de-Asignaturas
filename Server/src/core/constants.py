@@ -10,11 +10,11 @@ Los IDs de base de datos NO deben hardcodearse aquí.
 # =============================================================================
 # INFORMACIÓN DEL SISTEMA
 # =============================================================================
+# NOTA: Nombres y versiones del sistema ahora están en src/app/settings.py
+# Usar get_settings().PROJECT_NAME, get_settings().VERSION, etc.
 
-SYSTEM_NAME = "SGSCT"
-SYSTEM_FULL_NAME = "Sistema de Gestión de Consultas y Convalidaciones de Talleres"
-SYSTEM_VERSION = "1.0.0"
-SYSTEM_DESCRIPTION = "Sistema para gestionar consultas de estudiantes y convalidaciones de talleres del Departamento de Informática"
+
+
 
 # =============================================================================
 # PERÍODOS ACADÉMICOS
@@ -89,18 +89,7 @@ class ValidationRules:
     GRADE_MAX = 100
     GRADE_PASSING = 55  # Nota mínima de aprobación
 
-# =============================================================================
-# ARCHIVOS
-# =============================================================================
 
-class FileConfig:
-    """Configuración de archivos"""
-    MAX_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
-    ALLOWED_EXTENSIONS = ['.pdf']
-    ALLOWED_DOCUMENT_EXTENSIONS = ['.pdf']
-    UPLOAD_PATH = 'uploads'
-    SYLLABUS_PATH = 'uploads/syllabus'
-    CONVALIDATION_DOCS_PATH = 'uploads/convalidations'
 
 # =============================================================================
 # PAGINACIÓN
@@ -289,7 +278,6 @@ class DBLength:
     # Campos comunes
     EMAIL = 255
     PASSWORD_HASH = 255
-    SALT = 255
     NAME = 255
     FULL_NAME = 255
     ACRONYM = 255
@@ -332,7 +320,11 @@ class Limits:
     MESSAGE_MAX = 1000
     TITLE_MAX = 255
     NAME_MAX = 255
+    NAME_MIN = 3
     ACRONYM_MAX = 10
+    ACRONYM_MIN = 2
+    CODE_MAX = 20
+    CODE_MIN = 3
     SLUG_MAX = 255
     PATH_MAX = 500
     TOKEN_MAX = 255

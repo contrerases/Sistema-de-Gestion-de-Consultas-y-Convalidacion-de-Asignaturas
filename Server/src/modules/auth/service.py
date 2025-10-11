@@ -2,10 +2,10 @@
 Servicio de autenticación
 Sistema: SGSCT
 """
-import logging
 from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 from src.modules.auth.repositories import AuthRepository
+from src.monitoring.logging import get_logger
 from src.modules.auth.schemas import (
     LoginRequest,
     RegisterRequest,
@@ -21,7 +21,7 @@ from src.core.exceptions import (
 )
 from src.core.enums import UserType as UserTypeEnum
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class AuthService:
@@ -137,13 +137,11 @@ class AuthService:
         
         # Hashear contraseña
         password_hash = security.hash_password(data.password)
-        salt = None  # bcrypt incluye salt en el hash
         
         # Crear usuario
         user = self.repository.create_user(
             email=data.email,
             password_hash=password_hash,
-            salt="",  # bcrypt no necesita salt separado
             full_name=data.full_name,
             campus_id=campus.id,
             user_type_id=user_type.id,

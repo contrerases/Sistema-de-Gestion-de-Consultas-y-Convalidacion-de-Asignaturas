@@ -2,7 +2,6 @@
 Lógica de negocio para WORKSHOP_STATES
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, List
 from sqlalchemy.orm import Session
 from src.modules.catalog.workshop_states.repositories import WorkshopStateRepository
@@ -11,10 +10,11 @@ from src.modules.catalog.workshop_states.schemas import (
     WorkshopStateUpdate, 
     WorkshopStateResponse
 )
-
-logger = logging.getLogger(__name__)
 from src.modules.catalog.workshop_states.models import WorkshopState
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class WorkshopStateService:

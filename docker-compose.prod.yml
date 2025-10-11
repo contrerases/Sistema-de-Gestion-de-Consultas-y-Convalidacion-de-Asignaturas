@@ -36,13 +36,13 @@ services:
     networks:
       - net
     volumes:
-      - file_uploads_prod:/app/file_uploads
+      - files_prod:/app/files
 
   # ========================================
   # BASE DE DATOS - MariaDB (PRODUCCIÓN)
   # ========================================
   db:
-    image: mariadb:10.11
+    image: mariadb:11.0.6
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD_PROD}
       - MYSQL_DATABASE=sgc_db_prod
@@ -63,7 +63,7 @@ services:
 
 volumes:
   db_data_prod:
-  file_uploads_prod:
+  files_prod:
 
 networks:
   net:

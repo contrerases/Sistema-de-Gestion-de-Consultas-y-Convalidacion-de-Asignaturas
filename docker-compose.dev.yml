@@ -37,13 +37,13 @@ services:
       - net
     volumes:
       - ./server:/app
-      - file_uploads:/app/file_uploads
+      - files:/app/files
 
   # ========================================
   # BASE DE DATOS - MariaDB (DESARROLLO)
   # ========================================
   db:
-    image: mariadb:latest
+    image: mariadb:11.0.6
     env_file:
       - ./server/.env.dev
     environment:
@@ -108,7 +108,7 @@ networks:
 volumes:
   db_data:
     driver: local
-  file_uploads:
+  files:
     driver: local
 
 

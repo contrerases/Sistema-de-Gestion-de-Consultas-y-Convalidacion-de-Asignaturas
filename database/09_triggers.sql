@@ -115,14 +115,13 @@ BEGIN
     DECLARE workshop_state VARCHAR(50);
     DECLARE max_cap INT;
     DECLARE current_inscr INT;
-    DECLARE inscr_end_date DATE;
+    DECLARE inscr_end_date TIMESTAMP;
     DECLARE existing_slots INT;
-    DECLARE new_id_slot INT;
     
-    SELECT WS.name, W.max_inscriptions, W.inscriptions_number, W.inscriptions_end_date, W.id_slot
-    INTO workshop_state, max_cap, current_inscr, inscr_end_date, new_id_slot
+    SELECT WS.name, W.limit_inscriptions, W.inscriptions_number, W.inscription_end_date
+    INTO workshop_state, max_cap, current_inscr, inscr_end_date
     FROM WORKSHOPS W
-    JOIN WORKSHOP_STATES WS ON W.id_state = WS.id
+    JOIN WORKSHOP_STATES WS ON W.id_workshop_state = WS.id
     WHERE W.id = NEW.id_workshop;
     
     IF workshop_state != 'INSCRIPCION' THEN

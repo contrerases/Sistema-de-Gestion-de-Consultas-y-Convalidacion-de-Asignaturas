@@ -1,1 +1,4 @@
-# Workshops module
+"""
+Módulo de Talleres
+Sistema: SGSCT
+"""

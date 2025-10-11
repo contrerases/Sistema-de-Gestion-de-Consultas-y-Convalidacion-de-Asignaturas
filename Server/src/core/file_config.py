@@ -2,12 +2,12 @@
 Configuración de directorios de archivos
 Sistema: SGSCT
 """
-import logging
 from pathlib import Path
 from typing import Set
 from src.app.settings import get_settings
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 settings = get_settings()
 
 # Directorios base (desde settings)
@@ -29,7 +29,7 @@ MAX_FILE_SIZE = settings.MAX_UPLOAD_SIZE
 # Extensiones permitidas por tipo (desde settings)
 SYLLABUS_EXTENSIONS: Set[str] = set(settings.EXTENSIONS_LIST)
 PERSONAL_PROJECT_EXTENSIONS: Set[str] = set(settings.EXTENSIONS_LIST)
-CERTIFICATE_EXTENSIONS: Set[str] = {".pdf", ".jpg", ".jpeg", ".png"}
+CERTIFICATE_EXTENSIONS: Set[str] = set(settings.EXTENSIONS_LIST)
 
 
 def verify_upload_directories() -> None:

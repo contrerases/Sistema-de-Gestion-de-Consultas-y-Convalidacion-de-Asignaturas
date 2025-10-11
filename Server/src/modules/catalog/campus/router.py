@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.campus.service import CampusService
 from src.modules.catalog.campus.schemas import CampusCreate, CampusUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/campus", tags=["Campus"])

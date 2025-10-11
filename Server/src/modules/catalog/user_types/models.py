@@ -4,11 +4,12 @@ Sistema: SGSCT
 """
 from sqlalchemy import Column, Integer, String
 from src.database.base import Base
+from src.database.tables import Tables
 
 
 class UserType(Base):
     """Modelo USER_TYPES - Tipos de usuario del sistema"""
-    __tablename__ = "USER_TYPES"
+    __tablename__ = Tables.USER_TYPES
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_type = Column(String(50), nullable=False, unique=True, index=True)

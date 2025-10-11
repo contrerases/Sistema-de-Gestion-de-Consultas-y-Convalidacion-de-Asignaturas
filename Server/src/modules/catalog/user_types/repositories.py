@@ -15,7 +15,7 @@ class UserTypeRepository:
     
     def get_all(self, skip: int = 0, limit: int = 100) -> List[UserType]:
         """Obtiene todos los tipos de usuario con paginación"""
-        return self.db.query(UserType).offset(skip).limit(limit).all()
+        return self.db.query(UserType).order_by(UserType.id.asc()).offset(skip).limit(limit).all()
     
     def get_by_id(self, user_type_id: int) -> Optional[UserType]:
         """Obtiene un tipo de usuario por ID"""

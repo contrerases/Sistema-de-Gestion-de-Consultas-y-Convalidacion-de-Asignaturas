@@ -14,7 +14,7 @@ from src.modules.auth.schemas import (
     UserResponse
 )
 from src.modules.auth.dependencies import get_current_user
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import (
     SuccessResponse,
     success_response

@@ -6,13 +6,13 @@ from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.exc import SQLAlchemyError
-import logging
 from typing import Optional
 
 from src.app.settings import get_settings
 from src.database.base import Base
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class DatabaseConnection:

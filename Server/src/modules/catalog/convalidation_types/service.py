@@ -2,7 +2,6 @@
 Lógica de negocio para CONVALIDATION_TYPES
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, List
 from sqlalchemy.orm import Session
 from src.modules.catalog.convalidation_types.repositories import ConvalidationTypeRepository
@@ -11,10 +10,11 @@ from src.modules.catalog.convalidation_types.schemas import (
     ConvalidationTypeUpdate, 
     ConvalidationTypeResponse
 )
-
-logger = logging.getLogger(__name__)
 from src.modules.catalog.convalidation_types.models import ConvalidationType
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class ConvalidationTypeService:

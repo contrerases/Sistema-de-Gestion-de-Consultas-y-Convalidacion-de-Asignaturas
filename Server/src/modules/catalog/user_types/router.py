@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.user_types.service import UserTypeService
 from src.modules.catalog.user_types.schemas import UserTypeCreate, UserTypeUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/user-types", tags=["Tipos de Usuario"])

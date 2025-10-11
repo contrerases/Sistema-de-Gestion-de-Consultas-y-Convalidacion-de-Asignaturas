@@ -4,13 +4,14 @@ Sistema: SGSCT
 """
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from src.database.connection import Base
+from src.database.base import Base
+from src.database.tables import Tables
 
 
 class Subject(Base):
     """Asignaturas de la universidad"""
     
-    __tablename__ = "SUBJECTS"
+    __tablename__ = Tables.SUBJECTS
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     acronym = Column(String(255), nullable=False)

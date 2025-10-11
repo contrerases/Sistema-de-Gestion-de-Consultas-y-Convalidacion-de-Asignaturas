@@ -6,6 +6,13 @@ import os
 
 
 class Settings(BaseSettings):
+    # Sistema
+    NAME: str = "Sistema de Gestión de Solicitudes de Convalidacion y Talleres"
+    ACRONYM: str = "SGSCT"
+    VERSION: str = "1.0.0" 
+    # Configuración de API
+    API_V1_PREFIX: str = "/api/v1"
+
     # Configuración del Servidor
     ENVIRONMENT: str = "dev"
     BACKEND_PORT: int = 8000
@@ -13,16 +20,14 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:5174"
     
+    CORS_ORIGINS: str = ""
+    
     @computed_field
     @property
     def ORIGINS_LIST(self) -> List[str]:
         """Convertir ALLOWED_ORIGINS string en lista"""
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
     
-    # Configuración de API
-    API_V1_PREFIX: str = "/api/v1"
-    PROJECT_NAME: str = "Sistema de Gestión Solicitudes de Convalidación y Talleres"
-    VERSION: str = "1.0.0"
     
     # Configuración Base de Datos
     MARIADB_HOST: str = "db"
@@ -42,14 +47,13 @@ class Settings(BaseSettings):
     
     # Configuración de Seguridad
     SECRET_KEY: str = "your_secret_key_here_which_is_at_least_32_characters_long"
-    SALT: str = "your_salt_here_at_least_32_characters_long"
     ALGORITHM: str = "HS256"
     HASH_ALGORITHM: str = "bcrypt"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # Configuración de Archivos
-    UPLOAD_DIR: str = "file_uploads"
+    UPLOAD_DIR: str = "files"
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10 MB
     ALLOWED_EXTENSIONS: str = ".pdf"
     

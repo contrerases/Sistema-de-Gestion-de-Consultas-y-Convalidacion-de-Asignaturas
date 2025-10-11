@@ -4,11 +4,12 @@ Sistema: SGSCT
 """
 from sqlalchemy import Column, Integer, String
 from src.database.base import Base
+from src.database.tables import Tables
 
 
 class Campus(Base):
     """Modelo CAMPUS - Campus universitarios"""
-    __tablename__ = "CAMPUS"
+    __tablename__ = Tables.CAMPUS
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     acronym = Column(String(10), nullable=False, unique=True, index=True)

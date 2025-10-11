@@ -17,6 +17,7 @@ class CampusRepository:
         """Obtiene todos los campus con paginación"""
         return (
             self.db.query(Campus)
+            .order_by(Campus.name.asc())
             .offset(skip)
             .limit(limit)
             .all()

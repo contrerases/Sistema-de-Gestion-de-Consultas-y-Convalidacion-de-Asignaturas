@@ -2,7 +2,6 @@
 Lógica de negocio para CONVALIDATION_STATES
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, List
 from sqlalchemy.orm import Session
 from src.modules.catalog.convalidation_states.repositories import ConvalidationStateRepository
@@ -11,10 +10,11 @@ from src.modules.catalog.convalidation_states.schemas import (
     ConvalidationStateUpdate, 
     ConvalidationStateResponse
 )
-
-logger = logging.getLogger(__name__)
 from src.modules.catalog.convalidation_states.models import ConvalidationState
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class ConvalidationStateService:

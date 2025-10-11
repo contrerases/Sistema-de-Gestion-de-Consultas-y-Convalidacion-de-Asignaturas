@@ -2,8 +2,10 @@
 Endpoints de salud y monitoreo del sistema
 """
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from src.database.sessions import get_db
+from src.app.settings import get_settings
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -13,10 +15,11 @@ async def health_check():
     """
     Health check básico del API
     """
+    settings = get_settings()
     return {
         "status": "healthy",
         "service": "SGSCT API",
-        "version": "1.0.0"
+        "version": settings.VERSION
     }
 
 
@@ -27,7 +30,7 @@ async def database_health_check(db: Session = Depends(get_db)):
     """
     try:
         # Query simple para verificar conexión
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {
             "status": "healthy",
             "database": "connected"

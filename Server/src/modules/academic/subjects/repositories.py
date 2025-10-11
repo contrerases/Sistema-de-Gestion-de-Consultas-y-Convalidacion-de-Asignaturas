@@ -18,6 +18,7 @@ class SubjectRepository:
         return (
             self.db.query(Subject)
             .options(joinedload(Subject.department))
+            .order_by(Subject.acronym.asc())
             .offset(skip)
             .limit(limit)
             .all()
@@ -47,6 +48,7 @@ class SubjectRepository:
             self.db.query(Subject)
             .options(joinedload(Subject.department))
             .filter(Subject.id_department == department_id)
+            .order_by(Subject.acronym.asc())
             .offset(skip)
             .limit(limit)
             .all()

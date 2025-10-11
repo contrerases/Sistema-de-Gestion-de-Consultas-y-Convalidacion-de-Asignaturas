@@ -2,7 +2,6 @@
 Lógica de negocio para CURRICULUM_COURSES_TYPE
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, List
 from sqlalchemy.orm import Session
 from src.modules.catalog.curriculum_course_types.repositories import CurriculumCourseTypeRepository
@@ -11,10 +10,11 @@ from src.modules.catalog.curriculum_course_types.schemas import (
     CurriculumCourseTypeUpdate, 
     CurriculumCourseTypeResponse
 )
-
-logger = logging.getLogger(__name__)
 from src.modules.catalog.curriculum_course_types.models import CurriculumCourseType
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class CurriculumCourseTypeService:

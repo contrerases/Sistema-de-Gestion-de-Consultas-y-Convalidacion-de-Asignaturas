@@ -2,14 +2,14 @@
 Servicio de lógica de negocio para USER_TYPES
 Sistema: SGSCT
 """
-import logging
 from typing import Dict, Any
 from sqlalchemy.orm import Session
 from src.modules.catalog.user_types.repositories import UserTypeRepository
 from src.modules.catalog.user_types.schemas import UserTypeCreate, UserTypeUpdate, UserTypeResponse
 from src.core.exceptions import NotFoundException, ValidationException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class UserTypeService:

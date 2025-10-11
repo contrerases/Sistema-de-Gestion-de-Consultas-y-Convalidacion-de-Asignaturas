@@ -104,33 +104,9 @@ class Permissions:
 class Roles:
     """Constantes para roles de usuario"""
     
-    # Roles del sistema
+    # Roles del sistema (deben coincidir con la BD)
     STUDENT = "STUDENT"
     ADMINISTRATOR = "ADMINISTRATOR"
-    SUPER_ADMIN = "SUPER_ADMIN"
-    
-    # Permisos por rol
-    STUDENT_PERMISSIONS = {
-        "workshops": ["read", "inscribe"],
-        "convalidations": ["create", "read", "update"],  # Solo propias
-        "requests": ["create", "read", "update"],  # Solo propias
-        "grades": ["read"],  # Solo propias
-        "profile": ["read", "update"]  # Solo propio
-    }
-    
-    ADMINISTRATOR_PERMISSIONS = {
-        "workshops": ["create", "read", "update", "delete"],
-        "convalidations": ["read", "review", "approve"],
-        "requests": ["read", "update", "resolve"],
-        "students": ["read"],
-        "grades": ["create", "read", "update"],
-        "subjects": ["create", "read", "update", "delete"],
-        "curriculum_slots": ["create", "read", "update", "delete"]
-    }
-    
-    SUPER_ADMIN_PERMISSIONS = {
-        "*": ["*"]  # Todos los permisos
-    }
 
 # =============================================================================
 # SEGURIDAD
@@ -147,12 +123,6 @@ class Security:
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
     }
     
-    # CORS
-    ALLOWED_ORIGINS = ["http://localhost:5173", "http://localhost:3000"]
-    ALLOW_CREDENTIALS = True
-    ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"]
-    ALLOWED_HEADERS = ["*"]
-    
     # Rate limiting
     RATE_LIMIT_REQUESTS = 100
     RATE_LIMIT_WINDOW_SECONDS = 60
@@ -163,14 +133,11 @@ class Security:
     MSG_CSRF_ERROR = "Error de CSRF"
 
 # =============================================================================
-# SALT Y TOKENS
+# TOKENS
 # =============================================================================
 
 class Tokens:
-    """Constantes para tokens y salt"""
-    
-    # Salt para hashing
-    SALT_LENGTH = 32
+    """Constantes para tokens de autenticación"""
     
     # Reset tokens
     RESET_TOKEN_LENGTH = 64

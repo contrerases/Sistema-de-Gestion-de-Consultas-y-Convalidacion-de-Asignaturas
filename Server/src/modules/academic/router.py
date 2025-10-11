@@ -5,7 +5,7 @@ Agrega routers de submódulos
 from fastapi import APIRouter
 
 from .subjects.router import router as subjects_router
-from .curriculum_courses.router import router as curriculum_course_slots_router
+from .curriculum_courses_slots.router import router as curriculum_course_slots_router
 from .departments.router import router as departments_router
 
 router = APIRouter(prefix="/academic", tags=["academic"])

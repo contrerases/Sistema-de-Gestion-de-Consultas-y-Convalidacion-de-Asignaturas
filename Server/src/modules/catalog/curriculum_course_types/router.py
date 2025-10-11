@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.curriculum_course_types.service import CurriculumCourseTypeService
 from src.modules.catalog.curriculum_course_types.schemas import CurriculumCourseTypeCreate, CurriculumCourseTypeUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/curriculum-course-types", tags=["Tipos de Cursos Curriculares"])

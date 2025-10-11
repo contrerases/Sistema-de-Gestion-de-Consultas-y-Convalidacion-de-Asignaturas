@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.workshop_states.service import WorkshopStateService
 from src.modules.catalog.workshop_states.schemas import WorkshopStateCreate, WorkshopStateUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/workshop-states", tags=["Estados de Talleres"])

@@ -4,13 +4,14 @@ Sistema: SGSCT
 """
 from sqlalchemy.orm import Session, joinedload
 from typing import Optional
-from src.modules.auth.models import AuthUser, User
+from src.modules.auth.models import AuthUser
+from src.modules.users.models import User
 from src.modules.catalog.campus import Campus
 from src.modules.catalog.user_types import UserType
 from src.core.exceptions import UserNotFoundException, DuplicateEmailException
-import logging
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class AuthRepository:
@@ -120,7 +121,6 @@ class AuthRepository:
         db: Session,
         email: str,
         password_hash: str,
-        salt: str,
         full_name: str,
         campus_id: int,
         user_type_id: int,
@@ -133,8 +133,7 @@ class AuthRepository:
         Args:
             db: Sesión de base de datos
             email: Email del usuario
-            password_hash: Hash de la contraseña
-            salt: Salt usado en el hash
+            password_hash: Hash de la contraseña (bcrypt incluye salt)
             full_name: Nombre completo
             campus_id: ID del campus
             user_type_id: ID del tipo de usuario
@@ -154,8 +153,7 @@ class AuthRepository:
         # Crear auth_user
         auth_user = AuthUser(
             email=email,
-            password_hash=password_hash,
-            salt=salt
+            password_hash=password_hash
         )
         db.add(auth_user)
         db.flush()  # Para obtener el ID sin commit
@@ -178,15 +176,14 @@ class AuthRepository:
         return AuthRepository.get_user_by_id(db, user.id)
     
     @staticmethod
-    def update_password(db: Session, user_id: int, new_password_hash: str, new_salt: str) -> None:
+    def update_password(db: Session, user_id: int, new_password_hash: str) -> None:
         """
         Actualizar contraseña de usuario
         
         Args:
             db: Sesión de base de datos
             user_id: ID del usuario
-            new_password_hash: Nuevo hash de contraseña
-            new_salt: Nuevo salt
+            new_password_hash: Nuevo hash de contraseña (bcrypt incluye salt)
             
         Raises:
             UserNotFoundException: Si el usuario no existe
@@ -197,7 +194,6 @@ class AuthRepository:
             raise UserNotFoundException(user_id=user_id)
         
         auth_user.password_hash = new_password_hash
-        auth_user.salt = new_salt
         db.commit()
         
         logger.info(f"Contraseña actualizada para usuario ID: {user_id}")

@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.convalidation_states.service import ConvalidationStateService
 from src.modules.catalog.convalidation_states.schemas import ConvalidationStateCreate, ConvalidationStateUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/convalidation-states", tags=["Estados de Convalidación"])

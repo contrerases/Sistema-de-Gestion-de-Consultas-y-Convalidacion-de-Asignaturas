@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.modules.catalog.convalidation_types.service import ConvalidationTypeService
 from src.modules.catalog.convalidation_types.schemas import ConvalidationTypeCreate, ConvalidationTypeUpdate
 from src.modules.auth.dependencies import require_admin
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.responses import success_response, paginated_response
 
 router = APIRouter(prefix="/convalidation-types", tags=["Tipos de Convalidación"])

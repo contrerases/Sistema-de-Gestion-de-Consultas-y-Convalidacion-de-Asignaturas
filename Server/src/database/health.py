@@ -5,12 +5,12 @@ Sistema: SGSCT
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
-import logging
 
 from src.database.connection import get_db_connection
 from src.core.exceptions import DatabaseConnectionException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class DatabaseHealthCheck:

@@ -14,7 +14,7 @@ class ConvalidationStateRepository(BaseRepository[ConvalidationState]):
         super().__init__(ConvalidationState, db)
     
     def get_all(self, skip: int = 0, limit: int = 100) -> List[ConvalidationState]:
-        return self.db.query(self.model).offset(skip).limit(limit).all()
+        return self.db.query(self.model).order_by(self.model.id.asc()).offset(skip).limit(limit).all()
     
     def get_by_id(self, state_id: int) -> Optional[ConvalidationState]:
         return self.db.query(self.model).filter(self.model.id == state_id).first()

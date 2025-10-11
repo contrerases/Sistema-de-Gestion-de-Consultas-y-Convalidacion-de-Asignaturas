@@ -17,6 +17,7 @@ class DepartmentRepository:
         """Obtiene todos los departamentos con paginación"""
         return (
             self.db.query(Department)
+            .order_by(Department.name.asc())
             .offset(skip)
             .limit(limit)
             .all()

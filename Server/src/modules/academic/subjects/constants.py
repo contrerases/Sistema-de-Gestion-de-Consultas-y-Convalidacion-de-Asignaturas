@@ -6,24 +6,9 @@ Constantes específicas del submódulo Subjects (Asignaturas)
 # ASIGNATURAS
 # =============================================================================
 
-# Validación
-NAME_MAX_LENGTH = 255
-NAME_MIN_LENGTH = 3
-CODE_MAX_LENGTH = 20
-CODE_MIN_LENGTH = 3
-
 # Patrón de código de asignatura
 # Ej: INF123, MAT1234, QUI2001
 CODE_PATTERN = r'^[A-Z]{3}\d{3,4}$'
-
-# Prefijos comunes de códigos por departamento
-CODE_PREFIXES = {
-    "INFORMATICA": "INF",
-    "MATEMATICA": "MAT",
-    "QUIMICA": "QUI",
-    "ELECTRONICA": "ELO",
-    "FISICA": "FIS"
-}
 
 # Mensajes
 MSG_SUBJECT_NOT_FOUND = "Asignatura no encontrada"

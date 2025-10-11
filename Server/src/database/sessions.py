@@ -6,12 +6,12 @@ from contextlib import contextmanager
 from typing import Generator
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-import logging
 
 from src.database.connection import SessionLocal
 from src.core.exceptions import DatabaseException
+from src.monitoring.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def get_db() -> Generator[Session, None, None]:

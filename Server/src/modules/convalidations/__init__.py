@@ -1,1 +1,4 @@
-# Convalidations module
+"""
+Módulo de Convalidaciones
+Sistema: SGSCT
+"""

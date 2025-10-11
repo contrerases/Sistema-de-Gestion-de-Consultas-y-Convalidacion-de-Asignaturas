@@ -9,7 +9,7 @@ from src.database.sessions import get_db
 from src.core import security
 from src.core.exceptions import UnauthorizedException, ForbiddenException
 from src.modules.auth.repositories import AuthRepository
-from src.modules.auth.models import User
+from src.modules.users.models import User
 from src.core.enums import UserType
 
 
