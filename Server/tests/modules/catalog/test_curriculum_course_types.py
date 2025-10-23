@@ -1,3 +1,0 @@
-"""
-Tests para CURRICULUM_COURSES_TYPE
-"""

@@ -39,7 +39,7 @@ INSERT INTO CAMPUS (acronym, name, location) VALUES
 ('VSM', 'VITACURA', 'SANTIAGO');
 
 -- Tipos de usuarios
-INSERT INTO USER_TYPES (user_type) VALUES
+INSERT INTO USER_TYPES (name) VALUES
 ('STUDENT'),
 ('ADMINISTRATOR');
 

@@ -2,6 +2,7 @@
 Configuración de directorios de archivos
 Sistema: SGSCT
 """
+
 from pathlib import Path
 from typing import Set
 from src.app.settings import get_settings
@@ -44,9 +45,9 @@ def verify_upload_directories() -> None:
         CERTIFICATED_COURSES_DIR,
         WORKSHOPS_DIR,
         SYLLABUS_DIR,
-        WORKSHOPS_CONVALIDATION_LIST_DIR
+        WORKSHOPS_CONVALIDATION_LIST_DIR,
     ]
-    
+
     for directory in required_dirs:
         if not directory.exists():
             directory.mkdir(parents=True, exist_ok=True)

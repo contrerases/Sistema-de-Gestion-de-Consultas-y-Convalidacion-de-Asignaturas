@@ -1,3 +1,0 @@
-"""
-Tests para módulo catalog
-"""

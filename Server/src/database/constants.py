@@ -1,0 +1,86 @@
+# =============================================================================
+# LONGITUDES Y LÍMITES PARA CAMPOS DE BASE DE DATOS
+# =============================================================================
+
+
+class VarcharLength:
+    """
+    Límites de longitud para columnas de base de datos.
+    """
+
+    NAME = 255
+
+    # Campos comunes
+    EMAIL = 255
+    PASSWORD_HASH = 255
+    NAME = 255
+    FULL_NAME = 255
+    ACRONYM = 255
+    LOCATION = 255
+
+    # RUT y ROL
+    RUT = 12  # formato: 12345678-K
+    ROL = 11  # formato: 2019012345
+
+    # Talleres
+    WORKSHOP_NAME = 255
+    WORKSHOP_DESCRIPTION = 1000
+    WORKSHOP_SLUG = 255
+    SYLLABUS_PATH = 500
+
+    # Asignaturas
+    SUBJECT_ACRONYM = 255
+    SUBJECT_NAME = 255
+
+    # Convalidaciones
+    REVIEW_COMMENTS = 1000
+    ACTIVITY_NAME = 255
+    ACTIVITY_DESCRIPTION = 255
+    FILE_PATH = 500
+
+    # Notificaciones
+    NOTIFICATION_TYPE = 50
+    NOTIFICATION_MESSAGE = 1000
+
+    # Tokens
+    TOKEN = 255
+
+    # User types
+    USER_TYPE = 50
+
+
+class Tables:
+    """Nombres de tablas de la base de datos"""
+
+    # AUTH
+    AUTH_USERS = "AUTH_USERS"
+    USERS = "USERS"
+
+    # CATALOG
+    CAMPUS = "CAMPUS"
+    USER_TYPES = "USER_TYPES"
+    CONVALIDATION_TYPES = "CONVALIDATION_TYPES"
+    CONVALIDATION_STATES = "CONVALIDATION_STATES"
+    WORKSHOP_STATES = "WORKSHOP_STATES"
+    CURRICULUM_COURSES_TYPES = "CURRICULUM_COURSES_TYPES"
+
+    # ACADEMIC
+    DEPARTMENTS = "DEPARTMENTS"
+    SUBJECTS = "SUBJECTS"
+    CURRICULUM_COURSE_SLOTS = "CURRICULUM_COURSE_SLOTS"
+
+    # USERS
+    PROFESSORS = "PROFESSORS"
+
+    # WORKSHOPS
+    WORKSHOPS = "WORKSHOPS"
+    WORKSHOPS_TOKENS = "WORKSHOPS_TOKENS"
+    WORKSHOPS_INSCRIPTIONS = "WORKSHOPS_INSCRIPTIONS"
+    WORKSHOPS_GRADES = "WORKSHOPS_GRADES"
+
+    # CONVALIDATIONS
+    CONVALIDATIONS = "CONVALIDATIONS"
+    CONVALIDATIONS_SUBJECTS = "CONVALIDATIONS_SUBJECTS"
+    CONVALIDATIONS_WORKSHOPS = "CONVALIDATIONS_WORKSHOPS"
+    CONVALIDATIONS_EXTERNAL_ACTIVITIES = "CONVALIDATIONS_EXTERNAL_ACTIVITIES"
+    REQUESTS = "REQUESTS"

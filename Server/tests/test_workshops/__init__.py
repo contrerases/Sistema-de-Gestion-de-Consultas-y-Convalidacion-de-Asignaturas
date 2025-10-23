@@ -1,1 +1,0 @@
-# Workshops tests package
