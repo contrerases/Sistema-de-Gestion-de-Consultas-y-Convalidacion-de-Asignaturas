@@ -1,9 +1,6 @@
 
 
 services:
-  # ========================================
-  # FRONTEND - Vue.js (PRODUCCIÓN)
-  # ========================================
   web:
     build:
       context: ./client
@@ -16,9 +13,6 @@ services:
     networks:
       - net
 
-  # ========================================
-  # BACKEND - Python + FastAPI (PRODUCCIÓN)
-  # ========================================
   api:
     build:
       context: ./server
@@ -38,9 +32,6 @@ services:
     volumes:
       - files_prod:/app/files
 
-  # ========================================
-  # BASE DE DATOS - MariaDB (PRODUCCIÓN)
-  # ========================================
   db:
     image: mariadb:11.0.6
     environment:

@@ -4,30 +4,30 @@ WORKDIR /app
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    gcc \
-    default-libmysqlclient-dev \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+    FROM python:3.11.11-slim-bookworm
 
-# Copiar requirements
-COPY requirements.txt .
-COPY requirements-dev.txt .
+    WORKDIR /app
 
-# Instalar dependencias Python
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r requirements-dev.txt
+    RUN apt-get update && apt-get install -y \
+        gcc \
+        default-libmysqlclient-dev \
+        pkg-config \
+        && rm -rf /var/lib/apt/lists/*
 
-# Copiar código fuente
-COPY . .
+    COPY requirements.txt .
+    COPY requirements-dev.txt .
 
-# Crear estructura de directorios de archivos
-RUN mkdir -p /app/files/convalidations/personal_projects && \
-    mkdir -p /app/files/convalidations/certificated_courses && \
-    mkdir -p /app/files/workshops/syllabus && \
-    mkdir -p /app/files/workshops/convalidation_list
+    RUN pip install --no-cache-dir -r requirements.txt
+    RUN pip install --no-cache-dir -r requirements-dev.txt
 
-# Exponer puerto
-EXPOSE 8000
+    COPY . .
 
-# Comando de inicio para desarrollo (con reload)
+    RUN mkdir -p /app/files/convalidations/personal_projects && \
+        mkdir -p /app/files/convalidations/certificated_courses && \
+        mkdir -p /app/files/workshops/syllabus && \
+        mkdir -p /app/files/workshops/convalidation_list
+
+    EXPOSE 8000
+
+    CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

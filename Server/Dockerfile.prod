@@ -2,7 +2,6 @@ FROM python:3.11.11-slim-bookworm
 
 WORKDIR /app
 
-# Instalar dependencias del sistema (solo las necesarias)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -10,27 +9,19 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar requirements (desde Server/ si Railway no usa Root Directory)
 COPY ./requirements.txt .
 
-# Actualizar pip, setuptools y wheel
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
-# Instalar dependencias Python (solo producción)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar código fuente
 COPY . .
 
-# Crear estructura de directorios de archivos
 RUN mkdir -p /app/files/convalidations/personal_projects && \
     mkdir -p /app/files/convalidations/certificated_courses && \
     mkdir -p /app/files/workshops/syllabus && \
     mkdir -p /app/files/workshops/convalidation_list
 
-# Exponer puerto
 EXPOSE 8000
 
-# Comando de inicio para producción (con workers)
-# Railway provee $PORT automáticamente
 CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 4

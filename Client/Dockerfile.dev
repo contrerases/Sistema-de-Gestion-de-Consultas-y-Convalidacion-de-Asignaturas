@@ -4,18 +4,13 @@ WORKDIR /app
 
 RUN apk add --no-cache bash
 
-# Copiar archivos de configuración
 COPY package*.json ./
 COPY tsconfig*.json ./
 
-# Instalar dependencias
 RUN npm install --include=dev
 
-# Copiar el resto del código
 COPY . .
 
-# Exponer puerto
 EXPOSE 5173
 
-# Comando por defecto
 CMD ["npm", "run", "dev"]

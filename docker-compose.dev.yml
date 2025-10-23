@@ -8,7 +8,7 @@ services:
     ports:
       - "5173:5173"
     env_file:
-      - ./client/.env.dev    
+      - ./client/.env.dev
     restart: unless-stopped
     networks:
       - net
@@ -16,9 +16,6 @@ services:
       - ./client:/app
       - /app/node_modules
 
-  # ========================================
-  # BACKEND - Python + FastAPI (DESARROLLO)
-  # ========================================
   api:
     build:
       context: ./server
@@ -39,9 +36,6 @@ services:
       - ./server:/app
       - files:/app/files
 
-  # ========================================
-  # BASE DE DATOS - MariaDB (DESARROLLO)
-  # ========================================
   db:
     image: mariadb:11.0.6
     env_file:
@@ -51,7 +45,6 @@ services:
       - MARIADB_DATABASE=sgc_db_dev
       - MARIADB_USER=sgc_user
       - MARIADB_PASSWORD=sgc_user_dev_password
-
     ports:
       - "3306:3306"
     volumes:
@@ -96,10 +89,10 @@ services:
       - net
     healthcheck:
       test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "--password=sgc_root_dev_password" ]
-      interval: 10s  
+      interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s 
+      start_period: 30s
 
 networks:
   net:
